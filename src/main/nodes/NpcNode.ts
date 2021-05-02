@@ -12,7 +12,6 @@ import { STANDARD_FONT, Layer } from "../constants";
 import { Gather } from "../Gather";
 import { clamp } from "../../engine/util/math";
 import { PlayerNode } from "./PlayerNode";
-import { Vector2 } from "../../engine/graphics/Vector2";
 
 interface NpcNodeArgs extends SceneNodeArgs {
     spriteIndex?: number;

@@ -203,7 +203,7 @@ export class Gather extends Game {
         const player = this.getPlayer();
         const pos = player.getScenePosition();
         player.remove().moveTo(pos.x, pos.y).appendTo(this.getGameScene().rootNode);
-        MusicManager.getInstance().loopTrack(1);
+        MusicManager.getInstance().loopTrack(0);
         FxManager.getInstance().playSounds();
         // this.turnOnAllLights();
     }

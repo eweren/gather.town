@@ -36,7 +36,7 @@ export class SuccessScene extends Scene<Gather> {
             .setText(`Press ${keyToPress} to exit`)
             .moveTo(GAME_WIDTH - 56, GAME_HEIGHT - 64)
             .appendTo(this.rootNode);
-        MusicManager.getInstance().loopTrack(3);
+        MusicManager.getInstance().loopTrack(0);
         FxManager.getInstance().stop();
     }
 
