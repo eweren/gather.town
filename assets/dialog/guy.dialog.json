@@ -1,0 +1,29 @@
+{
+    "entry": [
+        "Oh, you're not a rat!",
+        "►[not who]Who are you? @who",
+        "►[not live]Do you live down here? @live",
+        "►[not zombies]What about the zombies? @zombies",
+        "►Got to go. @bye"
+    ],
+    "who": [
+        "Oh, I'm Bill!",
+        "Still on my way to work.",
+        "The meeting is at 2PM.",
+        "Then I got lost...",
+        "But I can still make it. !set who true @entry"
+    ],
+    "live": [
+        "If you call that living...",
+        "But I am glad, that there is no vacuum here!",
+        "I could kill for a doughnut... !set live true @entry"
+    ],
+    "zombies": [
+        "Oh, they must really love me! They always try to eat me.",
+        "But to be honest...",
+        "I don't like the smell. !set zombies true @entry"
+    ],
+    "bye": [
+        "Got to run! @entry !end"
+    ]
+}

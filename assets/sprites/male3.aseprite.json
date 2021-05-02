@@ -1,0 +1,84 @@
+{ "frames": {
+   "male3 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 8, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 5, "w": 8, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 1250
+   },
+   "male3 1.aseprite": {
+    "frame": { "x": 8, "y": 0, "w": 8, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 5, "w": 8, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 150
+   },
+   "male3 2.aseprite": {
+    "frame": { "x": 16, "y": 0, "w": 8, "h": 28 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 4, "w": 8, "h": 28 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 1250
+   },
+   "male3 3.aseprite": {
+    "frame": { "x": 24, "y": 0, "w": 10, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 5, "w": 10, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 1000
+   },
+   "male3 4.aseprite": {
+    "frame": { "x": 34, "y": 0, "w": 9, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 6, "y": 5, "w": 9, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 100
+   },
+   "male3 5.aseprite": {
+    "frame": { "x": 43, "y": 0, "w": 10, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 6, "y": 5, "w": 10, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 100
+   },
+   "male3 6.aseprite": {
+    "frame": { "x": 53, "y": 0, "w": 11, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 5, "w": 11, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 100
+   },
+   "male3 7.aseprite": {
+    "frame": { "x": 64, "y": 0, "w": 13, "h": 27 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 5, "w": 13, "h": 27 },
+    "sourceSize": { "w": 20, "h": 32 },
+    "duration": 1000
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25",
+  "image": "male3.png",
+  "format": "RGBA8888",
+  "size": { "w": 77, "h": 28 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "idle", "from": 0, "to": 2, "direction": "pingpong" },
+   { "name": "idle2", "from": 3, "to": 7, "direction": "pingpong" }
+  ],
+  "layers": [
+   { "name": "male1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

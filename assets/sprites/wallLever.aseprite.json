@@ -1,0 +1,31 @@
+{ "frames": {
+   "0": {
+    "frame": { "x": 0, "y": 0, "w": 9, "h": 17 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 9, "h": 17 },
+    "sourceSize": { "w": 11, "h": 24 },
+    "duration": 100
+   },
+   "1": {
+    "frame": { "x": 9, "y": 0, "w": 9, "h": 17 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 6, "w": 9, "h": 17 },
+    "sourceSize": { "w": 11, "h": 24 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25-x64",
+  "image": "wallLever.png",
+  "format": "RGBA8888",
+  "size": { "w": 18, "h": 17 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "off", "from": 0, "to": 0, "direction": "forward" },
+   { "name": "on", "from": 1, "to": 1, "direction": "forward" }
+  ]
+ }
+}

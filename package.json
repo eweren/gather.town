@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json.schemastore.org/package#",
+  "name": "hyperloop",
+  "version": "1.0.2",
+  "description": "A small 2D action platformer with handcrafted pixel art, an emphasis on mood, and a blasting original soundtrack.",
+  "homepage": "https://ldjam.com/events/ludum-dare/47/hyperloop-2",
+  "author": "The Cat Hive Developers",
+  "maintainers": [],
+  "keywords": [
+    "game",
+    "browser",
+    "electron"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/friendlyfiregame/hyperloop"
+  },
+  "main": ".webpack/main",
+  "scripts": {
+    "clean": "rimraf lib dist out",
+    "markdownlint": "markdownlint -c ./.markdownlint.json -i node_modules/ -i dist/ -i out/ .",
+    "htmlhint": "htmlhint ./index.html",
+    "eslint": "eslint --ext .ts ./src/",
+    "lint": "npm run -s markdownlint && npm run -s htmlhint && npm run -s eslint",
+    "check": "jest",
+    "cspell": "cspell '**/*'",
+    "coverage": "jest --coverage",
+    "test": "npm run -s cspell && npm run -s lint && npm run -s check",
+    "compile": "tsc",
+    "watch": "tsc -w",
+    "prepare": "npm run -s clean && npm run -s compile",
+    "dist": "webpack",
+    "start": "webpack-dev-server -d",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "config": {
+    "forge": "electron-forge.config.js"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "6.0.0-beta.53",
+    "@electron-forge/maker-deb": "6.0.0-beta.53",
+    "@electron-forge/maker-rpm": "6.0.0-beta.53",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.53",
+    "@electron-forge/maker-zip": "6.0.0-beta.53",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.53",
+    "@jest-runner/electron": "3.0.0",
+    "@types/base64-js": "1.3.0",
+    "@types/jest": "26.0.14",
+    "@types/pako": "1.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "copy-webpack-plugin": "6.2.0",
+    "cspell": "4.1.0",
+    "electron": "10.1.3",
+    "eslint": "^7.8.1",
+    "generate-json-webpack-plugin": "^1.0.0",
+    "git-revision-webpack-plugin": "^3.0.6",
+    "htmlhint": "^0.14.1",
+    "jest": "26.4.2",
+    "jest-extended": "0.11.5",
+    "jest-sonar-reporter": "^2.0.0",
+    "markdownlint": "0.21.0",
+    "markdownlint-cli": "0.24.0",
+    "rimraf": "3.0.2",
+    "source-map-loader": "1.1.0",
+    "steal": "2.2.4",
+    "typescript": "^4.0.2",
+    "webpack": "4.44.2",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0"
+  },
+  "dependencies": {
+    "base64-js": "1.3.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "pako": "1.0.11",
+    "tslib": "^2.0.1"
+  }
+}
