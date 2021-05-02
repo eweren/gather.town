@@ -7,10 +7,11 @@ import { cacheResult } from "../../engine/util/cache";
 import { clamp } from "../../engine/util/math";
 import { rnd } from "../../engine/util/random";
 import { Layer, STANDARD_FONT } from "../constants";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { CollisionNode } from "./CollisionNode";
 import { DialogNode } from "./DialogNode";
 import { InteractiveNode } from "./InteractiveNode";
+import { NpcNode } from "./NpcNode";
 import { ParticleNode, valueCurves } from "./ParticleNode";
 
 export enum PreCharacterTags {
@@ -26,7 +27,7 @@ export enum PostCharacterTags {
     DANCE = "dance"
 }
 
-export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
+export abstract class CharacterNode extends AsepriteNode<Gather> {
 
     @asset(STANDARD_FONT)
     private static readonly dialogFont: BitmapFont;
@@ -38,14 +39,13 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
     public abstract getSpeed(): number;
     public abstract getAcceleration(): number;
     public abstract getDeceleration(): number;
-    public abstract getJumpPower(): number;
 
     // Dynamic player state
     protected updateTime = 0;
     protected direction: SimpleDirection = SimpleDirection.NONE;
     protected velocity: Vector2;
     protected debug = false;
-    private canInteractWith: InteractiveNode | null = null;
+    private canInteractWith: InteractiveNode | NpcNode | null = null;
     protected consecutiveXCollisions = 0;
     protected consecutiveYCollisions = 0;
 
@@ -166,6 +166,10 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
             } else {
                 this.consecutiveYCollisions = 0;
             }
+            if (this.collidesWithNpc(newX, newY)) {
+                newX = x;
+                newY = y;
+            }
 
             // Apply
             if (newX !== x || newY !== y) {
@@ -223,7 +227,6 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
         const oldTag = this.getTag();
         if (tag && ((oldTag !== this.preTag + tag) || (tag === PostCharacterTags.DANCE && oldTag !== tag))) {
             const newTag = (tag !== PostCharacterTags.DANCE ? this.preTag : "") + tag;
-            console.log("Tag set: ", newTag);
             super.setTag(newTag);
         }
         return this;
@@ -231,7 +234,6 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
 
     public setDirection(direction: SimpleDirection = SimpleDirection.BOTTOM): void {
         if (direction !== this.direction) {
-            console.log("Direction: ", direction);
             switch(direction) {
                 case SimpleDirection.BOTTOM:
                     this.setPreTag(PreCharacterTags.FRONT);
@@ -283,6 +285,18 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
         return colliders;
     }
 
+    private collidesWithNpc(x = this.getX(), y = this.getY()): boolean {
+        const oldX = this.x;
+        const oldY = this.y;
+        this.setX(x);
+        this.setY(y);
+        const collides = !!this.getScene()?.rootNode.getChildren().filter(c => c instanceof CharacterNode && c !== this)
+            .some(c => c.collidesWithNode(this));
+        this.x = oldX;
+        this.y = oldY;
+        return collides;
+    }
+
 
     public getHeadPosition(): Vector2 {
         const p = this.getScenePosition();
@@ -295,17 +309,17 @@ export abstract class CharacterNode extends AsepriteNode<Hyperloop> {
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
 
-    public registerInteractiveNode(node: InteractiveNode): void {
+    public registerInteractiveNode(node: InteractiveNode | NpcNode): void {
         this.canInteractWith = node;
     }
 
-    public unregisterInteractiveNode(node: InteractiveNode): void {
+    public unregisterInteractiveNode(node: InteractiveNode | NpcNode): void {
         if (this.canInteractWith === node) {
             this.canInteractWith = null;
         }
     }
 
-    public getNodeToInteractWith(): InteractiveNode | null {
+    public getNodeToInteractWith(): InteractiveNode | NpcNode | null {
         return this.canInteractWith;
     }
 }

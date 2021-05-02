@@ -1,7 +1,7 @@
 import { ReadonlyVector2Like } from "../../engine/graphics/Vector2";
 import { SceneNode, SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { GRAVITY } from "../constants";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
 type ParticleAppearance = string | HTMLImageElement | HTMLCanvasElement;
 
@@ -29,7 +29,7 @@ export interface ParticleNodeArgs extends SceneNodeArgs {
     update?: (p: Particle) => void;
 }
 
-export class ParticleNode extends SceneNode<Hyperloop> {
+export class ParticleNode extends SceneNode<Gather> {
     private particles: Particle[];
     private offsetGenerator: VectorGenerator;
     private velocityGenerator: VectorGenerator;

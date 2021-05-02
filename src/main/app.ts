@@ -7,7 +7,7 @@ if (require("electron-squirrel-startup")) { // eslint-disable-line global-requir
     app.quit();
 }
 
-app.name = "Hyperloop";
+app.name = "Gather";
 app.allowRendererProcessReuse = true;
 
 const createWindow = () => {
@@ -16,7 +16,7 @@ const createWindow = () => {
         width: GAME_WIDTH,
         height: GAME_HEIGHT,
         fullscreen: true,
-        title: "Hyperloop",
+        title: "Gather",
         icon: path.join(__dirname, "../renderer/assets/appicon.iconset/icon_256x256.png")
     });
 

@@ -2,7 +2,7 @@ import { asset } from "../../engine/assets/Assets";
 import { Sound } from "../../engine/assets/Sound";
 import { SoundNode, } from "../../engine/scene/SoundNode";
 import { TiledSceneArgs } from "../../engine/scene/TiledMapNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
 const soundAssets = [
     "sounds/loops/loop_breathing.mp3",
@@ -32,7 +32,7 @@ function getAssetIndexForName(name: string): number {
     return soundMapping[name] ?? -1;
 }
 
-export class TiledSoundNode extends SoundNode<Hyperloop> {
+export class TiledSoundNode extends SoundNode<Gather> {
     @asset(soundAssets)
     private static sounds: Sound[];
 

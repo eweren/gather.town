@@ -1,4 +1,4 @@
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { Scene } from "../../engine/scene/Scene";
 import { asset } from "../../engine/assets/Assets";
 import { Direction } from "../../engine/geom/Direction";
@@ -15,7 +15,7 @@ import { SuccessScene } from "./SuccessScene";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 import { isDebugMap } from "../../engine/util/env";
 
-export class TitleScene extends Scene<Hyperloop> {
+export class TitleScene extends Scene<Gather> {
     @asset("images/title-image.png")
     private static titleImage: HTMLImageElement;
 

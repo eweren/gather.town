@@ -1,9 +1,9 @@
 import { Direction } from "../../engine/geom/Direction";
 import { Bounds2 } from "../../engine/graphics/Bounds2";
 import { SceneNode, SceneNodeArgs } from "../../engine/scene/SceneNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
-export class CollisionNode extends SceneNode<Hyperloop> {
+export class CollisionNode extends SceneNode<Gather> {
     public constructor(args?: SceneNodeArgs) {
         super({ anchor: Direction.TOP_LEFT, ...args });
         // this.setShowBounds(true);

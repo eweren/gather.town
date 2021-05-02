@@ -6,10 +6,10 @@ import { SceneNode, SceneNodeAspect } from "../../../engine/scene/SceneNode";
 import { TiledSceneArgs } from "../../../engine/scene/TiledMapNode";
 import { createCanvas, getRenderingContext } from "../../../engine/util/graphics";
 import { Layer } from "../../constants";
-import { Hyperloop } from "../../Hyperloop";
+import { Gather } from "../../Gather";
 import { intensifyColor } from "../LightNode";
 
-export class AmbientPlayerNode extends SceneNode<Hyperloop> {
+export class AmbientPlayerNode extends SceneNode<Gather> {
     private color: Color;
     private readonly intensity: number;
     private gradient: CanvasGradient | null = null;

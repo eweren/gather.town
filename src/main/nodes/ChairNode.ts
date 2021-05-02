@@ -6,7 +6,7 @@ import { asset } from "../../engine/assets/Assets";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 import { PreCharacterTags } from "./CharacterNode";
 import { FocusNode } from "./FocusNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
 export interface ChairNodeArgs extends SceneNodeArgs {
     onUpdate?: (state: boolean) => boolean | undefined;
@@ -25,7 +25,7 @@ export class ChairNode extends InteractiveNode {
             tag: "off",
             ...args
         }, "PRESS E TO SIT DOWN");
-        this.presentationBoard = args.tiledObject?.getOptionalProperty("forPresentationboard")?.getValue() as number;
+        this.presentationBoard = args.tiledObject?.getOptionalProperty("forPresentationboard", "int")?.getValue();
     }
 
 
@@ -43,7 +43,7 @@ export class ChairNode extends InteractiveNode {
         if (isSitting !== this.sitDown && !isSitting) {
             this.sitDown = false;
             this.getScene()?.camera.focus(this.getPlayer()!, {follow: true});
-            (this.getGame() as Hyperloop).turnOnAllLights();
+            (this.getGame() as Gather).turnOnAllLights();
 
         }
         return isSitting;
@@ -59,7 +59,7 @@ export class ChairNode extends InteractiveNode {
             if (presentationBoard) {
                 this.getScene()?.camera.focus(presentationBoard).then((successful) => {
                     if (successful) {
-                        (this.getGame() as Hyperloop).dimLights();
+                        (this.getGame() as Gather).dimLights();
                     }
                 });
             }

@@ -1,7 +1,7 @@
 {
     "lang": "en-US",
-    "name": "Hyperloop",
-    "short_name": "Hyperloop",
+    "name": "Gather",
+    "short_name": "Gather",
     "start_url": "./?utm_source=web_app_manifest",
     "display": "standalone",
     "background_color": "#cecece",

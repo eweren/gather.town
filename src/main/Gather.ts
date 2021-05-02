@@ -24,7 +24,7 @@ export enum GameStage {
     DONE = 2
 }
 
-export class Hyperloop extends Game {
+export class Gather extends Game {
     private stageStartTime = 0;
     private stageTime = 0;
     private dialogs: Dialog[] = [];
@@ -42,6 +42,7 @@ export class Hyperloop extends Game {
 
     @asset("dialog/train.dialog.json")
     private static readonly trainDialog: DialogJSON;
+    private dialogChar?: CharacterNode;
 
     public constructor() {
         super();
@@ -54,7 +55,7 @@ export class Hyperloop extends Game {
         // Assets cannot be loaded in constructor because the LoadingScene
         // is not initialized at constructor time and Assets are loaded in the LoadingScene
         this.dialogs = [
-            new Dialog(Hyperloop.trainDialog)
+            new Dialog(Gather.trainDialog)
         ];
 
         this.input.onDrag.filter(e => e.isRightStick && !!e.direction && e.direction.getLength() > 0.3).connect(this.getPlayer().handleControllerInput, this.getPlayer());
@@ -92,13 +93,10 @@ export class Hyperloop extends Game {
     }
 
     private spawnNPCs(): void {
-        const chars = [ new NpcNode(0), new NpcNode(1), new NpcNode(2), new NpcNode(3), new NpcNode(4) ];
-        const positions = [ -80, -40, 24, 60, 125 ];
+        const chars = [ new NpcNode({spriteIndex: 0}), new NpcNode({spriteIndex: 1}), new NpcNode({spriteIndex: 2}), new NpcNode({spriteIndex: 3}), new NpcNode({spriteIndex: 4}) ];
+        const positions = [ 644, 680, 720, 760, 800 ];
         for (let i = 0; i < chars.length; i++) {
-            chars[i].moveTo(positions[i], -20).appendTo(this.getGameScene().rootNode);
-        }
-        for (let i = 3; i < chars.length; i++) {
-            chars[i].setMirrorX(true);
+            chars[i].moveTo(positions[i], 512).appendTo(this.getGameScene().rootNode);
         }
         this.npcs = chars;
     }
@@ -142,9 +140,10 @@ export class Hyperloop extends Game {
         }
     }
 
-    private nextDialogLine() {
+    private nextDialogLine(char = this.dialogChar) {
         // Shut up all characters
         this.npcs.forEach(npc => npc.say());
+        this.getPlayer().say();
         this.currentDialogLine++;
         if (this.currentDialog && this.currentDialogLine >= this.currentDialog.lines.length) {
             this.currentDialog = null;
@@ -152,15 +151,21 @@ export class Hyperloop extends Game {
         } else if (this.currentDialog) {
             // Show line
             const line = this.currentDialog.lines[this.currentDialogLine];
-            const char = this.npcs[line.charNum];
+            console.log(this.currentDialogLine, line.charNum);
+            char = line.charNum >= 1 ? char ?? this.npcs[line.charNum] : this.getPlayer();
             char.say(line.line, Infinity);
+
         }
     }
 
-    private startDialog(num: number) {
+    public startDialog(num: number, char?: CharacterNode) {
+        if (this.currentDialog) {
+            return;
+        }
         this.currentDialog = this.dialogs[num];
         this.currentDialogLine = -1;
-        this.nextDialogLine();
+        this.dialogChar = char;
+        this.nextDialogLine(char);
     }
 
     private updateGame(): void {
@@ -243,7 +248,7 @@ export class Hyperloop extends Game {
 }
 
 (async () => {
-    const game = new Hyperloop();
+    const game = new Gather();
     await game.scenes.setScene(LoadingScene);
     (window as any).game = game;
     game.start();

@@ -18,6 +18,14 @@ export enum SimpleDirection {
     BOTTOM = 4
 }
 
+export const SimpleDirections = [
+    SimpleDirection.NONE,
+    SimpleDirection.LEFT,
+    SimpleDirection.RIGHT,
+    SimpleDirection.TOP,
+    SimpleDirection.BOTTOM
+];
+
 export namespace Direction {
     export function isLeft(direction: Direction): boolean {
         return (direction & Direction.LEFT) !== 0;

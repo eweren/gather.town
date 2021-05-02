@@ -7,7 +7,7 @@ import { SceneNode, SceneNodeAspect } from "../../engine/scene/SceneNode";
 import { TiledSceneArgs } from "../../engine/scene/TiledMapNode";
 import { createCanvas, getRenderingContext } from "../../engine/util/graphics";
 import { radians } from "../../engine/util/math";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
 export function intensifyColor(color: RGBColor, f: number): Color {
     let r = f * color.getRed(), g = f * color.getGreen(), b = f * color.getBlue();
@@ -29,7 +29,7 @@ export function intensifyColor(color: RGBColor, f: number): Color {
     return new RGBColor(r, g, b);
 }
 
-export class LightNode extends SceneNode<Hyperloop> {
+export class LightNode extends SceneNode<Gather> {
     private color: Color;
     private intensity: number;
     private readonly polygon: Polygon2 | null;

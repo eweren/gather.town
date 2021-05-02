@@ -2,9 +2,9 @@ import { Aseprite } from "../../engine/assets/Aseprite";
 import { asset } from "../../engine/assets/Assets";
 import { AsepriteNode } from "../../engine/scene/AsepriteNode";
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
-export class FocusNode extends AsepriteNode<Hyperloop> {
+export class FocusNode extends AsepriteNode<Gather> {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
 

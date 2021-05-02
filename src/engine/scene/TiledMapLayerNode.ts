@@ -16,6 +16,7 @@ export interface TiledMapLayerNodeArgs extends SceneNodeArgs {
 export class TiledMapLayerNode<T extends Game> extends SceneNode<T> {
     private map: TiledMap;
     private name: string;
+    private isRendering = false;
 
     /**
      * Creates a new scene node displaying the given Tiled Map.
@@ -34,7 +35,8 @@ export class TiledMapLayerNode<T extends Game> extends SceneNode<T> {
     private renderedMap: HTMLCanvasElement | null = null;
 
     private getRenderedMap(): HTMLCanvasElement | null {
-        if (this.renderedMap == null) {
+        if (this.renderedMap == null && !this.isRendering) {
+            this.isRendering = true;
             const canvas = createCanvas(this.map.getWidth() * this.map.getTileWidth(), this.map.getHeight() * this.map.getTileHeight());
             const ctx = getRenderingContext(canvas, "2d");
             const layer = this.map.getLayer(this.name, TiledTileLayer);
@@ -42,10 +44,10 @@ export class TiledMapLayerNode<T extends Game> extends SceneNode<T> {
             const data = layer.getData();
             const height = layer.getHeight();
             const width = layer.getWidth();
-            tilesets.forEach(tileset => {
+            for (const tileset of tilesets) {
                 const tilesetImage = tileset.getImage();
                 if (tilesetImage === null) {
-                    return;
+                    continue;
                 }
                 for (let y = layer.getY(); y < height; ++y) {
                     for (let x = layer.getX(); x < width; ++x) {
@@ -79,7 +81,8 @@ export class TiledMapLayerNode<T extends Game> extends SceneNode<T> {
                     }
                 }
                 this.renderedMap = canvas;
-            });
+            }
+            this.isRendering = false;
         }
         return this.renderedMap;
     }

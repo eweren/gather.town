@@ -28,7 +28,7 @@ export class PlayerNode extends CharacterNode {
     @asset("sounds/fx/footsteps.ogg")
     private static readonly footsteps: Sound;
 
-    @asset("sprites/character.aseprite.json")
+    @asset("sprites/characters/character.aseprite.json")
     private static readonly sprite: Aseprite;
 
     @asset("sprites/crosshair.aseprite.json")
@@ -38,7 +38,6 @@ export class PlayerNode extends CharacterNode {
     private readonly speed = 60;
     private readonly acceleration = 10000;
     private readonly deceleration = 600;
-    private readonly jumpPower = 295;
     private leftMouseDown = false;
     private rightMouseDown = false;
     private previouslyPressed = 0;
@@ -81,7 +80,6 @@ export class PlayerNode extends CharacterNode {
     }
 
     public getSpeed(): number {
-        // TODO remove before publishing
         return this.speed * (this.isRunning ? 2.4 : 1.2);
     }
 
@@ -91,10 +89,6 @@ export class PlayerNode extends CharacterNode {
 
     public getDeceleration(): number {
         return this.deceleration;
-    }
-
-    public getJumpPower(): number {
-        return this.jumpPower;
     }
 
     public update(dt: number, time: number) {
@@ -150,7 +144,7 @@ export class PlayerNode extends CharacterNode {
             this.leftMouseDown = false;
         }
         // Interact
-        if (this.canInteract(ControllerIntent.PLAYER_INTERACT)) {
+        if (this.canInteract(ControllerIntent.PLAYER_RELOAD)) {
             const node = this.getNodeToInteractWith();
             if (node) {
                 node.interact();

@@ -1,44 +1,140 @@
 import { Aseprite } from "../../engine/assets/Aseprite";
-import { CharacterNode } from "./CharacterNode";
-import { Direction } from "../../engine/geom/Direction";
+import { CharacterNode, PostCharacterTags } from "./CharacterNode";
+import { Direction, SimpleDirection, SimpleDirections } from "../../engine/geom/Direction";
 
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { asset } from "../../engine/assets/Assets";
 import { Rect } from "../../engine/geom/Rect";
+import { rndItem } from "../../engine/util/random";
+import { TextNode } from "../../engine/scene/TextNode";
+import { BitmapFont } from "../../engine/assets/BitmapFont";
+import { STANDARD_FONT, Layer } from "../constants";
+import { Gather } from "../Gather";
+import { clamp } from "../../engine/util/math";
+import { PlayerNode } from "./PlayerNode";
+import { Vector2 } from "../../engine/graphics/Vector2";
+
+interface NpcNodeArgs extends SceneNodeArgs {
+    spriteIndex?: number;
+}
 
 export class NpcNode extends CharacterNode {
+    @asset(STANDARD_FONT)
+    private static readonly font: BitmapFont;
     @asset([
-        "sprites/male.aseprite.json",
-        "sprites/female.aseprite.json",
-        "sprites/male2.aseprite.json",
-        "sprites/male3.aseprite.json",
-        "sprites/female2.aseprite.json",
-        "sprites/female3.aseprite.json"
+        "sprites/characters/dark_staff_black.aseprite.json",
+        "sprites/characters/HalloweenGhost.aseprite.json",
+        "sprites/characters/dark_casualjacket_orange_white.aseprite.json",
+        "sprites/characters/light_male_pkmn_red.aseprite.json",
+        "sprites/characters/femalenerdydark_green.aseprite.json",
+        "sprites/characters/dark_graduation_orange.aseprite.json",
+        "sprites/characters/light_female_pkmn_yellow.aseprite.json"
+
     ])
     private static sprites: Aseprite[];
+    protected caption: string;
+    private captionOpacity = 0;
+    private target: CharacterNode | null = null;
 
     // Character settings
-    private readonly acceleration = 600;
+    private readonly acceleration = 10000;
     private readonly deceleration = 800;
-    private readonly jumpPower = 295;
+    private lastDirectionChange = 0;
+    private textNode: TextNode<Gather>;
 
-    public constructor(spriteIndex: number, args?: SceneNodeArgs) {
+    public constructor(args?: NpcNodeArgs) {
         super({
-            aseprite: NpcNode.sprites[spriteIndex] ? NpcNode.sprites[spriteIndex] : NpcNode.sprites[0],
+            aseprite: NpcNode.sprites[args?.spriteIndex ?? args?.tiledObject?.getOptionalProperty("spriteIndex", "int")?.getValue() ?? 0],
             anchor: Direction.BOTTOM,
             childAnchor: Direction.CENTER,
             tag: "idle",
             id: "player",
-            sourceBounds: new Rect(6, 10, 8, 26),
+            sourceBounds: new Rect(7, 1, 20, 30),
             ...args
         });
+
+        this.textNode = new TextNode<Gather>({
+            font: NpcNode.font,
+            color: "white",
+            outlineColor: "black",
+            y: 20,
+            layer: Layer.OVERLAY
+        }).appendTo(this);
+
+        this.caption = "PRESS R TO INTERACT";
+    }
+
+
+    public setCaption(caption: string): void {
+        this.caption = caption;
+    }
+
+    protected getRange(): number {
+        return 50;
+    }
+
+    public update(dt: number, time: number): void {
+        let target = null;
+        if (this.canInteract()) {
+            const player = this.getPlayer();
+            if (player) {
+                const dis = player.getScenePosition().getSquareDistance(this.getScenePosition());
+                if (dis < this.getRange() ** 2) {
+                    target = player;
+                }
+            }
+        }
+        this.setTarget(target);
+
+        if (this.target) {
+            this.captionOpacity = clamp(this.captionOpacity + dt * 2, 0, 1);
+        } else {
+            this.captionOpacity = clamp(this.captionOpacity - dt * 2, 0, 1);
+        }
+
+        this.textNode.setOpacity(this.captionOpacity);
+        this.textNode.setText(this.captionOpacity > 0 ? this.caption : "");
+
+        if (time - this.lastDirectionChange > 3 && (this.getTag() !== PostCharacterTags.DANCE || this.getTimesPlayed(this.getTag()) > 10)) {
+            this.lastDirectionChange = time;
+            this.setDirection(rndItem(SimpleDirections));
+        }
+
+        super.update(dt, time);
+    }
+
+    public canInteract(): boolean {
+        return true;
+    }
+
+    public interact(): void {
+        if (Math.random() < 0.2) {
+            this.direction = SimpleDirection.NONE;
+            this.setTag(PostCharacterTags.DANCE);
+            this.getPlayer()?.setTag(PostCharacterTags.DANCE);
+            this.caption = "";
+        } else {
+            this.getGame().startDialog(0, this);
+        }
+    }
+
+    private setTarget(target: CharacterNode | null): void {
+        if (target !== this.target) {
+            if (this.target) {
+                this.target.unregisterInteractiveNode(this);
+            }
+            this.target = target;
+            if (this.target) {
+                this.target.registerInteractiveNode(this);
+            }
+        }
     }
 
     protected unstuck(): this {
         return this;
     }
     public getSpeed(): number {
-        return 1;
+        return 40;
     }
     public getAcceleration(): number {
         return this.acceleration;
@@ -46,12 +142,8 @@ export class NpcNode extends CharacterNode {
     public getDeceleration(): number {
         return this.deceleration;
     }
-    public getJumpPower(): number {
-        return this.jumpPower;
-    }
-
-    public update(dt: number, time: number) {
-        super.update(dt, time);
+    protected getPlayer(): PlayerNode | undefined {
+        return this.getScene()?.rootNode.getDescendantsByType(PlayerNode)[0];
     }
 
 }

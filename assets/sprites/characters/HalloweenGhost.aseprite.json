@@ -147,7 +147,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.2.27",
-  "image": "character.png",
+  "image": "HalloweenGhost.png",
   "format": "RGBA8888",
   "size": { "w": 512, "h": 32 },
   "scale": "1",
@@ -157,10 +157,10 @@
    { "name": "Frontwalk", "from": 1, "to": 2, "direction": "forward" },
    { "name": "Leftidle", "from": 3, "to": 3, "direction": "forward" },
    { "name": "Leftwalk", "from": 4, "to": 5, "direction": "forward" },
-   { "name": "Rightidle", "from": 6, "to": 6, "direction": "forward" },
-   { "name": "Rightwalk", "from": 7, "to": 8, "direction": "forward" },
-   { "name": "Backidle", "from": 9, "to": 9, "direction": "forward" },
-   { "name": "Backwalk", "from": 10, "to": 11, "direction": "forward" },
+   { "name": "Backidle", "from": 6, "to": 6, "direction": "forward" },
+   { "name": "Backwalk", "from": 7, "to": 8, "direction": "forward" },
+   { "name": "Rightidle", "from": 9, "to": 9, "direction": "forward" },
+   { "name": "Rightwalk", "from": 10, "to": 11, "direction": "forward" },
    { "name": "dance", "from": 12, "to": 15, "direction": "forward" }
   ],
   "layers": [

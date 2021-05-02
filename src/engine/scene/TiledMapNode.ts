@@ -33,7 +33,6 @@ export class TiledMapNode<T extends Game> extends SceneNode<T> {
             ...args
         });
         for (const tiledLayer of map.getLayers()) {
-            console.log(tiledLayer);
             const layer = tiledLayer.getOptionalProperty("layer", "int")?.getValue();
             if (tiledLayer instanceof TiledTileLayer) {
                 this.appendChild(new TiledMapLayerNode({ map, layer, name: tiledLayer.getName() }));

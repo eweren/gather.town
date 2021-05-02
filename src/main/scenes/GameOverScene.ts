@@ -1,4 +1,4 @@
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { Scene } from "../../engine/scene/Scene";
 import { asset } from "../../engine/assets/Assets";
 import { GAME_HEIGHT, GAME_WIDTH, STANDARD_FONT } from "../constants";
@@ -13,7 +13,7 @@ import { FadeTransition } from "../../engine/transitions/FadeTransition";
 import { TitleScene } from "./TitleScene";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
-export class GameOverScene extends Scene<Hyperloop> {
+export class GameOverScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
     private static font: BitmapFont;
 

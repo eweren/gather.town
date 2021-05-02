@@ -1,4 +1,4 @@
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { Scene } from "../../engine/scene/Scene";
 import { asset } from "../../engine/assets/Assets";
 import { GAME_HEIGHT, GAME_WIDTH, STANDARD_FONT } from "../constants";
@@ -15,7 +15,7 @@ import { MusicManager } from "../MusicManager";
 import { FxManager } from "../FxManager";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
-export class SuccessScene extends Scene<Hyperloop> {
+export class SuccessScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
     private static font: BitmapFont;
 

@@ -5,11 +5,11 @@ import { AsepriteNode, AsepriteNodeArgs } from "../../engine/scene/AsepriteNode"
 import { TextNode } from "../../engine/scene/TextNode";
 import { clamp } from "../../engine/util/math";
 import { Layer, STANDARD_FONT } from "../constants";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { CharacterNode } from "./CharacterNode";
 import { PlayerNode } from "./PlayerNode";
 
-export abstract class InteractiveNode extends AsepriteNode<Hyperloop> {
+export abstract class InteractiveNode extends AsepriteNode<Gather> {
     @asset(STANDARD_FONT)
     private static readonly font: BitmapFont;
 

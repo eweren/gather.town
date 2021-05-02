@@ -1,8 +1,8 @@
 import { Rect } from "../../engine/geom/Rect";
 import { SceneNode } from "../../engine/scene/SceneNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
-export class CameraLimitNode extends SceneNode<Hyperloop> {
+export class CameraLimitNode extends SceneNode<Gather> {
     public update(): void {
         const scene = this.getScene();
         if (scene != null) {

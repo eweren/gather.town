@@ -1,4 +1,4 @@
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { Scene } from "../../engine/scene/Scene";
 import { PlayerNode } from "../nodes/PlayerNode";
 import { asset } from "../../engine/assets/Assets";
@@ -18,8 +18,9 @@ import { FadeToBlackTransition } from "../../engine/transitions/FadeToBlackTrans
 import { ChairNode } from "../nodes/ChairNode";
 import { FocusNode } from "../nodes/FocusNode";
 import { SwitchNode } from "../nodes/SwitchNode";
+import { NpcNode } from "../nodes/NpcNode";
 
-export class GameScene extends Scene<Hyperloop> {
+export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
     private static font: BitmapFont;
 
@@ -32,7 +33,7 @@ export class GameScene extends Scene<Hyperloop> {
 
     private debugMode: boolean = false;
 
-    private mapNode = new TiledMapNode<Hyperloop>({ map: GameScene.maps[this.targetMap], objects: {
+    private mapNode = new TiledMapNode<Gather>({ map: GameScene.maps[this.targetMap], objects: {
         "collision": CollisionNode,
         "player": PlayerNode,
         "light": LightNode,
@@ -40,7 +41,8 @@ export class GameScene extends Scene<Hyperloop> {
         "sound": TiledSoundNode,
         "chair": ChairNode,
         "powerswitch": SwitchNode,
-        "focus": FocusNode
+        "focus": FocusNode,
+        "npc": NpcNode
     }});
 
     public setup() {

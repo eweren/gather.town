@@ -1,10 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package#",
-  "name": "hyperloop",
+  "name": "gather",
   "version": "1.0.2",
   "description": "A small 2D action platformer with handcrafted pixel art, an emphasis on mood, and a blasting original soundtrack.",
-  "homepage": "https://ldjam.com/events/ludum-dare/47/hyperloop-2",
-  "author": "The Cat Hive Developers",
   "maintainers": [],
   "keywords": [
     "game",
@@ -12,10 +10,6 @@
     "electron"
   ],
   "license": "SEE LICENSE IN LICENSE.md",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/friendlyfiregame/hyperloop"
-  },
   "main": ".webpack/main",
   "scripts": {
     "clean": "rimraf lib dist out",

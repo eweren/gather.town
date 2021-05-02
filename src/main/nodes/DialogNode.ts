@@ -1,7 +1,7 @@
 import { TextNode } from "../../engine/scene/TextNode";
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 
-export class DialogNode extends TextNode<Hyperloop> {
+export class DialogNode extends TextNode<Gather> {
     /** @inheritDoc */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.save();

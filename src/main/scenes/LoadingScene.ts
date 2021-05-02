@@ -1,10 +1,10 @@
-import { Hyperloop } from "../Hyperloop";
+import { Gather } from "../Gather";
 import { Scene } from "../../engine/scene/Scene";
 import { ProgressBarNode } from "../../engine/scene/ProgressBarNode";
 import { FadeTransition } from "../../engine/transitions/FadeTransition";
 import { GameScene } from "./GameScene";
 
-export class LoadingScene extends Scene<Hyperloop> {
+export class LoadingScene extends Scene<Gather> {
     private progressBar!: ProgressBarNode;
 
     public setup(): void {
