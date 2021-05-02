@@ -36,6 +36,7 @@ export class TiledMapLayerNode<T extends Game> extends SceneNode<T> {
 
     private getRenderedMap(): HTMLCanvasElement | null {
         if (this.renderedMap == null && !this.isRendering) {
+            console.log(this.name);
             this.isRendering = true;
             const canvas = createCanvas(this.map.getWidth() * this.map.getTileWidth(), this.map.getHeight() * this.map.getTileHeight());
             const ctx = getRenderingContext(canvas, "2d");

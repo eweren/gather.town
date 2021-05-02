@@ -24,16 +24,12 @@ export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
     private static font: BitmapFont;
 
-    @asset([
-        "map/debug.tiledmap.json"
-    ])
-    private static maps: TiledMap[];
-
-    private targetMap = 0;
+    @asset("map/debug.tiledmap.json")
+    private static map: TiledMap;
 
     private debugMode: boolean = false;
 
-    private mapNode = new TiledMapNode<Gather>({ map: GameScene.maps[this.targetMap], objects: {
+    private mapNode = new TiledMapNode<Gather>({ map: GameScene.map, objects: {
         "collision": CollisionNode,
         "player": PlayerNode,
         "light": LightNode,

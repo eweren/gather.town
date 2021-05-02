@@ -6,15 +6,11 @@ import { SceneNodeArgs, SceneNodeAspect } from "../../engine/scene/SceneNode";
 import { Sound } from "../../engine/assets/Sound";
 import { Vector2 } from "../../engine/graphics/Vector2";
 import { asset } from "../../engine/assets/Assets";
-import { Layer } from "../constants";
 import { ParticleNode, valueCurves } from "./ParticleNode";
 import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
-import { AsepriteNode } from "../../engine/scene/AsepriteNode";
-import { ScenePointerDownEvent } from "../../engine/scene/events/ScenePointerDownEvent";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
-import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
 const groundColors = [
     "#806057",
@@ -31,9 +27,6 @@ export class PlayerNode extends CharacterNode {
     @asset("sprites/characters/character.aseprite.json")
     private static readonly sprite: Aseprite;
 
-    @asset("sprites/crosshair.aseprite.json")
-    private static readonly crossHairSprite: Aseprite;
-
     // Character settings
     private readonly speed = 60;
     private readonly acceleration = 10000;
@@ -45,7 +38,6 @@ export class PlayerNode extends CharacterNode {
     private initDone = false;
 
     private dustParticles: ParticleNode;
-    private crosshairNode: AsepriteNode;
 
     public constructor(args?: SceneNodeArgs) {
         super({
@@ -71,12 +63,6 @@ export class PlayerNode extends CharacterNode {
             lifetime: () => rnd(0.5, 0.8),
             alphaCurve: valueCurves.trapeze(0.05, 0.2)
         }).appendTo(this);
-
-        this.crosshairNode = new AsepriteNode({
-            aseprite: PlayerNode.crossHairSprite,
-            tag: "idle",
-            layer: Layer.HUD
-        });
     }
 
     public getSpeed(): number {
@@ -102,13 +88,7 @@ export class PlayerNode extends CharacterNode {
             this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
             this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);
         }
-        if (this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD) {
-            this.crosshairNode.hide();
-        } else {
-            this.crosshairNode.show();
-        }
         this.setOpacity(1);
-        this.updateCrosshair();
 
         // Controls
         const input = this.getScene()!.game.input;
@@ -190,34 +170,11 @@ export class PlayerNode extends CharacterNode {
         this.debug = debug;
     }
 
-    private handlePointerDown(event: ScenePointerDownEvent): void {
-        if (event.getButton() === 0) {
-            this.leftMouseDown = true;
-            event.onPointerEnd.connect(() => {
-                this.leftMouseDown = false;
-            });
-        } else if (event.getButton() === 2) {
-            this.rightMouseDown = true;
-            event.onPointerEnd.connect(() => {
-                this.rightMouseDown = false;
-            });
-        }
-    }
-
     protected activate(): void {
-        this.crosshairNode.appendTo(this.getScene()!.rootNode);
-        this.getScene()?.onPointerDown.connect(this.handlePointerDown, this);
         this.getGame().canvas.style.cursor = "none";
     }
 
     protected deactivate(): void {
         this.getGame().canvas.style.cursor = "";
-        this.getScene()?.onPointerDown.disconnect(this.handlePointerDown, this);
-        this.crosshairNode.remove();
-    }
-
-    protected updateCrosshair(): void {
-        const tag = "idle";
-        this.crosshairNode.setTag(tag);
     }
 }
