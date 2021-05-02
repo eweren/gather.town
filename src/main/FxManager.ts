@@ -1,4 +1,3 @@
-import { asset } from "../engine/assets/Assets";
 import { Sound } from "../engine/assets/Sound";
 import { mutedRandomFx } from "../engine/util/env";
 import { clamp } from "../engine/util/math";
@@ -7,40 +6,28 @@ import { sleep } from "../engine/util/time";
 
 export class FxManager {
 
-    @asset("sounds/ambient/zombieScream.ogg")
-    private static scream: Sound;
-
-    @asset("sounds/ambient/drip.ogg")
-    private static drip: Sound;
-
-    @asset("sounds/ambient/metalDoor.ogg")
-    private static metalDoor: Sound;
-
-    @asset("sounds/ambient/womanHeavyBreathing.ogg")
-    private static womanHeavyBreathing: Sound;
-
     private sounds: Array<Sound> = [];
 
     private static theInstance = new FxManager();
 
     private loaded = false;
-    private loadInterval: number;
+    //private loadInterval: number;
     private currentSoundToPlay = -1;
     private active = false;
 
     public constructor() {
         this.loaded = false;
-        this.loadInterval = +setInterval(this.checkLoaded.bind(this), 200);
+        //this.loadInterval = +setInterval(this.checkLoaded.bind(this), 200);
     }
 
-    private checkLoaded() {
-        if (FxManager.scream) {
-            this.loaded = true;
-            this.sounds = [FxManager.scream, FxManager.drip, FxManager.metalDoor, FxManager.womanHeavyBreathing];
-            clearInterval(this.loadInterval);
-            this.loadInterval = 0;
-        }
-    }
+    // private checkLoaded() {
+        // if (FxManager.scream) {
+        //    this.loaded = true;
+        //    this.sounds = [FxManager.scream, FxManager.drip, FxManager.metalDoor, FxManager.womanHeavyBreathing];
+        //    clearInterval(this.loadInterval);
+        //    this.loadInterval = 0;
+        //}
+    // }
 
     public static getInstance() {
         return FxManager.theInstance;
