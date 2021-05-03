@@ -2,7 +2,6 @@ import { DialogJSON } from "*.dialog.json";
 import { asset } from "../engine/assets/Assets";
 import { RGBColor } from "../engine/color/RGBColor";
 import { Game } from "../engine/Game";
-import { ControllerIntent } from "../engine/input/ControllerIntent";
 import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
@@ -36,7 +35,6 @@ export class Gather extends Game {
     private fadeOutInitiated = false;
 
     // Dialog
-    private dialogKeyPressed = false;
     private currentDialogLine = 0;
     private currentDialog: Dialog | null = null;
 
@@ -58,6 +56,8 @@ export class Gather extends Game {
             new Dialog(Gather.trainDialog)
         ];
 
+        this.keyboard.onKeyPress.filter(e => e.key === "Enter" || e.key === "Space").connect(() => this.nextDialogLine(), this);
+
         this.input.onDrag.filter(e => e.isRightStick && !!e.direction && e.direction.getLength() > 0.3).connect(this.getPlayer().handleControllerInput, this.getPlayer());
     }
 
@@ -70,9 +70,6 @@ export class Gather extends Game {
             case GameStage.DONE:
                 this.updateDone(dt);
                 break;
-        }
-        if (this.currentDialog) {
-            this.updateDialog();
         }
         super.update(dt, time);
     }
@@ -123,35 +120,18 @@ export class Gather extends Game {
         }
     }
 
-    private updateDialog(): void {
-        // Any key to proceed with next line
-        const pressed = this.input.currentActiveIntents ?? 0;
-        const moveButtonPressed = (this.input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_LEFT) > 0
-            || (this.input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_RIGHT) > 0
-            || (this.input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_UP) > 0
-            || (this.input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_DOWN) > 0;
-        if (moveButtonPressed) {
-            return;
-        }
-        const prevPressed = this.dialogKeyPressed;
-        this.dialogKeyPressed = pressed !== 0;
-        if (pressed && !prevPressed) {
-            this.nextDialogLine();
-        }
-    }
-
     private nextDialogLine(char = this.dialogChar) {
         // Shut up all characters
         this.npcs.forEach(npc => npc.say());
         this.getPlayer().say();
         this.currentDialogLine++;
+        console.log(this.currentDialogLine);
         if (this.currentDialog && this.currentDialogLine >= this.currentDialog.lines.length) {
             this.currentDialog = null;
             this.currentDialogLine = 0;
         } else if (this.currentDialog) {
             // Show line
             const line = this.currentDialog.lines[this.currentDialogLine];
-            console.log(this.currentDialogLine, line.charNum);
             char = line.charNum >= 1 ? char ?? this.npcs[line.charNum] : this.getPlayer();
             char.say(line.line, Infinity);
 

@@ -12,6 +12,7 @@ import { STANDARD_FONT, Layer } from "../constants";
 import { Gather } from "../Gather";
 import { clamp } from "../../engine/util/math";
 import { PlayerNode } from "./PlayerNode";
+import { Vector2 } from "../../engine/graphics/Vector2";
 
 interface NpcNodeArgs extends SceneNodeArgs {
     spriteIndex?: number;
@@ -40,6 +41,7 @@ export class NpcNode extends CharacterNode {
     private readonly deceleration = 800;
     private lastDirectionChange = 0;
     private textNode: TextNode<Gather>;
+    private inConversation = false;
 
     public constructor(args?: NpcNodeArgs) {
         super({
@@ -60,7 +62,7 @@ export class NpcNode extends CharacterNode {
             layer: Layer.OVERLAY
         }).appendTo(this);
 
-        this.caption = "PRESS R TO INTERACT";
+        this.caption = "PRESS E TO INTERACT";
     }
 
 
@@ -88,13 +90,13 @@ export class NpcNode extends CharacterNode {
         if (this.target) {
             this.captionOpacity = clamp(this.captionOpacity + dt * 2, 0, 1);
         } else {
-            this.captionOpacity = clamp(this.captionOpacity - dt * 2, 0, 1);
+            this.captionOpacity = clamp(this.captionOpacity - dt * 8, 0, 1);
         }
 
         this.textNode.setOpacity(this.captionOpacity);
         this.textNode.setText(this.captionOpacity > 0 ? this.caption : "");
 
-        if (time - this.lastDirectionChange > 3 && (this.getTag() !== PostCharacterTags.DANCE || this.getTimesPlayed(this.getTag()) > 10)) {
+        if (!this.inConversation && time - this.lastDirectionChange > 3 && (this.getTag() !== PostCharacterTags.DANCE || this.getTimesPlayed(this.getTag()) > 10)) {
             this.lastDirectionChange = time;
             this.setDirection(rndItem(SimpleDirections));
         }
@@ -103,7 +105,10 @@ export class NpcNode extends CharacterNode {
     }
 
     public canInteract(): boolean {
-        return true;
+        const playerPos = this.getPlayer()?.getPosition() ?? new Vector2();
+        const otherNpcs = this.getOtherNpcs()?.sort((npc1, npc2) => npc1.getPosition().getDistance(playerPos) - npc2.getPosition().getDistance(playerPos));
+
+        return otherNpcs != null && otherNpcs[0] === this;
     }
 
     public interact(): void {
@@ -129,6 +134,16 @@ export class NpcNode extends CharacterNode {
         }
     }
 
+    public say(line?: string, delay?: number): void {
+        if (line) {
+            this.inConversation = true;
+            this.setDirection(SimpleDirection.NONE);
+        } else {
+            this.inConversation = false;
+        }
+        super.say(line, delay);
+    }
+
     protected unstuck(): this {
         return this;
     }
@@ -143,6 +158,9 @@ export class NpcNode extends CharacterNode {
     }
     protected getPlayer(): PlayerNode | undefined {
         return this.getScene()?.rootNode.getDescendantsByType(PlayerNode)[0];
+    }
+    protected getOtherNpcs(): Array<NpcNode> | undefined {
+        return this.getScene()?.rootNode.getDescendantsByType(NpcNode);
     }
 
 }

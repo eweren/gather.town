@@ -19,6 +19,8 @@ import { ChairNode } from "../nodes/ChairNode";
 import { FocusNode } from "../nodes/FocusNode";
 import { SwitchNode } from "../nodes/SwitchNode";
 import { NpcNode } from "../nodes/NpcNode";
+import { PresentationBoardNode } from "../nodes/PresentationBoardNode";
+import { PresentationNode } from "../nodes/PresentationNode";
 
 export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
@@ -38,7 +40,9 @@ export class GameScene extends Scene<Gather> {
         "chair": ChairNode,
         "powerswitch": SwitchNode,
         "focus": FocusNode,
-        "npc": NpcNode
+        "npc": NpcNode,
+        "presentationBoard": PresentationBoardNode,
+        "presentation": PresentationNode
     }});
 
     public setup() {

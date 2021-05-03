@@ -59,7 +59,7 @@ export class TiledMapNode<T extends Game> extends SceneNode<T> {
                     this.appendChild(node);
                 }
             } else if (tiledLayer instanceof Object) {
-                console.log("Unknown layer", tiledLayer.constructor.name);
+                console.warn("Unknown layer", tiledLayer.constructor.name);
             }
         }
     }

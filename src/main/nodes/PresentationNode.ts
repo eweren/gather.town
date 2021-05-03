@@ -8,23 +8,23 @@ import { PreCharacterTags } from "./CharacterNode";
 import { Gather } from "../Gather";
 import { PresentationBoardTags, PresentationBoardNode } from "./PresentationBoardNode";
 
-export interface ChairNodeArgs extends SceneNodeArgs {
+export interface PresentationNodeArgs extends SceneNodeArgs {
     onUpdate?: (state: boolean) => boolean | undefined;
 }
 
-export class ChairNode extends InteractiveNode {
+export class PresentationNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
     private readonly presentationBoard?: number;
 
-    private sitDown: boolean = false;
-    public constructor({ onUpdate, ...args }: ChairNodeArgs) {
+    private presents: boolean = false;
+    public constructor({ onUpdate, ...args }: PresentationNodeArgs) {
         super({
-            aseprite: ChairNode.noSprite,
+            aseprite: PresentationNode.noSprite,
             anchor: Direction.CENTER,
             tag: "off",
             ...args
-        }, "PRESS E TO SIT DOWN");
+        }, "PRESS E TO PRESENT");
         this.presentationBoard = args.tiledObject?.getOptionalProperty("forPresentationboard", "int")?.getValue();
     }
 
@@ -34,14 +34,14 @@ export class ChairNode extends InteractiveNode {
     }
 
     public update(dt: number, time: number): void {
-        this.caption = this.playerSitsDown() ? "" :  `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO SIT DOWN`;
+        this.caption = this.playerSitsDown() ? "" :  `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO PRESENT`;
         super.update(dt, time);
     }
 
     private playerSitsDown(): boolean {
-        const isSitting = this.sitDown ? this.getPlayer()?.getPosition().getDistance(this.getPosition()) === 0 : false;
-        if (isSitting !== this.sitDown && !isSitting) {
-            this.sitDown = false;
+        const isSitting = this.presents ? this.getPlayer()?.getPosition().getDistance(this.getPosition()) === 0 : false;
+        if (isSitting !== this.presents && !isSitting) {
+            this.presents = false;
             const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
             if (presentationBoard != null) {
                 presentationBoard.setTag(PresentationBoardTags.ROLL_IN);
@@ -57,8 +57,8 @@ export class ChairNode extends InteractiveNode {
         if (this.canInteract()) {
             this.getPlayer()?.setX(this.x);
             this.getPlayer()?.setY(this.y);
-            this.getPlayer()?.setPreTag(PreCharacterTags.BACK);
-            this.sitDown = true;
+            this.getPlayer()?.setPreTag(PreCharacterTags.FRONT);
+            this.presents = true;
             const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
             if (presentationBoard) {
                 this.getScene()?.camera.focus(presentationBoard).then((successful) => {

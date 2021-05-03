@@ -109,7 +109,6 @@ export class PlayerNode extends CharacterNode {
             this.setTag(PostCharacterTags.DANCE);
         }
         if (this.getTag() === "walk") {
-            console.log("WALKING");
             PlayerNode.footsteps.setLoop(true);
             PlayerNode.footsteps.play({fadeIn: 0.5});
         } else {
@@ -124,7 +123,7 @@ export class PlayerNode extends CharacterNode {
             this.leftMouseDown = false;
         }
         // Interact
-        if (this.canInteract(ControllerIntent.PLAYER_RELOAD)) {
+        if (this.canInteract(ControllerIntent.PLAYER_INTERACT)) {
             const node = this.getNodeToInteractWith();
             if (node) {
                 node.interact();

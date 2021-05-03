@@ -3,10 +3,6 @@ import { mutedMusic } from "../engine/util/env";
 
 
 export class MusicManager {
-
-    // @asset("music/01-riding-the-hyperloop.ogg")
-    // private static music0: Sound;
-
     private tracks: Sound[] = [];
     private volumes: number[] = [];
 
