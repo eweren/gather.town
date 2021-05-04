@@ -1,11 +1,13 @@
 import { DialogJSON } from "*.dialog.json";
 import { asset } from "../engine/assets/Assets";
+import { BitmapFont } from "../engine/assets/BitmapFont";
 import { RGBColor } from "../engine/color/RGBColor";
 import { Game } from "../engine/Game";
 import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
 import { rnd } from "../engine/util/random";
+import { HEADLINE_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
 import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
@@ -24,6 +26,11 @@ export enum GameStage {
 }
 
 export class Gather extends Game {
+    @asset(HEADLINE_FONT)
+    public static readonly headlineFont: BitmapFont;
+    @asset(STANDARD_FONT)
+    public static readonly standardFont: BitmapFont;
+
     private stageStartTime = 0;
     private stageTime = 0;
     private dialogs: Dialog[] = [];

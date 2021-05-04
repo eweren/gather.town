@@ -5,6 +5,7 @@ import { loadImage } from "../util/graphics";
 import { Sound } from "./Sound";
 import { TiledMap } from "../tiled/TiledMap";
 import { DialogJSON } from "*.dialog.json";
+import { PresentationJSON } from "*.presentation.json";
 
 const assets = new Map<string, unknown>();
 
@@ -56,6 +57,8 @@ export class Assets {
                 asset = await (await fetch("appinfo.json")).json() as AppInfoJSON;
             } else if (src.endsWith(".dialog.json")) {
                 asset = await (await fetch("assets/" + src)).json() as DialogJSON;
+            } else if (src.endsWith(".presentation.json")) {
+                asset = await (await fetch("assets/" + src)).json() as PresentationJSON;
             } else {
                 throw new Error("Unknown asset format: " + src);
             }

@@ -647,6 +647,11 @@
             "char": "�",
             "width": 5,
             "compactablePrecursors": []
+        },
+        {
+            "char": "=",
+            "width": 5,
+            "compactablePrecursors": []
         }
     ],
     "margin": 1,

@@ -1,0 +1,41 @@
+[
+    {
+        "slide": 0,
+        "headline": "Global Warming",
+        "subHeadline":"A demo presentation for this gather clone."
+    },
+    {
+        "slide": 1,
+        "headline": "Structure",
+        "lines": [
+            "1. What IS global warming?",
+            "2. Why does it matter?",
+            "3. What can we do?",
+            "4. End"
+        ]
+    },
+    {
+        "slide": 2,
+        "headline": "What IS Global Warming?",
+        "lines": [
+            "- Weather != Global Warming",
+            "- Long term changes in weather",
+            "- Accelerated through greenhouse effect",
+            "- Greenhouse gases are important\n  but have to be kept in balance"
+        ]
+    },
+    {
+        "slide": 3,
+        "headline": "Why does it matter?",
+        "lines": [
+            "- Humankind pollutes the air and\n  accelerates the greenhouse effect",
+            "- Our children will have to deal with\n  weather events that will occure more\n  often because of CC",
+            "- When the earth is heating up, poles and\n  glaciers are smelting resulting in\n  higher sea level"
+        ]
+    },
+    {
+        "slide": 4,
+        "headline": "The End",
+        "subHeadline": "(Hopefully not!)"
+    }
+]

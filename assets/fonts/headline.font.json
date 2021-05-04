@@ -314,6 +314,7 @@
     "margin": 1,
     "colors": {
         "white": "#ffffff",
-        "black": "#000000"
+        "black": "#000000",
+        "grey": "#33333344"
     }
 }

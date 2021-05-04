@@ -138,13 +138,21 @@ export class BitmapFont {
 
         let precursorChar = null;
 
+        let lineWidth = 0;
+
         for (const currentChar of text) {
             const index = this.getCharIndex(currentChar);
-            const spaceReduction = precursorChar && this.compactablePrecursors[index].includes(precursorChar) ? 1 : 0;
-            ctx.translate(-spaceReduction, 0);
-            this.drawCharacter(ctx, index, color);
-            ctx.translate(this.charWidths[index] + CHAR_SPACING, 0);
-            precursorChar = currentChar;
+            if (currentChar === "\n") {
+                ctx.translate(-lineWidth, this.charHeight * 1.5);
+                lineWidth = 0;
+            } else {
+                const spaceReduction = precursorChar && this.compactablePrecursors[index].includes(precursorChar) ? 1 : 0;
+                ctx.translate(-spaceReduction, 0);
+                this.drawCharacter(ctx, index, color);
+                ctx.translate(this.charWidths[index] + CHAR_SPACING, 0);
+                lineWidth += this.charWidths[index] + CHAR_SPACING -spaceReduction;
+                precursorChar = currentChar;
+            }
         }
 
         ctx.restore();
@@ -152,19 +160,29 @@ export class BitmapFont {
 
     public measureText(text: string): { width: number, height: number } {
         let width = 0;
+        let maxWidth = 0;
+        let lines = 1;
         let precursorChar = null;
         for (const currentChar of text) {
+            if (currentChar === "\n") {
+                width = 0;
+                lines++;
+                continue;
+            }
             const index = this.getCharIndex(currentChar);
             const spaceReduction = precursorChar && this.compactablePrecursors[index].includes(precursorChar) ? 1 : 0;
             width += this.charWidths[index] - spaceReduction + CHAR_SPACING;
             precursorChar = currentChar;
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
         }
 
         if (text.length > 0) {
-            width -= CHAR_SPACING;
+            maxWidth -= CHAR_SPACING;
         }
 
-        return { width, height: this.charHeight };
+        return { width: maxWidth, height: this.charHeight * lines * 1.3 - 0.3 * this.charHeight };
     }
 
     public drawTextWithOutline(
