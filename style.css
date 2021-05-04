@@ -41,4 +41,5 @@ html, body {
     align-items: center;
     gap: 10px;
     color: white;
+    z-index: 1000;
 }
