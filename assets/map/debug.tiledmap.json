@@ -1874,24 +1874,6 @@
                  "width":0,
                  "x":256.222540987348,
                  "y":24.1386589907837
-                }, 
-                {
-                 "height":0,
-                 "id":460,
-                 "name":"Light 5",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"intensity",
-                         "type":"int",
-                         "value":500
-                        }],
-                 "rotation":0,
-                 "type":"light",
-                 "visible":true,
-                 "width":0,
-                 "x":256.568624368643,
-                 "y":127.830239951677
                 }],
          "opacity":1,
          "properties":[
@@ -1901,7 +1883,7 @@
                  "value":3
                 }],
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
