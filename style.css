@@ -29,3 +29,16 @@ html, body {
 #gameCanvas:focus {
     outline: 0;
 }
+#videos {
+    position: absolute;
+    display: flex;
+    gap: 20px;
+    padding: 20px
+}
+.userVideo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: white;
+}
