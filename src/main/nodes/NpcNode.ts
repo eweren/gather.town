@@ -41,7 +41,6 @@ export class NpcNode extends CharacterNode {
     private readonly deceleration = 800;
     private lastDirectionChange = 0;
     private textNode: TextNode<Gather>;
-    private inConversation = false;
 
     public constructor(args?: NpcNodeArgs) {
         super({
@@ -99,6 +98,8 @@ export class NpcNode extends CharacterNode {
         if (!this.inConversation && time - this.lastDirectionChange > 3 && (this.getTag() !== PostCharacterTags.DANCE || this.getTimesPlayed(this.getTag()) > 10)) {
             this.lastDirectionChange = time;
             this.setDirection(rndItem(SimpleDirections));
+        } else if (this.inConversation) {
+            this.setDirection(SimpleDirection.NONE);
         }
 
         super.update(dt, time);
@@ -135,12 +136,6 @@ export class NpcNode extends CharacterNode {
     }
 
     public say(line?: string, delay?: number): void {
-        if (line) {
-            this.inConversation = true;
-            this.setDirection(SimpleDirection.NONE);
-        } else {
-            this.inConversation = false;
-        }
         super.say(line, delay);
     }
 

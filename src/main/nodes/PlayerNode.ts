@@ -39,6 +39,8 @@ export class PlayerNode extends CharacterNode {
 
     private dustParticles: ParticleNode;
 
+    public isPresenting = false;
+
     public constructor(args?: SceneNodeArgs) {
         super({
             aseprite: PlayerNode.sprite,
@@ -93,17 +95,20 @@ export class PlayerNode extends CharacterNode {
         // Controls
         const input = this.getScene()!.game.input;
 
-        // Move left/right
-        const direction = (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_RIGHT)
-            ? SimpleDirection.RIGHT
-            : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_LEFT)
-                ? SimpleDirection.LEFT
-                : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_UP)
-                    ? SimpleDirection.TOP
-                    : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_DOWN)
-                        ? SimpleDirection.BOTTOM
-                        : SimpleDirection.NONE;
-        this.setDirection(direction);
+        if (!this.isPresenting) {
+            // Move left/right
+            const direction = (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_RIGHT)
+                ? SimpleDirection.RIGHT
+                : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_LEFT)
+                    ? SimpleDirection.LEFT
+                    : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_UP)
+                        ? SimpleDirection.TOP
+                        : (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_DOWN)
+                            ? SimpleDirection.BOTTOM
+                            : SimpleDirection.NONE;
+
+            this.setDirection(direction);
+        }
 
         if (input.currentActiveIntents & ControllerIntent.PLAYER_RELOAD) {
             this.setTag(PostCharacterTags.DANCE);

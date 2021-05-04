@@ -56,7 +56,7 @@ export class Gather extends Game {
             new Dialog(Gather.trainDialog)
         ];
 
-        this.keyboard.onKeyPress.filter(e => e.key === "Enter" || e.key === "Space").connect(() => this.nextDialogLine(), this);
+        this.input.onButtonPress.filter(e => e.isConfirm).connect(() => this.nextDialogLine(), this);
 
         this.input.onDrag.filter(e => e.isRightStick && !!e.direction && e.direction.getLength() > 0.3).connect(this.getPlayer().handleControllerInput, this.getPlayer());
     }
@@ -134,7 +134,11 @@ export class Gather extends Game {
             const line = this.currentDialog.lines[this.currentDialogLine];
             char = line.charNum >= 1 ? char ?? this.npcs[line.charNum] : this.getPlayer();
             char.say(line.line, Infinity);
-
+        }
+        if (this.currentDialogLine > (this.currentDialog?.lines.length ?? 0) - 1) {
+            if (this.dialogChar != null && this.dialogChar !== char) {
+                this.dialogChar.inConversation = false;
+            }
         }
     }
 
@@ -144,7 +148,13 @@ export class Gather extends Game {
         }
         this.currentDialog = this.dialogs[num];
         this.currentDialogLine = -1;
+        if (this.dialogChar != null && this.dialogChar !== char) {
+            this.dialogChar.inConversation = false;
+        }
         this.dialogChar = char;
+        if (this.dialogChar) {
+            this.dialogChar.inConversation = true;
+        }
         this.nextDialogLine(char);
     }
 

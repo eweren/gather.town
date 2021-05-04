@@ -440,8 +440,8 @@ export class Camera<T extends Game = Game> {
         this.focusAnimation = new Animator<Camera>(
             (camera, value) => {
                 const position = getCameraTargetPosition(target);
-                const newX = position.x;
-                const newY = position.y;
+                const newX = this.limitX(position.x);
+                const newY = this.limitY(position.y);
                 const deltaX = newX - oldX;
                 const deltaY = newY - oldY;
                 if (deltaX !== 0) {

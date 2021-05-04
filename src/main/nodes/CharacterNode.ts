@@ -40,6 +40,8 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     public abstract getAcceleration(): number;
     public abstract getDeceleration(): number;
 
+    public inConversation = false;
+
     // Dynamic player state
     protected updateTime = 0;
     protected direction: SimpleDirection = SimpleDirection.NONE;

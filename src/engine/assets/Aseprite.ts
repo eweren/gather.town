@@ -137,6 +137,10 @@ export class Aseprite {
         );
     }
 
+    public getNumFrames(): number {
+        return this.frames.length;
+    }
+
     /**
      * Returns the frame index of a tagged sprite animation at the given time.
      *

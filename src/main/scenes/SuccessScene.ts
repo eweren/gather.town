@@ -102,6 +102,7 @@ export class SuccessScene extends Scene<Gather> {
 
     private handleButton(event: ControllerEvent): void {
         if (event.intents & ControllerIntent.CONFIRM || event.intents & ControllerIntent.ABORT) {
+            console.log("Triggered");
             this.backToStart();
         }
     }

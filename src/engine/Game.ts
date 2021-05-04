@@ -23,6 +23,8 @@ export abstract class Game {
 
     public backgroundColor: string = "black";
 
+    public canvasScale = 1;
+
     public canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;
     private readonly gameLoopCallback = this.gameLoop.bind(this);
@@ -88,14 +90,14 @@ export abstract class Game {
     private updateCanvasSize(): void {
         const { width, height } = this;
 
-        const scale = Math.max(
+        this.canvasScale = Math.max(
             1,
             Math.floor(Math.min(window.innerWidth / width, window.innerHeight / height))
         );
 
         const style = this.canvas.style;
-        style.width = width * scale + "px";
-        style.height = height * scale + "px";
+        style.width = width * this.canvasScale + "px";
+        style.height = height * this.canvasScale + "px";
     }
 
     private gameLoop(): void {

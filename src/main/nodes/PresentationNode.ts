@@ -6,7 +6,8 @@ import { asset } from "../../engine/assets/Assets";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 import { PreCharacterTags } from "./CharacterNode";
 import { Gather } from "../Gather";
-import { PresentationBoardTags, PresentationBoardNode } from "./PresentationBoardNode";
+import { PresentationBoardNode } from "./PresentationBoardNode";
+import { ControllerEvent } from "../../engine/input/ControllerEvent";
 
 export interface PresentationNodeArgs extends SceneNodeArgs {
     onUpdate?: (state: boolean) => boolean | undefined;
@@ -15,9 +16,11 @@ export interface PresentationNodeArgs extends SceneNodeArgs {
 export class PresentationNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
-    private readonly presentationBoard?: number;
+    private readonly presentationBoardId?: number;
 
     private presents: boolean = false;
+    private presentationBoard?: PresentationBoardNode;
+
     public constructor({ onUpdate, ...args }: PresentationNodeArgs) {
         super({
             aseprite: PresentationNode.noSprite,
@@ -25,7 +28,7 @@ export class PresentationNode extends InteractiveNode {
             tag: "off",
             ...args
         }, "PRESS E TO PRESENT");
-        this.presentationBoard = args.tiledObject?.getOptionalProperty("forPresentationboard", "int")?.getValue();
+        this.presentationBoardId = args.tiledObject?.getOptionalProperty("forPresentationboard", "int")?.getValue();
     }
 
 
@@ -34,41 +37,62 @@ export class PresentationNode extends InteractiveNode {
     }
 
     public update(dt: number, time: number): void {
-        this.caption = this.playerSitsDown() ? "" :  `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO PRESENT`;
+        this.caption = this.presents ? "" : `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO PRESENT`;
         super.update(dt, time);
-    }
-
-    private playerSitsDown(): boolean {
-        const isSitting = this.presents ? this.getPlayer()?.getPosition().getDistance(this.getPosition()) === 0 : false;
-        if (isSitting !== this.presents && !isSitting) {
-            this.presents = false;
-            const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
-            if (presentationBoard != null) {
-                presentationBoard.setTag(PresentationBoardTags.ROLL_IN);
-            }
-            this.getScene()?.camera.focus(this.getPlayer()!, {follow: true});
-            (this.getGame() as Gather).turnOnAllLights();
-
-        }
-        return isSitting;
     }
 
     public interact(): void {
         if (this.canInteract()) {
-            this.getPlayer()?.setX(this.x);
-            this.getPlayer()?.setY(this.y);
-            this.getPlayer()?.setPreTag(PreCharacterTags.FRONT);
-            this.presents = true;
-            const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
-            if (presentationBoard) {
-                this.getScene()?.camera.focus(presentationBoard).then((successful) => {
+            const player = this.getPlayer();
+            player?.setX(this.x);
+            player?.setY(this.y);
+            player?.setPreTag(PreCharacterTags.FRONT);
+            this.presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoardId);
+            if (this.presentationBoard) {
+                this.presents = true;
+                const input = this.getScene()!.game.input;
+                input.onButtonDown.connect(this.handleButtonPress, this);
+                this.getScene()?.camera.focus(this.presentationBoard).then((successful) => {
                     if (successful) {
-                        if (presentationBoard.getTag() !== PresentationBoardTags.OUT)
-                        presentationBoard.setTag(PresentationBoardTags.ROLL_OUT);
+                        this.presentationBoard?.startPresentation();
+                        if (player != null) {
+                            player.isPresenting = true;
+                        }
                         (this.getGame() as Gather).dimLights();
                     }
                 });
             }
         }
+    }
+
+    private handleButtonPress(ev: ControllerEvent): void {
+        if (ev.isPlayerMoveRight) {
+            this.nextSlide();
+        } else if (ev.isPlayerMoveLeft) {
+            this.previousSlide();
+        } else if (ev.isAbort) {
+            const input = this.getScene()!.game.input;
+            input.onButtonDown.disconnect(this.handleButtonPress, this);
+            this.leavePresentation();
+        }
+    }
+
+    private leavePresentation(): void {
+        this.presents = false;
+        this.presentationBoard?.endPresentation();
+        const player = this.getPlayer();
+        if (player != null) {
+            player.isPresenting = false;
+            this.getScene()?.camera.focus(player, { follow: true });
+        }
+        (this.getGame() as Gather).turnOnAllLights();
+    }
+
+    private nextSlide(): void {
+        this.presentationBoard?.nextSlide();
+    }
+
+    private previousSlide(): void {
+        this.presentationBoard?.previousSlide();
     }
 }

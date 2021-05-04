@@ -651,13 +651,18 @@
                          "name":"boardId",
                          "type":"int",
                          "value":0
+                        }, 
+                        {
+                         "name":"presentation",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"presentationBoard",
                  "visible":true,
                  "width":0,
-                 "x":255.77475581496,
-                 "y":104.125191318315
+                 "x":256.506623785978,
+                 "y":127.788922381232
                 }, 
                 {
                  "height":0,
@@ -686,8 +691,8 @@
                  "type":"presentation",
                  "visible":true,
                  "width":0,
-                 "x":144.138061266688,
-                 "y":112.91957787386
+                 "x":112.060733521938,
+                 "y":176.860384511728
                 }],
          "opacity":1,
          "properties":[
@@ -1757,12 +1762,12 @@
                  "type":"collision",
                  "visible":true,
                  "width":21.7628014856082,
-                 "x":133.269017084494,
-                 "y":113.356618754008
+                 "x":101.191689339744,
+                 "y":177.297425391877
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1869,6 +1874,24 @@
                  "width":0,
                  "x":256.222540987348,
                  "y":24.1386589907837
+                }, 
+                {
+                 "height":0,
+                 "id":460,
+                 "name":"Light 5",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"intensity",
+                         "type":"int",
+                         "value":500
+                        }],
+                 "rotation":0,
+                 "type":"light",
+                 "visible":true,
+                 "width":0,
+                 "x":256.568624368643,
+                 "y":127.830239951677
                 }],
          "opacity":1,
          "properties":[
@@ -1884,7 +1907,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztm7tOAkEUhgcKLpVaAImV2qgvoGICJKIolfoEiolaeGnVyofwkvgSvoCXxEIt1cbeCikAtbPSn2QnLBMmzC7L7szOfMnJCQO77LdnGM5ugBD\/eUG8ehxvvhrIx2\/QBxAwXvmferQfvzH11xvjrzde+JetvGDlopWXrbxo5ZIH7+U1pv79wda8xIyzc0A2dK\/\/RISQMYfB9sy0xnQOrFiZzoUl5nnV0X3O2P1pTennndZ8kfN8GDD176TIZFp7ug6UmeyGmWgfG3uMqb\/eGH+9Mf56Y\/z1xvjrTcv\/A9fBWfSk89F2bkQ6H3fLvLEmtv1CfCN+uuy7Ggnaus0g6p+x9fejEvX63TDzX2+Mv96o6F+NEfKJqMX631cQ\/v3e\/xmKEzKMGIl3jv+1HicIiSTE96Vi\/WfhOYfIMv6T8J5CTIfcfwPem4gK478K7zXEesj9eRzB+xhxEhJ\/3jp35cCvFzL789a5B0H\/PZy3\/R7fETL789a5mqD\/GdzPFfbnrXOUOtwaiCbH8Qbjtwr79yKF85JGZDjnRwSV\/XPwziMKIfF3uq5vw3sHsdvF\/wDz\/lCgP5bJn13X3fSzlAu4Xyrmz67rbvpZyh3c7xXzZ3HSz7rtiWT2d9LPivZELDL7O0G0J2Lh3f8WyW7Hwn7\/WyWMv94Yf70x\/sHxiO\/sJ8Rzwt8xO0H613FMDUQz4e+YnSD9U0lC0ohM0t8xO0H653BMeUQh6e+YHbP+iff8Tq8PeNtcS\/SbkJZ\/BcezFe2dRV4jss17dDD\/f3cT47gW+we2+Ogu",
+         "data":"eJztm7tOAkEUhgcKhUotgMRKbdQXUDEBElGUSn0CL4laeGnVyofwkvgSvoCXxEIt1cbeCikAtbPSn2QnLhMmzC7LzszOfMnJCQO77LdnGM5ugJDweUa8BByvoRqox4\/sA5CM9TebIPxPAtiHLGz9zSYI\/7KT55xcdPKik+edXArgvYLG1r872JqXmHF2DqiG6fUfixEy4jHYnpnWmM6BJSfTubDAPK87ps8Ztz+tKf2805rPc56PArb+rRSZTGtP14Eyk\/0wFe9i44Cx9Tcb62821t9srL\/ZWH+zafq\/4zo4i550Nv6f67HWx+0yb6yBbT8RX4jvNvuuxGRb\/9OL+mdc\/f2wQr1+O+z8NxvrbzY6+lf6CPlAVPu635cM\/27v\/wz0EzKIGOpvHf9tPk4QEkuI70vH+k\/DcwaRZfzH4T2BmIy4\/xq81xEbjP8yvFcQqxH353EI7yPEcUT8eevcpQe\/Tqjsz1vn7gX9d3He9jp8R6jsz1vnqoL+p3A\/09ift85RanCrIxocx2uM32js34kUzksakeGcHxF09s\/BO48oRMTf67q+Be9txE4b\/33M+wOB\/lglf3Zd99PPUs7hfqGZP7uu++lnKbdwv9PMn8VLP+u3J1LZ30s\/K9oTsajs7wXRnoiFd\/9bJPsdi\/r9b52w\/mZj\/c3G+svjAd\/Zj4inRLhjbmT613BMdUQjEe6YG5n+qSQhaUQmGe6YG5n+ORxTHlFIhjvmxq5\/4j2\/1+sD3jZXCv0mpOm\/gePZjHfOIq8R2eYt3pv\/v\/uJUVyL\/QG65egu",
          "encoding":"base64",
          "height":64,
          "id":1,
@@ -1903,7 +1926,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":460,
+ "nextobjectid":461,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
