@@ -19,3 +19,6 @@
 [ ] __add multiplayer-ingame-games__
 [ ] optimize layout of joined members
 [ ] __add container build pipeline__
+[ ] mapmaking
+[ ] volume per user
+[ ] distance based video chat
