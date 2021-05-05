@@ -9,11 +9,13 @@
     [ ] other players should be mutable
     [ ] other players videos should disappear and video of speaker should focus
     [ ] other players should be able to ask questions
+    [ ] check how screensharing to canvas looks
 [ ] add chat option (public)
 [ ] add chat option (private)
-[ ] let moderator of room sync bots
-[ ] make bots more interactive and smart
-[ ] add synced ambient audio/video
+[ ] __let moderator of room sync bots__
+[ ] __make bots more interactive and smart__
+[ ] __add synced ambient audio/video__
 [ ] implement collaborative whiteboard thing of jitsi or miro
-[ ] add multiplayer-ingame-games
+[ ] __add multiplayer-ingame-games__
 [ ] optimize layout of joined members
+[ ] __add container build pipeline__
