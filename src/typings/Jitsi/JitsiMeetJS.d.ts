@@ -96,7 +96,7 @@ export type JitsiMeetJSType = {
 
   mediaDevices: typeof JitsiMediaDevices;
 
-  analytics: unknown; // TODO: code referes to Statistics.analytics which comes from modules/statstics/AnalyticsAdapter.js
+  analytics: unknown; // TODO: code refers to Statistics.analytics which comes from modules/statstics/AnalyticsAdapter.js
 
   init: ( options: InitOptions ) => unknown; // TODO:
 
@@ -122,9 +122,9 @@ export type JitsiMeetJSType = {
 
   getActiveAudioDevice: () => Promise<Object>; // TODO: can we improve on object?
 
-  // isDeviceListAvailable: () => boolean; // obsosete
+  // isDeviceListAvailable: () => boolean; // obsolete
 
-  // isDeviceChangeAvailable: ( deviceType: string ) => boolean; // obsosete
+  // isDeviceChangeAvailable: ( deviceType: string ) => boolean; // obsolete
 
   isMultipleAudioInputSupported: () => boolean;
 

@@ -57,7 +57,7 @@ export default async function (): Promise<JitsiConference | any> {
                     () => console.log("local track muted"));
                 localTracks[i].addEventListener(
                     JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => console.log("local track stoped"));
+                    () => console.log("local track stopped"));
                 localTracks[i].addEventListener(
                     JitsiTrackEvents.TRACK_AUDIO_OUTPUT_CHANGED,
                     (deviceId: string) =>
@@ -396,7 +396,7 @@ export default async function (): Promise<JitsiConference | any> {
                             () => console.log("local track muted"));
                         localTracks[1].addEventListener(
                             JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                            () => console.log("local track stoped"));
+                            () => console.log("local track stopped"));
                         const element = document.getElementById("#localVideo1");
                         if (element != null) {
                             localTracks[1].attach(element);

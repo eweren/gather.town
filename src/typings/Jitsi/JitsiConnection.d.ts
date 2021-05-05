@@ -62,7 +62,7 @@ export type JitsiConferenceInitOptions = {
         stunServers?: any;
         /** a delay given in seconds, before the conference switches back to P2P, after the 3rd participant has left the room. */
         backToP2PDelay?: number;
-        /** the mime type of the code that should not be negotiated on the peerconnection. */
+        /** the mime type of the code that should not be negotiated on the peer-connection. */
         disabledCodec?: any;
         /** the mime type of the codec that needs to be made the preferred codec for the connection. */
         preferredCodec?: any;
