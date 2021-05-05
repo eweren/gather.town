@@ -1,4 +1,3 @@
-import { Aseprite } from "../../engine/assets/Aseprite";
 import { CharacterNode } from "./CharacterNode";
 import { Direction } from "../../engine/geom/Direction";
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
@@ -9,6 +8,7 @@ import { ParticleNode, valueCurves } from "./ParticleNode";
 import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
+import { Gather } from "../Gather";
 
 const groundColors = [
     "#806057",
@@ -22,9 +22,6 @@ export class OtherPlayerNode extends CharacterNode {
     @asset("sounds/fx/footsteps.ogg")
     private static readonly footsteps: Sound;
 
-    @asset("sprites/characters/femalenerdydark_green.aseprite.json")
-    private static readonly sprite: Aseprite;
-
     // Character settings
     private readonly speed = 60;
     private readonly acceleration = 10000;
@@ -35,9 +32,9 @@ export class OtherPlayerNode extends CharacterNode {
 
     public isPresenting = false;
 
-    public constructor(id: string, args?: SceneNodeArgs) {
+    public constructor(id: string, public spriteIndex = 0, args?: SceneNodeArgs) {
         super({
-            aseprite: OtherPlayerNode.sprite,
+            aseprite: Gather.characterSprites[spriteIndex],
             anchor: Direction.BOTTOM,
             childAnchor: Direction.CENTER,
             tag: "idle",
@@ -70,6 +67,13 @@ export class OtherPlayerNode extends CharacterNode {
 
     public getDeceleration(): number {
         return this.deceleration;
+    }
+
+    public changeSprite(spriteIndex: number): void {
+        if (Gather.characterSprites.length > spriteIndex && spriteIndex > 0) {
+            this.spriteIndex = spriteIndex;
+            this.setAseprite(Gather.characterSprites[spriteIndex]);
+        }
     }
 
     public update(dt: number, time: number) {

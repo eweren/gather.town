@@ -2,7 +2,7 @@ import { Gather } from "./main/Gather";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
 import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
 import { JitsiConferenceEvents } from "./typings/Jitsi/JitsiConferenceEvents";
-import JitsiConnection from "./typings/Jitsi/JitsiConnection";
+import JitsiConnection, { JitsiConferenceInitOptions, JitsiConferenceOptions } from "./typings/Jitsi/JitsiConnection";
 import { JitsiConnectionEvents } from "./typings/Jitsi/JitsiConnectionEvents";
 import JitsiMediaDevices from "./typings/Jitsi/JitsiMediaDevices";
 import { JitsiMediaDevicesEvents } from "./typings/Jitsi/JitsiMediaDevicesEvents";
@@ -16,18 +16,16 @@ export default async function (): Promise<JitsiConference | any> {
 
         // Get the jitsi object from window (:D)
         const JitsiMeetJS = (window as any)["JitsiMeetJS"] as JitsiMeetJSType;
-        const options = {
+        const options: JitsiConferenceOptions = {
             hosts: {
                 domain: "meet.ewer.rest",
-                muc: "conference.meet.ewer.rest", // FIXME: use XEP-0030
+                muc: "conference.meet.ewer.rest"
             },
-            bosh: "https://meet.ewer.rest/http-bind", // FIXME: use xep-0156 for that
-
-            // The name of client node advertised in XEP-0115 'c' stanza
+            serviceUrl: "https://meet.ewer.rest/http-bind",
             clientNode: "http://meet.ewer.rest/jitsimeet",
         };
 
-        const confOptions = {
+        const confOptions: JitsiConferenceInitOptions = {
             openBridgeChannel: true
         };
 
@@ -196,7 +194,6 @@ export default async function (): Promise<JitsiConference | any> {
          * That function is executed when the conference is joined
          */
         function onConferenceJoined() {
-            console.log("conference joined!");
             isJoined = true;
             for (let i = 0; i < localTracks.length; i++) {
                 room.addTrack(localTracks[i]);
@@ -243,6 +240,7 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(JitsiConferenceEvents.CONFERENCE_JOINED, onConferenceJoined);
             room.on(JitsiConferenceEvents.USER_JOINED, id => {
                 Gather.instance.addPlayer(id);
+                Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
                 remoteTracks[id] = [];
             });
             room.on(JitsiConferenceEvents.USER_LEFT, onUserLeft);
@@ -266,7 +264,6 @@ export default async function (): Promise<JitsiConference | any> {
             room.addCommandListener("playerUpdate", (values: any) => {
                 const parsedObj = JSON.parse(values.value);
                 if (parsedObj.id !== room.myUserId()) {
-                    console.log("Updatte");
                     Gather.instance.updatePlayer(parsedObj);
                 }
             });
@@ -276,7 +273,6 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(
                 JitsiConferenceEvents.PHONE_NUMBER_CHANGED,
                 () => console.log(`${room.getPhoneNumber()} - ${room.getPhonePin()}`));
-            console.log("JOINING NOW");
             room.join();
             resolve(room);
         }
@@ -369,7 +365,7 @@ export default async function (): Promise<JitsiConference | any> {
                 JitsiConnectionEvents.CONNECTION_DISCONNECTED,
                 disconnect);
         }
-    
+
         /**
          *
          */
@@ -377,11 +373,10 @@ export default async function (): Promise<JitsiConference | any> {
             for (let i = 0; i < localTracks.length; i++) {
                 localTracks[i].dispose();
             }
-            console.log("LEAVING AND SHIT");
             await room.leave();
             connection?.disconnect();
         }
-    
+
         /*
         let isVideo = true;
         function switchVideo() {

@@ -23,6 +23,7 @@ export class NpcNode extends CharacterNode {
     private static readonly font: BitmapFont;
     @asset([
         "sprites/characters/dark_staff_black.aseprite.json",
+        "sprites/characters/character.aseprite.json",
         "sprites/characters/HalloweenGhost.aseprite.json",
         "sprites/characters/dark_casualjacket_orange_white.aseprite.json",
         "sprites/characters/light_male_pkmn_red.aseprite.json",
@@ -31,7 +32,7 @@ export class NpcNode extends CharacterNode {
         "sprites/characters/light_female_pkmn_yellow.aseprite.json"
 
     ])
-    private static sprites: Aseprite[];
+    public static sprites: Aseprite[];
     protected caption: string;
     protected isBot = true;
     private captionOpacity = 0;

@@ -11,6 +11,7 @@ import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
+import { Gather } from "../Gather";
 
 const groundColors = [
     "#806057",
@@ -35,6 +36,7 @@ export class PlayerNode extends CharacterNode {
     private rightMouseDown = false;
     private previouslyPressed = 0;
     private initDone = false;
+    public spriteIndex = 0;
 
     public isPlayer = true;
 
@@ -78,6 +80,22 @@ export class PlayerNode extends CharacterNode {
 
     public getDeceleration(): number {
         return this.deceleration;
+    }
+
+    public changeSprite(previous = false): void {
+        const spriteIndex = (this.spriteIndex + Gather.characterSprites.length + (previous ? -1 : 1)) % Gather.characterSprites.length;
+        if (Gather.characterSprites.length > spriteIndex && spriteIndex >= 0) {
+            this.spriteIndex = spriteIndex;
+            this.setAseprite(Gather.characterSprites[spriteIndex]);
+            this.getGame().sendCommand("playerUpdate", { spriteIndex });
+        }
+    }
+
+    public activate(): void {
+        super.activate();
+        const input = this.getScene()!.game.input;
+        input.onButtonPress.filter(b => b.isPlayerDance1).connect(() => this.changeSprite(true), this);
+        input.onButtonPress.filter(b => b.isPlayerDance2).connect(() => this.changeSprite(), this);
     }
 
     public update(dt: number, time: number) {

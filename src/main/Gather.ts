@@ -1,4 +1,5 @@
 import { DialogJSON } from "*.dialog.json";
+import { Aseprite } from "../engine/assets/Aseprite";
 import { asset } from "../engine/assets/Assets";
 import { BitmapFont } from "../engine/assets/BitmapFont";
 import { RGBColor } from "../engine/color/RGBColor";
@@ -33,6 +34,18 @@ export class Gather extends Game {
     public static readonly headlineFont: BitmapFont;
     @asset(STANDARD_FONT)
     public static readonly standardFont: BitmapFont;
+    @asset([
+        "sprites/characters/dark_staff_black.aseprite.json",
+        "sprites/characters/character.aseprite.json",
+        "sprites/characters/HalloweenGhost.aseprite.json",
+        "sprites/characters/dark_casualjacket_orange_white.aseprite.json",
+        "sprites/characters/light_male_pkmn_red.aseprite.json",
+        "sprites/characters/femalenerdydark_green.aseprite.json",
+        "sprites/characters/dark_graduation_orange.aseprite.json",
+        "sprites/characters/light_female_pkmn_yellow.aseprite.json"
+
+    ])
+    public static characterSprites: Aseprite[];
 
     public static instance: Gather;
 
@@ -41,6 +54,7 @@ export class Gather extends Game {
     private dialogs: Dialog[] = [];
     private npcs: CharacterNode[] = [];
     private players: Record<string, OtherPlayerNode> = {};
+    private firstCommand = true;
     public room: JitsiConference | null = null;
 
     // Game progress
@@ -59,7 +73,6 @@ export class Gather extends Game {
     public constructor() {
         super();
         Jitsi().then(room => {
-            console.log("Loaded");
             this.room = room;
         });
     }
@@ -128,9 +141,12 @@ export class Gather extends Game {
     }
 
     public updatePlayer(value: Record<string, any>): void {
+        if (value == null) {
+            return;
+        }
         const id = value.id;
         if (this.players[id] == null) {
-            const newPlayer = new OtherPlayerNode(id, { x: 140, y: 150 });
+            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 1, { x: 140, y: 150 });
             this.players[id] = newPlayer;
             this.getGameScene().rootNode.appendChild(newPlayer);
         }
@@ -138,7 +154,6 @@ export class Gather extends Game {
         if (id === this.room?.myUserId() || player == null || player.isPlayer) {
             return;
         }
-        console.log("Update");
         if ("x" in value) {
             player.x = value.x;
         }
@@ -152,15 +167,22 @@ export class Gather extends Game {
             player.setTag(PostCharacterTags.DANCE);
         }
         if ("isRunning" in value) {
-            console.log("Receive is running");
             player.isRunning = !!value.isRunning;
+        }
+        if ("spriteIndex" in value) {
+            player.changeSprite(value.spriteIndex);
         }
     }
 
     public sendCommand(eventName: string, value: any): void {
         const userId = this.room?.myUserId();
         if (userId != null) {
-            this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, id: userId}) });
+            if (this.firstCommand) {
+                this.firstCommand = false;
+                this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, spriteIndex: this.getPlayer().spriteIndex, id: userId}) });
+            } else {
+                this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, id: userId}) });
+            }
         }
     }
 
@@ -191,7 +213,6 @@ export class Gather extends Game {
         this.npcs.forEach(npc => npc.say());
         this.getPlayer().say();
         this.currentDialogLine++;
-        console.log(this.currentDialogLine);
         if (this.currentDialog && this.currentDialogLine >= this.currentDialog.lines.length) {
             this.currentDialog = null;
             this.currentDialogLine = 0;

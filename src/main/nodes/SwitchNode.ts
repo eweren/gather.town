@@ -62,7 +62,6 @@ export class SwitchNode extends InteractiveNode {
                 SwitchNode.clickSound.play();
                 this.turnedOn = newState;
                 this.setTag(this.turnedOn ? "on" : "off");
-                console.log(this, this.getTag(), this.turnedOn);
                 this.stateChanges++;
             } else {
                 // Switch blocked
