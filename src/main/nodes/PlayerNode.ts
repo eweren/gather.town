@@ -173,12 +173,4 @@ export class PlayerNode extends CharacterNode {
     public setDebug(debug: boolean): void {
         this.debug = debug;
     }
-
-    protected activate(): void {
-        this.getGame().canvas.style.cursor = "none";
-    }
-
-    protected deactivate(): void {
-        this.getGame().canvas.style.cursor = "";
-    }
 }

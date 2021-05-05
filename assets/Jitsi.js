@@ -73,9 +73,12 @@ function onRemoteTrack(track) {
 
     if (!remoteTracks[participant]) {
         remoteTracks[participant] = [];
+    } else if (remoteTracks[participant].find(el => el.getId() === track.getId()) != null) {
+        // Skip if already video of user present
+        return;
     }
-    // TODO fix duplicated streams
-    const idx = remoteTracks[participant].push(track);
+
+    remoteTracks[participant].push(track);
 
     track.addEventListener(
         JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
@@ -90,34 +93,32 @@ function onRemoteTrack(track) {
         deviceId =>
             console.log(
                 `track audio output device was changed to ${deviceId}`));
-    const id = participant + track.getType() + idx;
+    let element;
 
-    const x = [];
+    var nameOfParticipant = room.participants[track.getParticipantId()]?.getDisplayName() ?? "anonymous";
 
-    var nameOfParticipant = room.participants[track.getParticipantId()]?.getDisplayName();
-    if (nameOfParticipant == null) {
-        return;
-    }
     if (track.getType() === "video") {
-        var video = document.createElement("video");
+        element = document.createElement("video");
         var name = document.createElement("span");
         name.innerText = nameOfParticipant;
         var wrapper = document.createElement("div");
         wrapper.classList.add("userVideo");
-        wrapper.appendChild(video);
+        wrapper.appendChild(element);
         wrapper.appendChild(name);
-        video.autoplay = true;
-        video.id = `${participant}video${idx}`;
-        video.style.borderRadius = "500px";
-        video.style.width = "150px";
-        video.style.height = "150px";
-        video.style.objectFit = "cover";
+        element.autoplay = true;
+        element.id = `${participant}video`;
+        element.style.borderRadius = "500px";
+        element.style.width = "150px";
+        element.style.height = "150px";
+        element.style.objectFit = "cover";
         $("#videos").append(wrapper);
     } else {
-        $("body").append(
-            `<audio autoplay='1' id='${participant}audio${idx}' />`);
+        element = document.createElement("audio");
+        element.autoplay = true;
+        element.id = `${participant}audio`;
+        $("body").append(element);
     }
-    track.attach($(`#${id}`)[0]);
+    track.attach(element);
 }
 
 /**
@@ -143,7 +144,21 @@ function onUserLeft(id) {
     const tracks = remoteTracks[id];
 
     for (let i = 0; i < tracks.length; i++) {
-        tracks[i].detach($(`#${id}${tracks[i].getType()}`));
+        const elementId = `${id}${tracks[i].getType()}`;
+        const element = document.getElementById(elementId);
+
+        if (element == null) {
+            continue;
+        }
+
+        if (element.parentElement.classList.contains("userVideo")) {
+            element.parentElement.remove();
+        } else {
+            element.remove();
+        }
+
+
+        tracks[i].detach(element);
     }
 }
 
@@ -257,8 +272,8 @@ function changeAudioOutput(selected) { // eslint-disable-line no-unused-vars
     JitsiMeetJS.mediaDevices.setAudioOutputDevice(selected.value);
 }
 
-$(window).bind("beforeunload", unload);
-$(window).bind("unload", unload);
+window.addEventListener("beforeunload", unload);
+window.addEventListener("unload", unload);
 
 // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 const initOptions = {
