@@ -34,8 +34,9 @@ export class PlayerNode extends CharacterNode {
     private leftMouseDown = false;
     private rightMouseDown = false;
     private previouslyPressed = 0;
-    private isRunning = false;
     private initDone = false;
+
+    public isPlayer = true;
 
     private dustParticles: ParticleNode;
 
@@ -85,7 +86,11 @@ export class PlayerNode extends CharacterNode {
             this.initDone = true;
             this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
             const handleControllerInputChange = (ev: ControllerEvent) => {
+                const oldIsRunning = this.isRunning;
                 this.isRunning = (this.getGame().input.currentActiveIntents & ControllerIntent.PLAYER_RUN) === ControllerIntent.PLAYER_RUN;
+                if (oldIsRunning !== this.isRunning) {
+                    this.getGame().sendCommand("playerUpdate", { isRunning: this.isRunning });
+                }
             };
             this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
             this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);

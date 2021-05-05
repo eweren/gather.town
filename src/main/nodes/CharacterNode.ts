@@ -41,6 +41,9 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     public abstract getDeceleration(): number;
 
     public inConversation = false;
+    public isPlayer = false;
+    protected isBot = false;
+    public isRunning = false;
 
     // Dynamic player state
     protected updateTime = 0;
@@ -229,6 +232,9 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
         const oldTag = this.getTag();
         if (tag && ((oldTag !== this.preTag + tag) || (tag === PostCharacterTags.DANCE && oldTag !== tag))) {
             const newTag = (tag !== PostCharacterTags.DANCE ? this.preTag : "") + tag;
+            if (this.getTag() !== PostCharacterTags.DANCE && tag === PostCharacterTags.DANCE) {
+                this.getGame().sendCommand("playerUpdate", { dances: true });
+            }
             super.setTag(newTag);
         }
         return this;
@@ -249,6 +255,9 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
                 case SimpleDirection.TOP:
                     this.setPreTag(PreCharacterTags.BACK);
                     break;
+            }
+            if (this.isPlayer) {
+                this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, direction });
             }
         }
         this.direction = direction;
@@ -292,7 +301,7 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
         const oldY = this.y;
         this.setX(x);
         this.setY(y);
-        const collides = !!this.getScene()?.rootNode.getChildren().filter(c => c instanceof CharacterNode && c !== this)
+        const collides = !!this.getScene()?.rootNode.getChildren().filter(c => c instanceof CharacterNode && c !== this && c.isBot)
             .some(c => c.collidesWithNode(this));
         this.x = oldX;
         this.y = oldY;

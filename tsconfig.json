@@ -1,6 +1,8 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig#",
     "compileOnSave": true,
+    // Change this to match your project
+    "include": ["src/**/*"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "declaration": true,

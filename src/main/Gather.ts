@@ -7,13 +7,16 @@ import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
 import { rnd } from "../engine/util/random";
+import Jitsi from "../Jitsi";
+import JitsiConference from "../typings/Jitsi/JitsiConference";
 import { HEADLINE_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
 import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
-import { CharacterNode } from "./nodes/CharacterNode";
+import { CharacterNode, PostCharacterTags } from "./nodes/CharacterNode";
 import { LightNode } from "./nodes/LightNode";
 import { NpcNode } from "./nodes/NpcNode";
+import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
 import { GameScene } from "./scenes/GameScene";
 import { LoadingScene } from "./scenes/LoadingScene";
@@ -31,10 +34,14 @@ export class Gather extends Game {
     @asset(STANDARD_FONT)
     public static readonly standardFont: BitmapFont;
 
+    public static instance: Gather;
+
     private stageStartTime = 0;
     private stageTime = 0;
     private dialogs: Dialog[] = [];
     private npcs: CharacterNode[] = [];
+    private players: Record<string, OtherPlayerNode> = {};
+    public room: JitsiConference | null = null;
 
     // Game progress
     private gameStage = GameStage.NONE;
@@ -51,6 +58,10 @@ export class Gather extends Game {
 
     public constructor() {
         super();
+        Jitsi().then(room => {
+            console.log("Loaded");
+            this.room = room;
+        });
     }
 
     // Called by GameScene
@@ -103,6 +114,54 @@ export class Gather extends Game {
             chars[i].moveTo(positions[i], 512).appendTo(this.getGameScene().rootNode);
         }
         this.npcs = chars;
+    }
+
+    public addPlayer(id: string): void {
+        //this.players[id]?.remove();
+        //const newPlayer = new OtherPlayerNode(id, { x: 140, y: 150 });
+        //this.players[id] = newPlayer;
+        //this.getGameScene().rootNode.appendChild(newPlayer);
+    }
+
+    public removePlayer(id: string): void {
+        this.players[id]?.remove();
+    }
+
+    public updatePlayer(value: Record<string, any>): void {
+        const id = value.id;
+        if (this.players[id] == null) {
+            const newPlayer = new OtherPlayerNode(id, { x: 140, y: 150 });
+            this.players[id] = newPlayer;
+            this.getGameScene().rootNode.appendChild(newPlayer);
+        }
+        const player = this.players[id];
+        if (id === this.room?.myUserId() || player == null || player.isPlayer) {
+            return;
+        }
+        console.log("Update");
+        if ("x" in value) {
+            player.x = value.x;
+        }
+        if ("y" in value) {
+            player.y = value.y;
+        }
+        if ("direction" in value) {
+            player.setDirection(value.direction);
+        }
+        if ("dances" in value) {
+            player.setTag(PostCharacterTags.DANCE);
+        }
+        if ("isRunning" in value) {
+            console.log("Receive is running");
+            player.isRunning = !!value.isRunning;
+        }
+    }
+
+    public sendCommand(eventName: string, value: any): void {
+        const userId = this.room?.myUserId();
+        if (userId != null) {
+            this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, id: userId}) });
+        }
     }
 
     public dimLights() {
@@ -246,6 +305,7 @@ export class Gather extends Game {
 
 (async () => {
     const game = new Gather();
+    Gather.instance = game;
     await game.scenes.setScene(LoadingScene);
     (window as any).game = game;
     game.start();

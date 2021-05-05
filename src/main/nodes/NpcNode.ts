@@ -33,6 +33,7 @@ export class NpcNode extends CharacterNode {
     ])
     private static sprites: Aseprite[];
     protected caption: string;
+    protected isBot = true;
     private captionOpacity = 0;
     private target: CharacterNode | null = null;
 

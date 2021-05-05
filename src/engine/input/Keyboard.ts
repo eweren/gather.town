@@ -6,7 +6,6 @@ import { ControllerManager } from "./ControllerManager";
 import { Signal } from "../util/Signal";
 
 const preventDefaultKeyCodes: string[] = [
-    "ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "Space"
 ];
 
 const keyToIntentMappings = new Map<string, ControllerIntent[]>();
