@@ -14,4 +14,6 @@
 [ ] let moderator of room sync bots
 [ ] make bots more interactive and smart
 [ ] add synced ambient audio/video
-[ ] implement collaborative whiteboard thing of jitsi 
+[ ] implement collaborative whiteboard thing of jitsi or miro
+[ ] add multiplayer-ingame-games
+[ ] optimize layout of joined members
