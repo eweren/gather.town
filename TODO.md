@@ -11,3 +11,7 @@
     [ ] other players should be able to ask questions
 [ ] add chat option (public)
 [ ] add chat option (private)
+[ ] let moderator of room sync bots
+[ ] make bots more interactive and smart
+[ ] add synced ambient audio/video
+[ ] implement collaborative whiteboard thing of jitsi 
