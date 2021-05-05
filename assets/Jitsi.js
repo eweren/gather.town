@@ -48,8 +48,21 @@ function onLocalTracks(tracks) {
                 console.log(
                     `track audio output device was changed to ${deviceId}`));
         if (localTracks[i].getType() === "video") {
-            $("#videos").append(`<video autoplay='1' id='localVideo${i}' style="border-radius: 500px;width: 150px;height: 150px;object-fit: cover" />`);
-            localTracks[i].attach($(`#localVideo${i}`)[0]);
+            const element = document.createElement("video");
+            var name = document.createElement("span");
+            name.innerText = "YOU";
+            var wrapper = document.createElement("div");
+            wrapper.classList.add("userVideo");
+            wrapper.appendChild(element);
+            wrapper.appendChild(name);
+            element.autoplay = true;
+            element.id = "localVideo";
+            element.style.borderRadius = "500px";
+            element.style.width = "150px";
+            element.style.height = "150px";
+            element.style.objectFit = "cover";
+            localTracks[i].attach(element);
+            $("#videos").append(wrapper);
         } else {
             $("body").append(
                 `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
