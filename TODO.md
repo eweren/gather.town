@@ -6,6 +6,8 @@
 
 [X] **add option to change input devices**
 
+[X] **add option for user to mute/un-mute and show/hide video**
+
 [ ] **optimize layout of joined members**
 
 [ ] distance based video chat

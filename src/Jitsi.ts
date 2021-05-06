@@ -1,3 +1,4 @@
+import { HoverOver } from "./customElements/HoverOver";
 import { isDev } from "./engine/util/env";
 import { Gather } from "./main/Gather";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
@@ -126,8 +127,28 @@ export default async function (): Promise<JitsiConference | any> {
                 room.setDisplayName(userName);
             }, false);
             const wrapper = document.createElement("div");
+            wrapper.style.position = "relative";
+            const hoverOver = new HoverOver();
+            hoverOver.addButton("🎙️", (val) => {
+                if (val) {
+                    room.getLocalAudioTrack()?.mute();
+                } else {
+                    room.getLocalAudioTrack()?.unmute();
+                }
+            }, "❌", "Mute", "Unmute");
+            hoverOver.addButton("📹", (val) => {
+                if (val) {
+                    room.getLocalVideoTrack()?.mute();
+                } else {
+                    room.getLocalVideoTrack()?.unmute();
+                }
+            }, "❌", "Hide video", "Show video");
+            hoverOver.style.position = "absolute";
+            hoverOver.style.bottom = "2em";
+            hoverOver.style.zIndex = "1008";
             wrapper.classList.add("userVideo");
             wrapper.appendChild(element);
+            wrapper.appendChild(hoverOver);
             wrapper.appendChild(name);
             element.autoplay = true;
             element.id = "localVideo";
@@ -272,6 +293,10 @@ export default async function (): Promise<JitsiConference | any> {
             });
             room.on(JitsiConferenceEvents.USER_LEFT, onUserLeft);
             room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track: JitsiRemoteTrack) => {
+                console.log(track.isMuted());
+                if (track.isLocal()) {
+                    return;
+                }
                 if (track.isVideoTrack() && track.isMuted()) {
                     pauseVideoTrackForUser(track.getParticipantId());
                 } else if (track.isVideoTrack()) {
@@ -357,7 +382,7 @@ export default async function (): Promise<JitsiConference | any> {
 
         function resumeVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): void {
             const newWrapper = createVideoTrackForUser(track);
-            document.getElementById(`${track.getParticipantId()}placeholder`)?.replaceWith(newWrapper);
+            document.getElementById(`${track.getParticipantId()}placeholder`)?.parentElement?.replaceWith(newWrapper);
         }
 
         /**

@@ -1,4 +1,5 @@
 import { DialogJSON } from "*.dialog.json";
+import createCustomElements from "../customElements/createCustomElements";
 import { Aseprite } from "../engine/assets/Aseprite";
 import { asset } from "../engine/assets/Assets";
 import { BitmapFont } from "../engine/assets/BitmapFont";
@@ -322,9 +323,14 @@ export class Gather extends Game {
     public getAllLights(): LightNode[] {
         return this.getGameScene().rootNode.getDescendantsByType(LightNode);
     }
+
+    public log(el: any) {
+        console.log(el);
+    }
 }
 
 (async () => {
+    createCustomElements();
     const game = new Gather();
     Gather.instance = game;
     await game.scenes.setScene(LoadingScene);
