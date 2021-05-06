@@ -296,7 +296,6 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED, handleMessageReceived);
             room.on(JitsiConferenceEvents.USER_LEFT, onUserLeft);
             room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track: JitsiRemoteTrack) => {
-                console.log(track.isMuted());
                 if (track.isLocal()) {
                     return;
                 }

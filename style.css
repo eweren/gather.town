@@ -44,6 +44,8 @@ html, body {
     padding: 20px;
     max-height: calc(100% - 40px);
     z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .userVideo {
     display: flex;

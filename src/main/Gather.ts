@@ -72,6 +72,8 @@ export class Gather extends Game {
     @asset("dialog/train.dialog.json")
     private static readonly trainDialog: DialogJSON;
     private dialogChar?: CharacterNode;
+    private wasAudioMuted = false;
+    private wasVideoMuted = false;
 
     public constructor() {
         super();
@@ -185,19 +187,6 @@ export class Gather extends Game {
         }
     }
 
-    public handleOtherPlayerPresentation(presentationBoardId: number): void {
-        const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === presentationBoardId);
-        if (presentationBoard != null) {
-            this.getGameScene()?.camera.focus(presentationBoard).then((successful) => {
-                if (successful) {
-                    presentationBoard?.startPresentation();
-                    this.preventPlayerInteraction++;
-                    this.dimLights();
-                }
-            });
-        }
-    }
-
     public handleOtherPlayerPresentationUpdate(args: {presentationBoardId: number, slide: number}): void {
         const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode)
             .find(n => n.boardId === args.presentationBoardId);
@@ -206,6 +195,12 @@ export class Gather extends Game {
             presentationBoard?.endPresentation();
             this.preventPlayerInteraction = clamp(this.preventPlayerInteraction - 1, 0, Infinity);
             this.turnOnAllLights();
+            if (!this.wasAudioMuted) {
+                this.room?.getLocalAudioTrack()?.unmute();
+            }
+            if (!this.wasVideoMuted) {
+                this.room?.getLocalVideoTrack()?.unmute();
+            }
         } else if (this.getCamera().getFollow() === presentationBoard && presentationBoard != null) {
             presentationBoard.setSlide(args.slide);
         } else if (presentationBoard != null) {
@@ -216,6 +211,10 @@ export class Gather extends Game {
                     presentationBoard?.startPresentation();
                     this.preventPlayerInteraction++;
                     this.dimLights();
+                    this.wasAudioMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
+                    this.wasVideoMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
+                    this.room?.getLocalAudioTrack()?.mute();
+                    this.room?.getLocalVideoTrack()?.mute();
                 }
             });
         }
