@@ -1,6 +1,4 @@
 import { Sound } from "../engine/assets/Sound";
-import { mutedMusic } from "../engine/util/env";
-
 
 export class MusicManager {
     private tracks: Sound[] = [];
@@ -40,9 +38,6 @@ export class MusicManager {
     // }
 
     public loopTrack(id: number): void {
-        if (mutedMusic()) {
-            return;
-        }
         if (!this.loaded) {
             this.currentMusic = id;
             return;
