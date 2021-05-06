@@ -6,7 +6,6 @@ export class HoverOver extends HTMLElement {
     private wrapper = document.createElement("div");
 
     public constructor() {
-        // Always call super first in constructor
         super();
     }
 
@@ -18,20 +17,6 @@ export class HoverOver extends HTMLElement {
         const button = document.createElement("div");
         button.classList.add("actionButton");
         button.innerText = text;
-        /* button.addEventListener("mouseenter", () => {
-            if (button.innerText === text && toggleText) {
-                button.innerText = toggleText;
-            } else {
-                button.innerText = text;
-            }
-        });
-        button.addEventListener("mouseleave", () => {
-            if (button.innerText === text && toggleText) {
-                button.innerText = toggleText;
-            } else {
-                button.innerText = text;
-            }
-        });*/
         button.title = textHover ?? "";
         button.onclick = () => {
             callback(button.innerText === text && toggleText != null);
@@ -67,7 +52,7 @@ export class HoverOver extends HTMLElement {
             }
             .actionButtonWrapper {
                 opacity: 0;
-                transition: opacity 0.5s ease-in-out;
+                transition: opacity 0.2s ease-in-out;
                 pointer-event: none;
                 display: flex;
                 gap: 8px;

@@ -541,6 +541,7 @@ export default async function (): Promise<JitsiConference | any> {
                 optionsButton.addEventListener("click", (ev) => {
                     ev.stopImmediatePropagation();
                     optionsContainer.style.display = optionsContainer.style.display === "flex" ? "none" : "flex";
+                    optionsButton.innerText = optionsContainer.style.display === "flex" ? "Options ↥" : "Options ↧";
                 });
                 optionsContainer.style.display = "none";
                 JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
@@ -551,6 +552,7 @@ export default async function (): Promise<JitsiConference | any> {
 
                     if (audioOutputDevices.length > 1) {
                         const selectAudioOutput = document.createElement("select");
+                        selectAudioOutput.title = "Select audio output device";
                         selectAudioOutput.id = "audioOutputSelect";
                         optionsContainer.appendChild(selectAudioOutput);
                         const options = audioOutputDevices.map(d => {
@@ -566,6 +568,7 @@ export default async function (): Promise<JitsiConference | any> {
                     }
                     if (audioInputDevices.length > 1) {
                         const selectAudioInput = document.createElement("select");
+                        selectAudioInput.title = "Select audio input device";
                         selectAudioInput.id = "audioInputSelect";
                         optionsContainer.appendChild(selectAudioInput);
                         const options = audioInputDevices.map(d => {
@@ -583,7 +586,7 @@ export default async function (): Promise<JitsiConference | any> {
                     const selectVideoBtn = document.createElement("button");
 
                     selectVideoBtn.id = "shareScreenBtn";
-                    selectVideoBtn.innerText = "Share screen";
+                    selectVideoBtn.innerText = "Share screen 🖥️";
                     optionsContainer.appendChild(selectVideoBtn);
                     selectVideoBtn.addEventListener("click", (ev) => {
                         switchVideo();
