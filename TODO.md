@@ -28,7 +28,7 @@
 
 [X] add chat option (public)
 
-[ ] add chat option (private)
+[X] add chat option (private)
 
 [ ] implement collaborative whiteboard thing of jitsi or miro
 

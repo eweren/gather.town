@@ -284,10 +284,24 @@ export class Gather extends Game {
         this.preventPlayerInteraction++;
         input.addEventListener("keypress", (ev) => {
             if (ev.key === "Enter") {
+                ev.preventDefault();
+                ev.stopImmediatePropagation();
                 const text = input.value;
-                this.getPlayer().say(text ?? "");
-                this.room?.sendMessage(text);
+                const otherPlayers = this.getGameScene()?.rootNode.getDescendantsByType(OtherPlayerNode);
+                const filteredPlayers = otherPlayers
+                    .filter(p => p.getPosition().getDistance(this.getPlayer().getPosition()) < 50)
+                    .map(p => p.getId()!);
+                if (filteredPlayers.length > 0) {
+                    filteredPlayers.forEach(p => {
+                        this.room?.sendMessage(text, p);
+                    });
+                } else {
+                    this.room?.sendMessage(text);
+                }
                 this.preventPlayerInteraction = clamp(this.preventPlayerInteraction - 1, 0, Infinity);
+                if (text) {
+                    this.getPlayer().say(text, 5);
+                }
                 input.remove();
             }
         });
