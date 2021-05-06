@@ -6,7 +6,7 @@ export class FadeToBlack {
     private current: number = 0;
     private duration: number = 0.5;
     private promise: Promise<this> | null = null;
-    private promiseResolve: (() => void) | null = null;
+    private promiseResolve: ((value: this | PromiseLike<this>) => void) | null = null;
 
     private move(target: number, duration: number): Promise<this> {
         if (this.promise == null) {
