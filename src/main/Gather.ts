@@ -20,6 +20,7 @@ import { LightNode } from "./nodes/LightNode";
 import { NpcNode } from "./nodes/NpcNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
+import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
 import { GameScene } from "./scenes/GameScene";
 import { LoadingScene } from "./scenes/LoadingScene";
 import { SuccessScene } from "./scenes/SuccessScene";
@@ -49,6 +50,8 @@ export class Gather extends Game {
     public static characterSprites: Aseprite[];
 
     public static instance: Gather;
+
+    public playerIsPresenting = false;
 
     private stageStartTime = 0;
     private stageTime = 0;
@@ -147,7 +150,8 @@ export class Gather extends Game {
         }
         const id = value.id;
         if (this.players[id] == null) {
-            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x: 140, y: 150 });
+            const { x, y } = this.getGameScene().mapNode.getPlayerSpawn();
+            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x, y });
             this.players[id] = newPlayer;
             this.getGameScene().rootNode.appendChild(newPlayer);
         }
@@ -185,6 +189,43 @@ export class Gather extends Game {
                 this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, id: userId}) });
             }
         }
+    }
+
+    public handleOtherPlayerPresentation(presentationBoardId: number): void {
+        const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === presentationBoardId);
+        if (presentationBoard != null) {
+            this.getGameScene()?.camera.focus(presentationBoard).then((successful) => {
+                if (successful) {
+                    presentationBoard?.startPresentation();
+                    this.playerIsPresenting = true;
+                    this.dimLights();
+                }
+            });
+        }
+    }
+
+    public handleOtherPlayerPresentationUpdate(args: {presentationBoardId: number, slide: number}): void {
+        const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode)
+            .find(n => n.boardId === args.presentationBoardId);
+        if (args.slide === -1) {
+            this.getCamera().focus(this.getPlayer(), { follow: true });
+            presentationBoard?.endPresentation();
+            this.playerIsPresenting = false;
+            this.turnOnAllLights();
+        } else if (this.getCamera().getFollow() === presentationBoard && presentationBoard != null) {
+            presentationBoard.setSlide(args.slide);
+        } else if (presentationBoard != null) {
+            this.getCamera().focus(presentationBoard).then((successful) => {
+                if (successful) {
+                    this.getCamera().setFollow(presentationBoard);
+                    console.log("Follow other players presentation");
+                    presentationBoard?.startPresentation();
+                    this.playerIsPresenting = true;
+                    this.dimLights();
+                }
+            });
+        }
+
     }
 
     public dimLights() {

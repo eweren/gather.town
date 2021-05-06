@@ -8,7 +8,7 @@
 
 [X] **add option for user to mute/un-mute and show/hide video**
 
-[ ] **optimize layout of joined members**
+[ ] _optimize layout of joined members_
 
 [ ] distance based video chat
 
@@ -16,7 +16,7 @@
 
 [ ] optimize presentation
 
-    [ ] other members of room should be focused to presentation
+    [X] other members of room should be focused to presentation
 
     [ ] other players should be mutable
 

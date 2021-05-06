@@ -30,12 +30,12 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
     @asset("presentations/demo.presentation.json")
     private static presentationData: PresentationJSON;
 
-    private headlineNode = new TextNode<Gather>({font: Gather.headlineFont, outlineColor: "grey"});
-    private textNode = new TextNode<Gather>({font: Gather.standardFont,});
+    private headlineNode = new TextNode<Gather>({ font: Gather.headlineFont, outlineColor: "grey" });
+    private textNode = new TextNode<Gather>({ font: Gather.standardFont, });
 
-    private slideIndex = 0;
+    public slideIndex = 0;
 
-    private lightNode = new LightNode({x: this.x, y: this.y, width: PresentationBoardNode.sprite.width, height: PresentationBoardNode.sprite.height, anchor: Direction.CENTER, layer: Layer.LIGHT});
+    private lightNode = new LightNode({ x: this.x, y: this.y, width: PresentationBoardNode.sprite.width, height: PresentationBoardNode.sprite.height, anchor: Direction.CENTER, layer: Layer.LIGHT });
     private presentationIndex: number;
     private currentLine?: { slide: number; headline: string; subHeadline?: string, lines?: string[]; };
 
@@ -55,6 +55,7 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         super.activate();
         this.presentation = PresentationBoardNode.presentations[this.presentationIndex];
         this.currentLine = PresentationBoardNode.presentationData[this.slideIndex];
+        this.setLayer(Layer.OVERLAY);
     }
 
     public update(dt: number, time: number): void {
@@ -82,12 +83,22 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
             this.slideIndex = clamp(this.slideIndex + 1, 0, PresentationBoardNode.presentationData.length - 1);
             this.currentLine = PresentationBoardNode.presentationData[this.slideIndex];
             this.updateSlide();
+            this.getGame().sendCommand("presentationUpdate", { presentationBoardId: this.boardId, slide: this.slideIndex });
         }
     }
 
     public previousSlide(): void {
         if (this.presentation) {
             this.slideIndex = clamp(this.slideIndex - 1, 0, this.slideIndex);
+            this.currentLine = PresentationBoardNode.presentationData[this.slideIndex];
+            this.updateSlide();
+            this.getGame().sendCommand("presentationUpdate", { presentationBoardId: this.boardId, slide: this.slideIndex });
+        }
+    }
+
+    public setSlide(slideIndex: number) {
+        if (this.presentation) {
+            this.slideIndex = clamp(slideIndex, 0, PresentationBoardNode.presentationData.length - 1);
             this.currentLine = PresentationBoardNode.presentationData[this.slideIndex];
             this.updateSlide();
         }

@@ -5,8 +5,6 @@ import { SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { asset } from "../../engine/assets/Assets";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 import { PreCharacterTags } from "./CharacterNode";
-import { Gather } from "../Gather";
-import { PresentationBoardTags, PresentationBoardNode } from "./PresentationBoardNode";
 
 export interface ChairNodeArgs extends SceneNodeArgs {
     onUpdate?: (state: boolean) => boolean | undefined;
@@ -15,7 +13,6 @@ export interface ChairNodeArgs extends SceneNodeArgs {
 export class ChairNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
-    private readonly presentationBoard?: number;
 
     private sitDown: boolean = false;
     public constructor({ onUpdate, ...args }: ChairNodeArgs) {
@@ -25,7 +22,6 @@ export class ChairNode extends InteractiveNode {
             tag: "off",
             ...args
         }, "PRESS E TO SIT DOWN");
-        this.presentationBoard = args.tiledObject?.getOptionalProperty("forPresentationboard", "int")?.getValue();
     }
 
 
@@ -42,13 +38,6 @@ export class ChairNode extends InteractiveNode {
         const isSitting = this.sitDown ? this.getPlayer()?.getPosition().getDistance(this.getPosition()) === 0 : false;
         if (isSitting !== this.sitDown && !isSitting) {
             this.sitDown = false;
-            const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
-            if (presentationBoard != null) {
-                presentationBoard.setTag(PresentationBoardTags.ROLL_IN);
-            }
-            this.getScene()?.camera.focus(this.getPlayer()!, {follow: true});
-            (this.getGame() as Gather).turnOnAllLights();
-
         }
         return isSitting;
     }
@@ -59,16 +48,6 @@ export class ChairNode extends InteractiveNode {
             this.getPlayer()?.setY(this.y);
             this.getPlayer()?.setPreTag(PreCharacterTags.BACK);
             this.sitDown = true;
-            const presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoard);
-            if (presentationBoard) {
-                this.getScene()?.camera.focus(presentationBoard).then((successful) => {
-                    if (successful) {
-                        if (presentationBoard.getTag() !== PresentationBoardTags.OUT)
-                        presentationBoard.setTag(PresentationBoardTags.ROLL_OUT);
-                        (this.getGame() as Gather).dimLights();
-                    }
-                });
-            }
         }
     }
 }

@@ -49,6 +49,7 @@ export class PresentationNode extends InteractiveNode {
             player?.setPreTag(PreCharacterTags.FRONT);
             this.presentationBoard = this.getScene()?.rootNode.getDescendantsByType(PresentationBoardNode).find(n => n.boardId === this.presentationBoardId);
             if (this.presentationBoard) {
+                this.getGame().sendCommand("presentationUpdate", { presentationBoardId: this.presentationBoard.boardId, slide: this.presentationBoard.slideIndex });
                 this.presents = true;
                 const input = this.getScene()!.game.input;
                 input.onButtonDown.connect(this.handleButtonPress, this);
@@ -56,7 +57,7 @@ export class PresentationNode extends InteractiveNode {
                     if (successful) {
                         this.presentationBoard?.startPresentation();
                         if (player != null) {
-                            player.isPresenting = true;
+                            player.startPresentation();
                         }
                         (this.getGame() as Gather).dimLights();
                     }
@@ -81,8 +82,11 @@ export class PresentationNode extends InteractiveNode {
         this.presents = false;
         this.presentationBoard?.endPresentation();
         const player = this.getPlayer();
+        if (this.presentationBoard) {
+            this.getGame().sendCommand("presentationUpdate", { presentationBoardId: this.presentationBoard.boardId, slide: -1 });
+        }
         if (player != null) {
-            player.isPresenting = false;
+            player.endPresentation();
             this.getScene()?.camera.focus(player, { follow: true });
         }
         (this.getGame() as Gather).turnOnAllLights();

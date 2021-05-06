@@ -288,7 +288,10 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(JitsiConferenceEvents.CONFERENCE_JOINED, onConferenceJoined);
             room.on(JitsiConferenceEvents.USER_JOINED, id => {
                 Gather.instance.addPlayer(id);
-                Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
+                console.log("Other user joined");
+                setTimeout(() => {
+                    Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
+                }, 100);
                 remoteTracks[id] = [];
             });
             room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, handleMessageReceived);
@@ -318,6 +321,12 @@ export default async function (): Promise<JitsiConference | any> {
                 const parsedObj = JSON.parse(values.value);
                 if (parsedObj.id !== room.myUserId()) {
                     Gather.instance.updatePlayer(parsedObj);
+                }
+            });
+            room.addCommandListener("presentationUpdate", (values: any) => {
+                const parsedObj = JSON.parse(values.value);
+                if (parsedObj.id !== room.myUserId()) {
+                    Gather.instance.handleOtherPlayerPresentationUpdate(parsedObj);
                 }
             });
             room.on(

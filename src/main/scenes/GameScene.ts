@@ -31,7 +31,7 @@ export class GameScene extends Scene<Gather> {
 
     private debugMode: boolean = false;
 
-    private mapNode = new TiledMapNode<Gather>({ map: GameScene.map, objects: {
+    public mapNode = new TiledMapNode<Gather>({ map: GameScene.map, objects: {
         "collision": CollisionNode,
         "player": PlayerNode,
         "light": LightNode,

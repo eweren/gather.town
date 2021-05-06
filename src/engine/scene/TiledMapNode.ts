@@ -1,5 +1,6 @@
 import { Game } from "../Game";
 import { Direction } from "../geom/Direction";
+import { Vector2 } from "../graphics/Vector2";
 import { TiledMap } from "../tiled/TiledMap";
 import { TiledObject } from "../tiled/TiledObject";
 import { TiledObjectGroupLayer } from "../tiled/TiledObjectGroupLayer";
@@ -21,6 +22,7 @@ export interface TiledMapNodeArgs<T extends Game> extends SceneNodeArgs {
 }
 
 export class TiledMapNode<T extends Game> extends SceneNode<T> {
+    private playerSpawn = new Vector2();
     /**
      * Creates a new scene node displaying the given Tiled Map.
      */
@@ -47,6 +49,9 @@ export class TiledMapNode<T extends Game> extends SceneNode<T> {
                         layer,
                         tiledObject: object
                     };
+                    if (object.getType() === "player") {
+                        this.playerSpawn = new Vector2(object.getX(), object.getY());
+                    }
                     const width = object.getWidth();
                     const height = object.getHeight();
                     if (width > 0 && height > 0) {
@@ -62,5 +67,9 @@ export class TiledMapNode<T extends Game> extends SceneNode<T> {
                 console.warn("Unknown layer", tiledLayer.constructor.name);
             }
         }
+    }
+
+    public getPlayerSpawn(): Vector2 {
+        return this.playerSpawn;
     }
 }

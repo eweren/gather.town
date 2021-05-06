@@ -102,6 +102,7 @@ export class PlayerNode extends CharacterNode {
         super.update(dt, time);
         if (this.isInScene() && !this.initDone) {
             this.initDone = true;
+            this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y });
             this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
             const handleControllerInputChange = (ev: ControllerEvent) => {
                 const oldIsRunning = this.isRunning;
@@ -118,7 +119,7 @@ export class PlayerNode extends CharacterNode {
         // Controls
         const input = this.getScene()!.game.input;
 
-        if (!this.isPresenting) {
+        if (!this.isPresenting && !this.getGame().playerIsPresenting) {
             // Move left/right
             const direction = (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_RIGHT)
                 ? SimpleDirection.RIGHT
@@ -174,6 +175,15 @@ export class PlayerNode extends CharacterNode {
             this.invalidate(SceneNodeAspect.SCENE_TRANSFORMATION);
             return;
         }
+    }
+
+    public startPresentation(): void {
+        this.isPresenting = true;
+        this.getGame().playerIsPresenting = true;
+    }
+    public endPresentation(): void {
+        this.isPresenting = false;
+        this.getGame().playerIsPresenting = false;
     }
 
     private updatePreviouslyPressed(): void {
