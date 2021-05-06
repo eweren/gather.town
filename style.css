@@ -54,6 +54,9 @@ html, body {
     gap: 10px;
     color: white;
 }
+.userVideo[hidden] {
+    display: none;
+}
 #options {
     position: absolute;
     right: 0;

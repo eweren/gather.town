@@ -187,7 +187,7 @@ export class Gather extends Game {
         }
     }
 
-    public handleOtherPlayerPresentationUpdate(args: {presentationBoardId: number, slide: number}): void {
+    public handleOtherPlayerPresentationUpdate(args: { presentationBoardId: number, slide: number; id: string}): void {
         const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode)
             .find(n => n.boardId === args.presentationBoardId);
         if (args.slide === -1) {
@@ -201,6 +201,17 @@ export class Gather extends Game {
             if (!this.wasVideoMuted) {
                 this.room?.getLocalVideoTrack()?.unmute();
             }
+            this.room?.getParticipants()?.forEach(p => {
+                const pId = p.getId();
+                const parentElement = document.getElementById(`${pId}video`)?.parentElement;
+                if (parentElement) {
+                    parentElement.hidden = false;
+                }
+            });
+            const localVid = document.getElementById("localVideo")?.parentElement;
+            if (localVid != null) {
+                localVid.hidden = false;
+            }
         } else if (this.getCamera().getFollow() === presentationBoard && presentationBoard != null) {
             presentationBoard.setSlide(args.slide);
         } else if (presentationBoard != null) {
@@ -213,8 +224,21 @@ export class Gather extends Game {
                     this.dimLights();
                     this.wasAudioMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
                     this.wasVideoMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
+                    console.log(this.room?.getParticipants());
+                    this.room?.getParticipants()?.filter(p => p.getId() !== args.id).forEach(p => {
+                        const pId = p.getId();
+                        const parentElement = document.getElementById(`${pId}video`)?.parentElement;
+                        if (parentElement != null) {
+                            parentElement.hidden = true;
+                            console.log("Hide element");
+                        }
+                    });
                     this.room?.getLocalAudioTrack()?.mute();
-                    this.room?.getLocalVideoTrack()?.mute();
+                    // this.room?.getLocalVideoTrack()?.mute();
+                    const localVid = document.getElementById("localVideo")?.parentElement;
+                    if (localVid != null) {
+                        localVid.hidden = true;
+                    }
                 }
             });
         }

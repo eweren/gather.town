@@ -18,13 +18,13 @@
 
     [X] other members of room should be focused to presentation
 
-    [ ] other players should be mutable
+    [X] other players should be mutable
 
-    [ ] other players videos should disappear and video of speaker should focus
+    [X] other players videos should disappear and video of speaker should focus
 
     [ ] other players should be able to ask questions
 
-    [ ] check how screensharing to canvas looks
+    [X] check how screensharing to canvas looks -> is shit
 
 [X] add chat option (public)
 
