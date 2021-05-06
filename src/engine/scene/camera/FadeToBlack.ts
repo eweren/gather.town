@@ -47,7 +47,7 @@ export class FadeToBlack {
             this.time += dt;
         } else if (this.promiseResolve != null) {
             this.promise = null;
-            this.promiseResolve();
+            this.promiseResolve(this);
             this.promiseResolve = null;
         }
     }
