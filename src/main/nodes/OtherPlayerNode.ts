@@ -30,8 +30,6 @@ export class OtherPlayerNode extends CharacterNode {
 
     private dustParticles: ParticleNode;
 
-    public isPresenting = false;
-
     public constructor(id: string, public spriteIndex = 0, args?: SceneNodeArgs) {
         super({
             aseprite: Gather.characterSprites[spriteIndex],

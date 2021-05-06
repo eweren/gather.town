@@ -15,6 +15,7 @@ keyToIntentMappings.set("KeyA", [ControllerIntent.PLAYER_MOVE_LEFT, ControllerIn
 keyToIntentMappings.set("KeyS", [ControllerIntent.PLAYER_MOVE_DOWN, ControllerIntent.MENU_DOWN]);
 keyToIntentMappings.set("KeyD", [ControllerIntent.PLAYER_MOVE_RIGHT, ControllerIntent.MENU_RIGHT]);
 keyToIntentMappings.set("KeyQ", [ControllerIntent.ABORT]);
+keyToIntentMappings.set("KeyT", [ControllerIntent.CHAT]);
 keyToIntentMappings.set("ArrowUp", [ControllerIntent.PLAYER_MOVE_UP, ControllerIntent.MENU_UP]);
 keyToIntentMappings.set("ArrowDown", [ControllerIntent.PLAYER_MOVE_DOWN, ControllerIntent.MENU_DOWN]);
 keyToIntentMappings.set("ArrowLeft", [ControllerIntent.PLAYER_MOVE_LEFT, ControllerIntent.MENU_LEFT]);

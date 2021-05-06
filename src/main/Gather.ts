@@ -17,7 +17,6 @@ import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
 import { CharacterNode, PostCharacterTags } from "./nodes/CharacterNode";
 import { LightNode } from "./nodes/LightNode";
-import { NpcNode } from "./nodes/NpcNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
 import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
@@ -51,7 +50,7 @@ export class Gather extends Game {
 
     public static instance: Gather;
 
-    public playerIsPresenting = false;
+    public preventPlayerInteraction = 0;
 
     private stageStartTime = 0;
     private stageTime = 0;
@@ -83,7 +82,8 @@ export class Gather extends Game {
 
     // Called by GameScene
     public setupScene(): void {
-        this.spawnNPCs();
+        // TODO Enable this when npc can be synced
+        // this.spawnNPCs();
         this.setStage(GameStage.GAME);
         // Assets cannot be loaded in constructor because the LoadingScene
         // is not initialized at constructor time and Assets are loaded in the LoadingScene
@@ -92,6 +92,7 @@ export class Gather extends Game {
         ];
 
         this.input.onButtonPress.filter(e => e.isConfirm).connect(() => this.nextDialogLine(), this);
+        this.input.onButtonUp.filter(e => e.isPlayerChat).connect(() => this.handleChat(), this);
 
         this.input.onDrag.filter(e => e.isRightStick && !!e.direction && e.direction.getLength() > 0.3).connect(this.getPlayer().handleControllerInput, this.getPlayer());
     }
@@ -124,14 +125,14 @@ export class Gather extends Game {
         }
     }
 
-    private spawnNPCs(): void {
+    /* private spawnNPCs(): void {
         const chars = [ new NpcNode({spriteIndex: 0}), new NpcNode({spriteIndex: 1}), new NpcNode({spriteIndex: 2}), new NpcNode({spriteIndex: 3}), new NpcNode({spriteIndex: 4}) ];
         const positions = [ 644, 680, 720, 760, 800 ];
         for (let i = 0; i < chars.length; i++) {
             chars[i].moveTo(positions[i], 512).appendTo(this.getGameScene().rootNode);
         }
         this.npcs = chars;
-    }
+    }*/
 
     public removePlayer(id: string): void {
         this.players[id]?.remove();
@@ -190,7 +191,7 @@ export class Gather extends Game {
             this.getGameScene()?.camera.focus(presentationBoard).then((successful) => {
                 if (successful) {
                     presentationBoard?.startPresentation();
-                    this.playerIsPresenting = true;
+                    this.preventPlayerInteraction++;
                     this.dimLights();
                 }
             });
@@ -203,7 +204,7 @@ export class Gather extends Game {
         if (args.slide === -1) {
             this.getCamera().focus(this.getPlayer(), { follow: true });
             presentationBoard?.endPresentation();
-            this.playerIsPresenting = false;
+            this.preventPlayerInteraction = clamp(this.preventPlayerInteraction - 1, 0, Infinity);
             this.turnOnAllLights();
         } else if (this.getCamera().getFollow() === presentationBoard && presentationBoard != null) {
             presentationBoard.setSlide(args.slide);
@@ -213,7 +214,7 @@ export class Gather extends Game {
                     this.getCamera().setFollow(presentationBoard);
                     console.log("Follow other players presentation");
                     presentationBoard?.startPresentation();
-                    this.playerIsPresenting = true;
+                    this.preventPlayerInteraction++;
                     this.dimLights();
                 }
             });
@@ -243,7 +244,7 @@ export class Gather extends Game {
         }
     }
 
-    private nextDialogLine(char = this.dialogChar) {
+    private nextDialogLine(char = this.dialogChar): void {
         // Shut up all characters
         this.npcs.forEach(npc => npc.say());
         this.getPlayer().say();
@@ -264,7 +265,35 @@ export class Gather extends Game {
         }
     }
 
-    public startDialog(num: number, char?: CharacterNode) {
+    private handleChat(): void {
+        if (document.getElementById("textInput")) {
+            return;
+        }
+        const input = document.createElement("input");
+        input.style.position = "absolute";
+        input.style.margin = "20px auto";
+        input.style.margin = "0 auto";
+        input.style.left = "0";
+        input.style.right = "0";
+        input.style.top = "0";
+        input.style.height = "20px";
+        input.id = "textInput";
+        document.body.append(input);
+        input.textContent = "";
+        input.focus();
+        this.preventPlayerInteraction++;
+        input.addEventListener("keypress", (ev) => {
+            if (ev.key === "Enter") {
+                const text = input.value;
+                this.getPlayer().say(text ?? "");
+                this.room?.sendMessage(text);
+                this.preventPlayerInteraction = clamp(this.preventPlayerInteraction - 1, 0, Infinity);
+                input.remove();
+            }
+        });
+    }
+
+    public startDialog(num: number, char?: CharacterNode): void {
         if (this.currentDialog) {
             return;
         }

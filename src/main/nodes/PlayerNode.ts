@@ -12,6 +12,7 @@ import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
 import { Gather } from "../Gather";
+import { clamp } from "../../engine/util/math";
 
 const groundColors = [
     "#806057",
@@ -41,8 +42,6 @@ export class PlayerNode extends CharacterNode {
     public isPlayer = true;
 
     private dustParticles: ParticleNode;
-
-    public isPresenting = false;
 
     public constructor(args?: SceneNodeArgs) {
         super({
@@ -119,7 +118,7 @@ export class PlayerNode extends CharacterNode {
         // Controls
         const input = this.getScene()!.game.input;
 
-        if (!this.isPresenting && !this.getGame().playerIsPresenting) {
+        if (this.getGame().preventPlayerInteraction === 0) {
             // Move left/right
             const direction = (input.currentActiveIntents & ControllerIntent.PLAYER_MOVE_RIGHT)
                 ? SimpleDirection.RIGHT
@@ -134,7 +133,7 @@ export class PlayerNode extends CharacterNode {
             this.setDirection(direction);
         }
 
-        if (input.currentActiveIntents & ControllerIntent.PLAYER_RELOAD) {
+        if (input.currentActiveIntents & ControllerIntent.PLAYER_RELOAD && this.getGame().preventPlayerInteraction === 0) {
             this.setTag(PostCharacterTags.DANCE);
         }
         if (this.getTag() === "walk") {
@@ -178,12 +177,11 @@ export class PlayerNode extends CharacterNode {
     }
 
     public startPresentation(): void {
-        this.isPresenting = true;
-        this.getGame().playerIsPresenting = true;
+        this.getGame().preventPlayerInteraction++;
     }
     public endPresentation(): void {
-        this.isPresenting = false;
-        this.getGame().playerIsPresenting = false;
+        this.getGame().preventPlayerInteraction = clamp(this.getGame().preventPlayerInteraction - 1, 0, Infinity);
+
     }
 
     private updatePreviouslyPressed(): void {

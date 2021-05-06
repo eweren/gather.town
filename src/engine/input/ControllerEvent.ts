@@ -79,8 +79,8 @@ export class ControllerEvent extends Object {
         return (this[intentsSymbol] & ControllerIntent.PLAYER_MOVE_DOWN) === ControllerIntent.PLAYER_MOVE_DOWN;
     }
 
-    get isPlayerEnterDoor(): boolean {
-        return (this[intentsSymbol] & ControllerIntent.PLAYER_ENTER_DOOR) === ControllerIntent.PLAYER_ENTER_DOOR;
+    get isPlayerChat(): boolean {
+        return (this[intentsSymbol] & ControllerIntent.CHAT) === ControllerIntent.CHAT;
     }
 
     get isPlayerInteract(): boolean {

@@ -55,7 +55,7 @@ vectorAxes.set(GamePadButtonId.LEFT_STICK, { x: StickAxisId.LEFT_HORIZONTAL, y: 
 vectorAxes.set(GamePadButtonId.RIGHT_STICK, { x: StickAxisId.RIGHT_HORIZONTAL, y: StickAxisId.RIGHT_VERTICAL, intents: [ControllerIntent.RIGHT_STICK] });
 
 const intentMappings = new Map<number, ControllerIntent[]>();
-intentMappings.set(GamePadButtonId.D_PAD_UP, [ControllerIntent.PLAYER_ENTER_DOOR, ControllerIntent.MENU_UP]);
+intentMappings.set(GamePadButtonId.D_PAD_UP, [ControllerIntent.MENU_UP]);
 intentMappings.set(GamePadButtonId.D_PAD_DOWN, [ControllerIntent.PLAYER_MOVE_DOWN, ControllerIntent.MENU_DOWN]);
 intentMappings.set(GamePadButtonId.D_PAD_LEFT, [ControllerIntent.PLAYER_MOVE_LEFT, ControllerIntent.MENU_LEFT]);
 intentMappings.set(GamePadButtonId.D_PAD_RIGHT, [ControllerIntent.PLAYER_MOVE_RIGHT, ControllerIntent.MENU_RIGHT]);

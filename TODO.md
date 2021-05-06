@@ -26,7 +26,7 @@
 
     [ ] check how screensharing to canvas looks
 
-[/] add chat option (public)
+[X] add chat option (public)
 
 [ ] add chat option (private)
 

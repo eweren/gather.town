@@ -42,7 +42,7 @@ export enum ControllerIntent {
     CONFIRM = 0b0000_0001_0000_0000_0000,
 
     /** Go through doors */
-    PLAYER_ENTER_DOOR = 0b0000_0010_0000_0000_0000,
+    CHAT = 0b0000_0010_0000_0000_0000,
 
     /** Pause/unpause. */
     PAUSE = 0b0000_0100_0000_0000_0000,
