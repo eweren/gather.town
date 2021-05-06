@@ -287,8 +287,6 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(JitsiConferenceEvents.TRACK_REMOVED, onRemoteTrackRemoved);
             room.on(JitsiConferenceEvents.CONFERENCE_JOINED, onConferenceJoined);
             room.on(JitsiConferenceEvents.USER_JOINED, id => {
-                Gather.instance.addPlayer(id);
-                console.log("Other user joined");
                 setTimeout(() => {
                     Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
                 }, 100);

@@ -133,13 +133,6 @@ export class Gather extends Game {
         this.npcs = chars;
     }
 
-    public addPlayer(id: string): void {
-        //this.players[id]?.remove();
-        //const newPlayer = new OtherPlayerNode(id, { x: 140, y: 150 });
-        //this.players[id] = newPlayer;
-        //this.getGameScene().rootNode.appendChild(newPlayer);
-    }
-
     public removePlayer(id: string): void {
         this.players[id]?.remove();
     }

@@ -1,0 +1,84 @@
+[
+    {
+        "slide": 0,
+        "headline": "Cloud",
+        "subHeadline":"Mehr als schwebendes Wasser?"
+    },
+    {
+        "slide": 1,
+        "headline": "Gliederung",
+        "lines": [
+            "1. Definition",
+            "2. Warum dieser Vortrag?",
+            "3. Anwendungsbeispiele",
+            "4. End"
+        ]
+    },
+    {
+        "slide": 4,
+        "headline": "Definition",
+        "lines": [
+            "- internet-based computing in which large\n  groups of remote servers are networked",
+            "- allow sharing of data-processing tasks,\n  centralized data storage, and online access"
+        ]
+    },
+    {
+        "slide": 3,
+        "headline": "Warum dieser Vortrag?",
+        "lines": [
+            "- Man hört immer wieder von \"Der Cloud\"",
+            "- Wir wollen euch einen kleinen Überblick\n  über die Cloud geben",
+            "- Verständnis und Idee, was mit \"Der\n  Cloud\" möglich ist"
+        ]
+    },
+    {
+        "slide": 1,
+        "headline": "Anwendungsbeispiel",
+        "subHeadline": "Google Drive"
+    },
+    {
+        "slide": 4,
+        "headline": "Google Drive",
+        "lines": [
+            "- Speicher auf einem Google Server",
+            "- Freigabe von Ressourcen mit\n  anderen Nutzern",
+            "- Echtzeit-Zusammenarbeit",
+            "- Viele integrierbare Tools"
+        ]
+    },
+    {
+        "slide": 1,
+        "headline": "Anwendungsbeispiel",
+        "subHeadline": "Gather.town oder auch dieser Klon"
+    },
+    {
+        "slide": 3,
+        "headline": "Diese Anwendung",
+        "lines": [
+            "- Hosting auf einer Cloud-Instanz",
+            "- Videokommunikation / Echtzeitkommunikation\n  (WebRTC und WebSockets)",
+            "- Source-Code-Verwaltung\n  (GitHub, GitLab, Bitbucket)",
+            "- Automatische Deployments über Runner"
+        ]
+    },
+    {
+        "slide": 1,
+        "headline": "Anwendungsbeispiel",
+        "subHeadline": "MongoDB Atlas"
+    },
+    {
+        "slide": 4,
+        "headline": "MongoDB Atlas",
+        "lines": [
+            "- Gemanangede Cloud-Datenbank",
+            "- verschiedene Standorte und Provider\n  (AWS, Google Cloud, Azure)",
+            "- Verteilbar -> Gespiegelte Datenbank über\n  verschiedene Standorte hinweg",
+            "- Automatische Deployments über Runner"
+        ]
+    },
+    {
+        "slide": 0,
+        "headline": "The End",
+        "subHeadline": "(Hopefully not!)"
+    }
+]

@@ -655,7 +655,7 @@
                         {
                          "name":"presentation",
                          "type":"int",
-                         "value":0
+                         "value":1
                         }],
                  "rotation":0,
                  "type":"presentationBoard",
@@ -1883,7 +1883,7 @@
                  "value":3
                 }],
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
