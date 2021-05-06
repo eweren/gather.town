@@ -291,6 +291,7 @@ export default async function (): Promise<JitsiConference | any> {
                 Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
                 remoteTracks[id] = [];
             });
+            room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, handleMessageReceived);
             room.on(JitsiConferenceEvents.USER_LEFT, onUserLeft);
             room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track: JitsiRemoteTrack) => {
                 console.log(track.isMuted());
@@ -327,6 +328,15 @@ export default async function (): Promise<JitsiConference | any> {
                 () => console.log(`${room.getPhoneNumber()} - ${room.getPhonePin()}`));
             room.join();
             resolve(room);
+        }
+
+        function handleMessageReceived(participantId: string, text: string, ts: number): void {
+            if (participantId === room.myUserId()) {
+                Gather.instance.getPlayer()?.say(text, 5);
+                return;
+            }
+            const player = Gather.instance.getOtherPlayerById(participantId);
+            player?.say(text, 5);
         }
 
         function createVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): HTMLDivElement {

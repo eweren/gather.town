@@ -36,8 +36,8 @@ export class Gather extends Game {
     @asset(STANDARD_FONT)
     public static readonly standardFont: BitmapFont;
     @asset([
-        "sprites/characters/dark_staff_black.aseprite.json",
         "sprites/characters/character.aseprite.json",
+        "sprites/characters/dark_staff_black.aseprite.json",
         "sprites/characters/HalloweenGhost.aseprite.json",
         "sprites/characters/dark_casualjacket_orange_white.aseprite.json",
         "sprites/characters/light_male_pkmn_red.aseprite.json",
@@ -147,7 +147,7 @@ export class Gather extends Game {
         }
         const id = value.id;
         if (this.players[id] == null) {
-            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 1, { x: 140, y: 150 });
+            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x: 140, y: 150 });
             this.players[id] = newPlayer;
             this.getGameScene().rootNode.appendChild(newPlayer);
         }
@@ -296,8 +296,12 @@ export class Gather extends Game {
         this.getCamera().moveTo(1740, 370); // hacky workaround
     }
 
-    public getPlayer(): PlayerNode {
+    public getPlayer(id?: string): PlayerNode {
         return this.getGameScene().rootNode.getDescendantsByType(PlayerNode)[0];
+    }
+
+    public getOtherPlayerById(id: string): OtherPlayerNode | null {
+        return this.players[id];
     }
 
     public getGameScene(): GameScene {
