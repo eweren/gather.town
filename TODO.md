@@ -14,7 +14,7 @@
 
 [ ] add interactive objects
 
-[ ] optimize presentation
+[X] optimize presentation
 
     [X] other members of room should be focused to presentation
 
@@ -22,7 +22,7 @@
 
     [X] other players videos should disappear and video of speaker should focus
 
-    [ ] other players should be able to ask questions
+    [X] other players should be able to ask questions
 
     [X] check how screensharing to canvas looks -> is shit
 
