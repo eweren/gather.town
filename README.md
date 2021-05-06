@@ -3,7 +3,7 @@
 ## Deployment
 
 All branches will be automatically deployed.
-The master-branch is always available at https://gather-town.pages.dev/.
+The master-branch is always available at [Pages.dev](https://gather-town.pages.dev).
 
 ## Development
 
