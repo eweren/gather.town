@@ -14,7 +14,7 @@ module.exports = {
             ProductName: "Gather"
         },
         icon: path.resolve(__dirname, "assets", "appicon.iconset"),
-        appCopyright: "Copyright (C) 2020 Eduard But, Nico Hülscher, Stephanie Jahn, Benjamin Jung, Nils Kreutzer, Bastian Lang, Ranjit Mevius, Markus Over, Klaus Reimer, Vladimir Sakhovski, Christina Schneider, Lisa Tsakiris, Jennifer van Veen, Moritz Vieth, Matthias Wetter",
+        appCopyright: "Copyright (C) 2021 Nico Hülscher",
         appVersion: require(path.resolve(__dirname, "package.json")).version
     },
     makers: [
@@ -27,7 +27,8 @@ module.exports = {
         {
             name: "@electron-forge/maker-zip",
             platforms: [
-                "darwin"
+                "darwin",
+                "linux"
             ]
         },
         {

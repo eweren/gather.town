@@ -1,14 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/package#",
   "name": "gather",
-  "version": "1.0.2",
-  "description": "A small 2D action platformer with handcrafted pixel art, an emphasis on mood, and a blasting original soundtrack.",
+  "version": "0.0.1",
+  "description": "A gather clone.",
   "maintainers": [],
   "keywords": [
     "game",
     "browser",
     "electron"
   ],
+  "private": "true",
   "license": "SEE LICENSE IN LICENSE.md",
   "main": ".webpack/main",
   "scripts": {

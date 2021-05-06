@@ -7,6 +7,14 @@ if (require("electron-squirrel-startup")) { // eslint-disable-line global-requir
     app.quit();
 }
 
+app.on("certificate-error", (event, webContents, url, error, certificate, callback) => {
+    console.log("Error");
+    // On certificate error we disable default behavior (stop loading the page)
+    // and we then say "it is all fine - true" to the callback
+    event.preventDefault();
+    callback(true);
+});
+
 app.name = "Gather";
 app.allowRendererProcessReuse = true;
 
@@ -15,6 +23,8 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: GAME_WIDTH,
         height: GAME_HEIGHT,
+        minWidth: GAME_WIDTH,
+        minHeight: GAME_HEIGHT,
         fullscreen: true,
         title: "Gather",
         icon: path.join(__dirname, "../renderer/assets/appicon.iconset/icon_256x256.png")
