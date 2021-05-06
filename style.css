@@ -66,7 +66,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
 }
-#optionsContainer {
+#options-container {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -77,7 +77,7 @@ html, body {
     width: 200px;
     overflow: hidden;
 }
-#optionsContainer > * {
+#options-container > * {
     width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;

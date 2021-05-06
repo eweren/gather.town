@@ -541,7 +541,7 @@ export default async function (): Promise<JitsiConference | any> {
         if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable("output")) {
             setTimeout(() => {
                 const optionsButton = document.getElementById("options");
-                const optionsContainer = document.getElementById("optionsContainer");
+                const optionsContainer = document.getElementById("options-container");
                 if (optionsButton == null || optionsContainer == null) {
                     return;
                 }
