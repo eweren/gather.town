@@ -1,5 +1,5 @@
 # Gather
-
+[![Current Release](https://github.com/eweren/gather.town/actions/workflows/createRelease.yml/badge.svg)](https://github.com/eweren/gather.town/actions/workflows/createRelease.yml)
 ## Deployment
 
 All branches will be automatically deployed.
