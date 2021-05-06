@@ -1,3 +1,4 @@
+import { isDev } from "./engine/util/env";
 import { Gather } from "./main/Gather";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
 import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
@@ -26,7 +27,10 @@ export default async function (): Promise<JitsiConference | any> {
         };
 
         const confOptions: JitsiConferenceInitOptions = {
-            openBridgeChannel: true
+            openBridgeChannel: true,
+            p2p: {
+                enabled: false
+            }
         };
 
         let connection: JitsiConnection | null = null;
@@ -48,6 +52,7 @@ export default async function (): Promise<JitsiConference | any> {
                 return;
             }
             localTracks = tracks;
+            console.log(localTracks);
             for (let i = 0; i < localTracks.length; i++) {
                 localTracks[i].addEventListener(
                     JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
@@ -64,48 +69,75 @@ export default async function (): Promise<JitsiConference | any> {
                         console.log(
                             `track audio output device was changed to ${deviceId}`));
                 if (localTracks[i].getType() === "video") {
-                    const element = document.createElement("video");
-                    const name = document.createElement("span");
-                    name.innerText = userName;
-                    name.contentEditable = "true";
-                    name.classList.add("userName");
-                    name.addEventListener("input", function (ev: Event) {
-                        ev.stopImmediatePropagation();
-                        ev.stopPropagation();
-                        if (name.innerText.includes("\n")) {
-                            name.innerText = name.innerText.trim();
-                            name.blur();
+                    const localVideo = document.getElementById("localVideo") ?? createLocalVideoElement();
+                    if (localVideo) {
+                        localTracks[i].attach(localVideo);
+                    }
+                    if (isJoined) {
+                        if (room.getLocalVideoTrack() != null) {
+                            room.replaceTrack(room.getLocalVideoTrack()!, localTracks[i]);
+                        } else {
+                            room.addTrack(localTracks[i]);
                         }
-                    }, false);
-                    name.addEventListener("blur", function () {
-                        if (name.innerText !== "") {
-                            userName = name.innerText;
-                        }
-                        room.setDisplayName(userName);
-                    }, false);
-                    const wrapper = document.createElement("div");
-                    wrapper.classList.add("userVideo");
-                    wrapper.appendChild(element);
-                    wrapper.appendChild(name);
-                    element.autoplay = true;
-                    element.id = "localVideo";
-                    element.style.borderRadius = "500px";
-                    element.style.width = "150px";
-                    element.style.height = "150px";
-                    element.style.objectFit = "cover";
-                    localTracks[i].attach(element);
-                    document.getElementById("videos")?.append(wrapper);
+                    }
                 } else {
-                    const audioEl = document.createElement("audio");
-                    audioEl.muted = true;
-                    audioEl.autoplay = true;
-                    audioEl.id = `localAudio${i}`;
-                    document.getElementById("body")?.append(audioEl);
-                }
-                if (isJoined) {
-                    room.addTrack(localTracks[i]);
+                    const localAudio = document.getElementById("localAudi") ?? createLocalAudio();
+                    if (localAudio) {
+                        localTracks[i].attach(localAudio);
+                    }
+                    if (isJoined) {
+                        if (room.getLocalAudioTrack() != null) {
+                            room.replaceTrack(room.getLocalAudioTrack()!, localTracks[i]);
+                        } else {
+                            room.addTrack(localTracks[i]);
+                        }
+                    }
                 }
             }
+        }
+
+        function createLocalAudio(): HTMLAudioElement {
+            const audioEl = document.createElement("audio");
+            audioEl.muted = true;
+            audioEl.autoplay = true;
+            audioEl.id = "localAudio";
+            document.getElementById("body")?.append(audioEl);
+            return audioEl;
+        }
+
+        function createLocalVideoElement(): HTMLVideoElement {
+            const element = document.createElement("video");
+            const name = document.createElement("span");
+            name.innerText = userName;
+            name.contentEditable = "true";
+            name.classList.add("userName");
+            name.addEventListener("input", function (ev: Event) {
+                ev.stopImmediatePropagation();
+                ev.stopPropagation();
+                if (name.innerText.includes("\n")) {
+                    name.innerText = name.innerText.trim();
+                    name.blur();
+                }
+            }, false);
+            name.addEventListener("blur", function () {
+                if (name.innerText !== "") {
+                    userName = name.innerText;
+                }
+                room.setDisplayName(userName);
+            }, false);
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("userVideo");
+            wrapper.appendChild(element);
+            wrapper.appendChild(name);
+            element.autoplay = true;
+            element.id = "localVideo";
+            element.style.borderRadius = "500px";
+            element.style.width = "150px";
+            element.style.height = "150px";
+            element.style.objectFit = "cover";
+            element.poster = "https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg";
+            document.getElementById("videos")?.append(wrapper);
+            return element;
         }
 
         function onRemoteTrackRemoved(track: JitsiRemoteTrack) {
@@ -148,14 +180,10 @@ export default async function (): Promise<JitsiConference | any> {
                         element?.remove();
                     }
                 }
-                console.log(val);
             });
 
             if (!remoteTracks[participant]) {
                 remoteTracks[participant] = [];
-            } else if (remoteTracks[participant].find(el => el.getId() === track.getId()) != null) {
-                // Skip if already video of user present
-                return;
             }
 
             remoteTracks[participant].push(track);
@@ -174,8 +202,7 @@ export default async function (): Promise<JitsiConference | any> {
                 () => console.log("remote track stopped"));
             track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_OUTPUT_CHANGED,
                 (deviceId: string) =>
-                    console.log(
-                        `track audio output device was changed to ${deviceId}`));
+                    console.log(`track audio output device was changed to ${deviceId}`));
             let element;
 
             if (track.getType() === "video") {
@@ -233,7 +260,7 @@ export default async function (): Promise<JitsiConference | any> {
             if (connection == null) {
                 return;
             }
-            room = connection.initJitsiConference("gather", confOptions);
+            room = connection.initJitsiConference(isDev() ?  "mylittleconference" : "gather", confOptions);
             (window as any)["room"] = room;
             room.on(JitsiConferenceEvents.TRACK_ADDED, onRemoteTrack);
             room.on(JitsiConferenceEvents.TRACK_REMOVED, onRemoteTrackRemoved);
@@ -297,12 +324,12 @@ export default async function (): Promise<JitsiConference | any> {
             track.attach(element);
             return wrapper;
         }
-    
+
         function removeVideoTrackForUser(userID: string): void {
             const vidEl = document.getElementById(`${userID}video`) as HTMLVideoElement;
             vidEl?.parentElement?.remove();
         }
-    
+
         function pauseVideoTrackForUser(userID: string): void {
             const nameOfParticipant = room.getParticipantById(userID)?.getDisplayName() ?? "anonymous";
             const vidEl = document.getElementById(`${userID}video`) as HTMLVideoElement;
@@ -327,26 +354,26 @@ export default async function (): Promise<JitsiConference | any> {
             vidEl.parentElement?.replaceWith(wrapper);
             vidEl.srcObject = null;
         }
-    
+
         function resumeVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): void {
             const newWrapper = createVideoTrackForUser(track);
             document.getElementById(`${track.getParticipantId()}placeholder`)?.replaceWith(newWrapper);
         }
-    
+
         /**
          * This function is called when the connection fail.
          */
         function onConnectionFailed() {
             console.error("Connection Failed!");
         }
-    
+
         /**
          * This function is called when the connection fail.
          */
         function onDeviceListChanged(devices: typeof JitsiMediaDevices) {
             console.info("current devices", devices);
         }
-    
+
         /**
          * This function is called when we disconnect.
          */
@@ -377,51 +404,76 @@ export default async function (): Promise<JitsiConference | any> {
             connection?.disconnect();
         }
 
-        /*
-        let isVideo = true;
         function switchVideo() {
-            isVideo = !isVideo;
-            if (localTracks[1]) {
-                localTracks[1].dispose();
-                localTracks.pop();
-            }
+            const previousTrack = localTracks.pop();
+            const isVideo = !!room.getLocalVideoTrack()?.isScreenSharing();
             JitsiMeetJS.createLocalTracks({
                 devices: [ isVideo ? "video" : "desktop" ]
             })
                 .then(tracks => {
                     if (tracks instanceof Array) {
+                        const element = document.getElementById("localVideo");
                         localTracks.push(tracks[0]);
                         localTracks[1].addEventListener(
                             JitsiTrackEvents.TRACK_MUTE_CHANGED,
                             () => console.log("local track muted"));
                         localTracks[1].addEventListener(
-                            JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                            () => console.log("local track stopped"));
-                        const element = document.getElementById("#localVideo1");
+                            JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
+                                if (localTracks[1]) {
+                                    const trackToDispose = localTracks.pop();
+                                    room.removeTrack(trackToDispose!);
+                                }
+                                if (previousTrack) {
+                                    localTracks.push(previousTrack);
+                                    if (element) {
+                                        previousTrack?.attach(element);
+                                    }
+                                    if (room.getLocalVideoTrack()) {
+                                        room.replaceTrack(room.getLocalVideoTrack()!, previousTrack);
+                                    } else {
+                                        room.addTrack(previousTrack);
+                                    }
+                                }
+                            });
                         if (element != null) {
                             localTracks[1].attach(element);
                         }
-                        room.addTrack(localTracks[1]);
+
+                        if (previousTrack) {
+                            room.replaceTrack(previousTrack, localTracks[1]);
+                        } else {
+                            room.addTrack(localTracks[1]);
+                        }
                     }
                 })
                 .catch(error => console.log(error));
         }
-        function changeAudioOutput(selected: any) {
-            JitsiMeetJS.mediaDevices.setAudioOutputDevice(selected.value);
-        } */
-    
+        function changeAudioOutput(deviceId: string) {
+            JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId);
+        }
+        function changeAudioInput(deviceId: string) {
+
+            JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"], micDeviceId: deviceId })
+                .then(onLocalTracks)
+                .catch(error => {
+                    throw error;
+                });
+            // TODO: fix change of inputDevices
+            // JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId);
+        }
+
         window.addEventListener("beforeunload", unload);
         window.addEventListener("unload", unload);
-    
+
         // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const initOptions = {
             disableAudioLevels: true
         };
-    
+
         JitsiMeetJS.init(initOptions);
-    
+
         connection = new JitsiMeetJS.JitsiConnection(undefined, undefined, options);
-    
+
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_ESTABLISHED,
             onConnectionSuccess);
@@ -431,38 +483,78 @@ export default async function (): Promise<JitsiConference | any> {
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_DISCONNECTED,
             disconnect);
-    
+
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
             onDeviceListChanged);
-    
+
         connection?.connect(undefined);
-    
+
         JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"] })
             .then(onLocalTracks)
             .catch(error => {
                 throw error;
             });
-    
+
         if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable("output")) {
-            JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
-                const audioOutputDevices
-                    = devices.filter(d => d.kind === "audiooutput");
-    
-                if (audioOutputDevices.length > 1) {
-                    const outputSelector = document.getElementById("audioOutputSelect");
-                    if (outputSelector == null) {
-                        return;
-                    }
-                    outputSelector.innerHTML = audioOutputDevices
-                        .map(
-                            d =>
-                                `<option value="${d.deviceId}">${d.label}</option>`)
-                        .join("\n");
-    
-                    // $("#audioOutputSelectWrapper").show();
+            setTimeout(() => {
+                const optionsButton = document.getElementById("options");
+                const optionsContainer = document.getElementById("optionsContainer");
+                if (optionsButton == null || optionsContainer == null) {
+                    return;
                 }
-            });
+                optionsButton.addEventListener("click", (ev) => {
+                    ev.stopImmediatePropagation();
+                    optionsContainer.style.display = optionsContainer.style.display === "flex" ? "none" : "flex";
+                });
+                optionsContainer.style.display = "none";
+                JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
+                    const audioOutputDevices
+                        = devices.filter(d => d.kind === "audiooutput");
+                    const audioInputDevices
+                        = devices.filter(d => d.kind === "audioinput");
+
+                    if (audioOutputDevices.length > 1) {
+                        const selectAudioOutput = document.createElement("select");
+                        selectAudioOutput.id = "audioOutputSelect";
+                        optionsContainer.appendChild(selectAudioOutput);
+                        const options = audioOutputDevices.map(d => {
+                            const option = document.createElement("option");
+                            option.value = d.deviceId;
+                            option.innerText = d.label;
+                            return option;
+                        });
+                        options.forEach(o => selectAudioOutput.appendChild(o));
+                        selectAudioOutput.addEventListener("input", (ev) => {
+                            changeAudioOutput((ev.target as any).value);
+                        });
+                    }
+                    if (audioInputDevices.length > 1) {
+                        const selectAudioInput = document.createElement("select");
+                        selectAudioInput.id = "audioInputSelect";
+                        optionsContainer.appendChild(selectAudioInput);
+                        const options = audioInputDevices.map(d => {
+                            const option = document.createElement("option");
+                            option.value = d.deviceId;
+                            option.innerText = d.label;
+                            return option;
+                        });
+                        options.forEach(o => selectAudioInput.appendChild(o));
+                        selectAudioInput.addEventListener("input", (ev) => {
+                            changeAudioInput((ev.target as any).value);
+                        });
+                    }
+
+                    const selectVideoBtn = document.createElement("button");
+
+                    selectVideoBtn.id = "shareScreenBtn";
+                    selectVideoBtn.innerText = "Share screen";
+                    optionsContainer.appendChild(selectVideoBtn);
+                    selectVideoBtn.addEventListener("click", (ev) => {
+                        switchVideo();
+                    });
+                });
+            }, 1000);
         }
     });
 }

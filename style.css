@@ -46,3 +46,18 @@ html, body {
     gap: 10px;
     color: white;
 }
+#options {
+    position: absolute;
+    right: 0;
+    height: 25px;
+    z-index: 1000;
+}
+#optionsContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    right: 0;
+    top: 25px;
+    z-index: 1000;
+}
