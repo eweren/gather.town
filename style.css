@@ -37,6 +37,7 @@ html, body {
     align-items: center;
     gap: 20px;
     padding: 20px;
+    max-height: calc(100% - 40px);
     z-index: 1000;
 }
 .userVideo {
