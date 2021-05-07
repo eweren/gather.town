@@ -6,64 +6,62 @@ on:
       - '*'
 
 jobs:
-  mac:
-    runs-on: macos-latest
-    timeout-minutes: 15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use node
-      uses: actions/setup-node@v1
-    - name: Cache node_modules
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: npm install
-    - name: Read package.json
-      uses: dutscher/read-package-json-endpoint-actions@v1.33.7
-      id: package-json-endpoint
-    - run: npm run package
-    - run: npm run make
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.3
-      with:
-          name: macos
-          path: out/**/Gather.app
-  linux:
-    runs-on: [self-hosted, linux]
-    timeout-minutes: 15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use node
-      uses: actions/setup-node@v1
-    - name: Cache node_modules
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: npm install
-    - run: npm run package
-    - run: npm run make
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.3
-      with:
-          name: linux
-          path: |
-              out/**/*.rpm
-              out/**/*.deb
+#   mac:
+#     runs-on: macos-latest
+#     timeout-minutes: 15
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Use node
+#       uses: actions/setup-node@v1
+#     - name: Cache node_modules
+#       uses: actions/cache@v2
+#       with:
+#         path: ~/.npm
+#         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#         restore-keys: |
+#           ${{ runner.os }}-node-
+#     - name: Install dependencies
+#       if: steps.cache.outputs.cache-hit != 'true'
+#       run: npm install
+#     - run: npm run package
+#     - run: npm run make
+#     - name: Upload a Build Artifact
+#       uses: actions/upload-artifact@v2.2.3
+#       with:
+#           name: macos
+#           path: out/**/Gather.app
+#   linux:
+#     runs-on: [self-hosted, linux]
+#     timeout-minutes: 15
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Use node
+#       uses: actions/setup-node@v1
+#     - name: Cache node_modules
+#       uses: actions/cache@v2
+#       with:
+#         path: ~/.npm
+#         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#         restore-keys: |
+#           ${{ runner.os }}-node-
+#     - name: Install dependencies
+#       if: steps.cache.outputs.cache-hit != 'true'
+#       run: npm install
+#     - run: npm run package
+#     - run: npm run make
+#     - name: Upload a Build Artifact
+#       uses: actions/upload-artifact@v2.2.3
+#       with:
+#           name: linux
+#           path: |
+#               out/**/*.rpm
+#               out/**/*.deb
   release:
     name: Create release
-    needs: [linux, mac]
+#    needs: [linux, mac]
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Download math result for mac
         uses: actions/download-artifact@v2
         with:
@@ -77,13 +75,16 @@ jobs:
         with:
           name: homework
           path: math-homework.txt
+      - name: Read package.json
+        uses: tyankatsu0105/read-package-version-actions@v1
+        id: package-version
       - name: release
         uses: actions/create-release@v1
         id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ steps.package-json-endpoint.outputs.endpoint }}
+          release_name:  ${{ steps.package-version.outputs.version }}
           tag_name: ${{ github.ref }}
           body_path: CHANGELOG.md
         env:
