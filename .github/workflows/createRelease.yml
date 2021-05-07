@@ -1,11 +1,9 @@
 name: Create release
 
 on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Release title'
-        required: true
+  push:
+    tags:
+      - '*'
 
 jobs:
   mac:
@@ -25,14 +23,16 @@ jobs:
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm install
+    - name: Read package.json
+      uses: dutscher/read-package-json-endpoint-actions@v1.33.7
+      id: package-json-endpoint
     - run: npm run package
     - run: npm run make
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.3
       with:
-          # Artifact name
-          name: ${{ github.event.inputs.releaseTitle }}macos
-          path: out
+          name: macos
+          path: out/**/Gather.app
   linux:
     runs-on: [self-hosted, linux]
     timeout-minutes: 15
@@ -55,5 +55,36 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.3
       with:
-          name: ${{ github.event.inputs.releaseTitle }}ubuntu
-          path: out
+          name: linux
+          path: |
+              out/**/*.rpm
+              out/**/*.deb
+  release:
+    name: Create release
+    needs: [linux, mac]
+    runs-on: windows-latest
+    steps:
+      - name: Download math result for mac
+        uses: actions/download-artifact@v2
+        with:
+          name: macos
+      - name: Download math result for linux
+        uses: actions/download-artifact@v2
+        with:
+          name: linux
+      - name: Upload math result for job 2
+        uses: actions/upload-artifact@v2
+        with:
+          name: homework
+          path: math-homework.txt
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.package-json-endpoint.outputs.endpoint }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
