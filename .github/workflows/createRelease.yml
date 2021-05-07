@@ -62,19 +62,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Download math result for mac
-        uses: actions/download-artifact@v2
-        with:
-          name: macos
-      - name: Download math result for linux
-        uses: actions/download-artifact@v2
-        with:
-          name: linux
-      - name: Upload math result for job 2
-        uses: actions/upload-artifact@v2
-        with:
-          name: homework
-          path: math-homework.txt
+    #   - name: Download mac artifact
+    #     uses: actions/download-artifact@v2
+    #     with:
+    #       name: macos
+    #   - name: Download linux artifact
+    #     uses: actions/download-artifact@v2
+    #     with:
+    #       name: linux
       - name: Read package.json
         uses: tyankatsu0105/read-package-version-actions@v1
         id: package-version
