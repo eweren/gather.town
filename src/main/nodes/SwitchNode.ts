@@ -75,7 +75,7 @@ export class SwitchNode extends InteractiveNode {
                 }
                 const backdrop = document.createElement("div");
                 backdrop.classList.add("backdrop");
-                backdrop.addEventListener("click", (ev) => {e
+                backdrop.addEventListener("click", (ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
                     backdrop.remove();
