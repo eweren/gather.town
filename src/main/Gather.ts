@@ -218,13 +218,11 @@ export class Gather extends Game {
             this.getCamera().focus(presentationBoard).then((successful) => {
                 if (successful) {
                     this.getCamera().setFollow(presentationBoard);
-                    console.log("Follow other players presentation");
                     presentationBoard?.startPresentation();
                     this.preventPlayerInteraction++;
                     this.dimLights();
                     this.wasAudioMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
                     this.wasVideoMuted = !!this.room?.getLocalAudioTrack()?.isMuted();
-                    console.log(this.room?.getParticipants());
                     this.room?.getParticipants()?.filter(p => p.getId() !== args.id).forEach(p => {
                         const pId = p.getId();
                         const parentElement = document.getElementById(`${pId}video`)?.parentElement;

@@ -90,6 +90,10 @@ export class PlayerNode extends CharacterNode {
         }
     }
 
+    public updatePlayerPosition(): void {
+        this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, spriteIndex: this.spriteIndex, direction: this.direction });
+    }
+
     public activate(): void {
         super.activate();
         const input = this.getScene()!.game.input;

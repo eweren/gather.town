@@ -1,6 +1,5 @@
 import { clamp } from "../util/math";
 import { ControllerManager } from "../input/ControllerManager";
-import { Vector2Like } from "../graphics/Vector2";
 
 // Get cross-browser AudioContext (Safari still uses webkitAudioContext…)
 const AudioContext = window.AudioContext ?? (window as any).webkitAudioContext as AudioContext;
@@ -49,9 +48,7 @@ export class Sound {
     private source: AudioBufferSourceNode | null = null;
     private loop: boolean = false;
     private stereoPannerNode: StereoPannerNode | null = null;
-    private pannerNode: PannerNode | null = null;
     private gainNode: GainNode | null = null;
-    private uses3D = false;
     private isPaused = false;
 
     private constructor(private readonly buffer: AudioBuffer, private defaultVolume = 1) {
@@ -70,30 +67,11 @@ export class Sound {
     }
 
     public setStereo(): void {
-        this.pannerNode?.disconnect();
-        this.pannerNode = null;
         const ctx = getAudioContext();
         this.gainNode = ctx.createGain();
         this.stereoPannerNode = ctx.createStereoPanner();
         this.gainNode.connect(getGlobalGainNode());
         this.stereoPannerNode.connect(this.gainNode);
-        this.uses3D = false;
-    }
-
-    public setPositionedSound(positionInScene: Vector2Like, intensity = 1, range = 150, emitterWidth = 30): void {
-        this.gainNode?.disconnect();
-        this.gainNode = null;
-        this.stereoPannerNode?.disconnect();
-        this.stereoPannerNode = null;
-        const ctx = getAudioContext();
-        this.pannerNode = ctx.createPanner();
-        this.pannerNode.connect(ctx.destination);
-        this.pannerNode.panningModel = "HRTF";
-        this.pannerNode.rolloffFactor = 1.5 / intensity;
-        this.pannerNode.maxDistance = range;
-        this.pannerNode.refDistance = emitterWidth;
-        this.pannerNode.setPosition(positionInScene.x, positionInScene.y, 10);
-        this.uses3D = true;
     }
 
     public static shallowClone(sound: Sound): Sound {
@@ -106,10 +84,6 @@ export class Sound {
 
     public shallowClone(): Sound {
         return Sound.shallowClone(this);
-    }
-
-    public is3D(): boolean {
-        return this.uses3D;
     }
 
     public isPlaying(): boolean {
@@ -132,8 +106,6 @@ export class Sound {
             source.loop = this.loop;
             if (this.stereoPannerNode) {
                 source.connect(this.stereoPannerNode);
-            } else if (this.pannerNode) {
-                source.connect(this.pannerNode);
             }
 
             source.addEventListener("ended", () => {
@@ -175,10 +147,6 @@ export class Sound {
     public pause(): void {
         if (!this.isPaused) {
             this.gainNode?.gain.setValueAtTime(0, this.gainNode.context.currentTime);
-            if (this.pannerNode) {
-                this.pannerNode.refDistance *= 0.2;
-                this.pannerNode.maxDistance *= 0.2;
-            }
             this.isPaused = true;
         }
     }
@@ -186,10 +154,6 @@ export class Sound {
     public resume(): void {
         if (this.isPaused) {
             this.gainNode?.gain.setValueAtTime(this.gainNode.gain.defaultValue, this.gainNode.context.currentTime);
-            if (this.pannerNode) {
-                this.pannerNode.refDistance *= 5;
-                this.pannerNode.maxDistance *= 5;
-            }
             this.isPaused = false;
         }
     }

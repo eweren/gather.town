@@ -1,4 +1,4 @@
-@font-face { font-family: 'LcdSolid'; src: url('assets/fonts/LcdSolid.ttf'); } 
+@font-face { font-family: 'LcdSolid'; src: url('assets/fonts/LcdSolid.ttf'); }
 html, body {
     padding: 0;
     margin: 0;
@@ -81,5 +81,41 @@ html, body {
     width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+}
+.bigVideo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    cursor: zoom-out;
+}
+.contextMenu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    cursor: pointer;
+}
+.contextMenu > span {
+    padding: 4px 6px;
+}
+.backdrop {
+    position: absolute;
+    z-index: 3000;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(200, 200, 200, 0.3);
+}
+button {
     cursor: pointer;
 }

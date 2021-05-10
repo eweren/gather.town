@@ -1,8 +1,6 @@
-import { CollisionNode } from "../../main/nodes/CollisionNode";
 import { Sound } from "../assets/Sound";
 import { Game } from "../Game";
 import { Vector2 } from "../graphics/Vector2";
-import { cacheResult } from "../util/cache";
 import { clamp } from "../util/math";
 import { SceneNode, SceneNodeArgs, SceneNodeAspect } from "./SceneNode";
 
@@ -18,9 +16,6 @@ export interface SoundNodeArgs extends SceneNodeArgs {
 
     /** The sound intensity between 0.0 and 1.0. Defaults to 1.0. */
     intensity?: number;
-
-    /** The width of the sound emitting source. Defaults to 30. */
-    emitterWidth?: number;
 }
 
 /**
@@ -38,18 +33,14 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
     /** The sound intensity. */
     private intensity: number;
 
-    /** The sounds-emitting source width. */
-    private emitterWidth: number;
-
     /**
      * Creates a new scene node displaying the given Aseprite.
      */
-    public constructor({ sound, range, intensity = 1.0, emitterWidth = 30, ...args }: SoundNodeArgs) {
+    public constructor({ sound, range, intensity = 1.0, ...args }: SoundNodeArgs) {
         super({ ...args });
         this.sound = sound;
         this.range = range;
         this.intensity = intensity;
-        this.emitterWidth = emitterWidth;
         this.sound.setLoop(true);
     }
 
@@ -73,14 +64,6 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
             this.invalidate(SceneNodeAspect.RENDERING);
         }
         return this;
-    }
-
-    public set3d(): void {
-        this.sound.setPositionedSound(new Vector2(this.getX(), this.getY()), this.intensity, this.range, this.emitterWidth);
-    }
-
-    public unset3d(): void {
-        this.sound.setStereo();
     }
 
     /**
@@ -138,7 +121,7 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
             horizontalDistance = this.getScenePosition().x - scene.camera.getX();
         }
         const volume = clamp(Math.max(0, this.range - distance) / this.range * this.intensity, 0, 1);
-        if (volume > 0 && !this.sound.is3D()) {
+        if (volume > 0) {
             let soundDirection = horizontalDistance > 0 ? 1 : -1;
             if (Math.abs(distance) < 100) {
                 soundDirection = horizontalDistance / 100;
@@ -146,58 +129,11 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
             this.sound.setVolume(volume, soundDirection);
             if (!this.sound.isPlaying()) {
                 this.sound.play();
+            } else {
+                this.sound.resume();
             }
-        } else if (!this.sound.is3D()) {
-            this.sound.stop();
-        } else if (!this.sound.isPlaying() && this.sound.is3D()) {
-            this.sound.play();
-        } else if (this.isInView()) {
-            this.sound.resume();
         } else {
             this.sound.pause();
         }
-    }
-
-    private isInView(): boolean {
-        const direction = new Vector2().setVector(this.getScenePosition());
-        const scene = this.getScene();
-        if (scene) {
-            direction.x -= scene.camera.getX();
-            direction.y -= scene.camera.getY();
-            return !this.isColliding(new Vector2().setVector(this.getScenePosition()), direction);
-        }
-        return false;
-    }
-
-    @cacheResult
-    private getColliders(): CollisionNode[] {
-        const colliders = this.getScene()?.rootNode.getDescendantsByType(CollisionNode) ?? [];
-        return colliders;
-    }
-
-    private isColliding(startPoint: Vector2, directionVector: Vector2, stepSize = 5): boolean {
-        let isColliding: CollisionNode | null = null;
-        const nextCheckPoint = startPoint;
-        const length = directionVector.getLength();
-        const steps = Math.ceil(length / stepSize);
-        const stepX = directionVector.x / steps, stepY = directionVector.y / steps;
-        const colliders = this.getColliders();
-        for (let i = 0; i <= steps; i++) {
-            isColliding = this.getPointCollision(nextCheckPoint.x, nextCheckPoint.y, colliders);
-            nextCheckPoint.add({ x: stepX, y: stepY });
-            if (isColliding) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private getPointCollision(x: number, y: number, colliders = this.getColliders()): CollisionNode | null {
-        for (const c of colliders) {
-            if (c.containsPoint(x, y)) {
-                return c;
-            }
-        }
-        return null;
     }
 }

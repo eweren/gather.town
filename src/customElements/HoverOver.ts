@@ -18,7 +18,8 @@ export class HoverOver extends HTMLElement {
         button.classList.add("actionButton");
         button.innerText = text;
         button.title = textHover ?? "";
-        button.onclick = () => {
+        button.onclick = (ev) => {
+            ev.stopImmediatePropagation();
             callback(button.innerText === text && toggleText != null);
             if (button.innerText === text && toggleText != null) {
                 button.innerText = toggleText;
@@ -41,7 +42,6 @@ export class HoverOver extends HTMLElement {
         if (!this.isConnected) {
             return;
         }
-        console.log(this.innerHTML);
         const shadowRoot = this.attachShadow({ mode: "open" });
         const style = document.createElement("style");
         this.wrapper.classList.add("actionButtonWrapper");

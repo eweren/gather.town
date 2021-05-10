@@ -1,5 +1,6 @@
-import { HoverOver } from "./customElements/HoverOver";
+import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
+import { sleep } from "./engine/util/time";
 import { Gather } from "./main/Gather";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
 import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
@@ -37,7 +38,6 @@ export default async function (): Promise<JitsiConference | any> {
         let connection: JitsiConnection | null = null;
         let isJoined = false;
         let room: JitsiConference;
-        let userName = "You";
 
         let localTracks: Array<JitsiLocalTrack> = [];
         const remoteTracks: Record<string, Array<JitsiRemoteTrack>> = {};
@@ -48,12 +48,11 @@ export default async function (): Promise<JitsiConference | any> {
          * Handles local tracks.
          * @param tracks Array with JitsiTrack objects
          */
-        function onLocalTracks(tracks: Array<JitsiLocalTrack> | JitsiConferenceErrors) {
+        async function onLocalTracks(tracks: Array<JitsiLocalTrack> | JitsiConferenceErrors) {
             if (!(tracks instanceof Array)) {
                 return;
             }
             localTracks = tracks;
-            console.log(localTracks);
             for (let i = 0; i < localTracks.length; i++) {
                 localTracks[i].addEventListener(
                     JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
@@ -70,9 +69,9 @@ export default async function (): Promise<JitsiConference | any> {
                         console.log(
                             `track audio output device was changed to ${deviceId}`));
                 if (localTracks[i].getType() === "video") {
-                    const localVideo = document.getElementById("localVideo") ?? createLocalVideoElement();
+                    const localVideo = (document.getElementById("localUserVideo") as UserVideoElement ?? await createLocalVideoElement());
                     if (localVideo) {
-                        localTracks[i].attach(localVideo);
+                        localVideo.setTrack(localTracks[i]);
                     }
                     if (isJoined) {
                         if (room.getLocalVideoTrack() != null) {
@@ -106,59 +105,11 @@ export default async function (): Promise<JitsiConference | any> {
             return audioEl;
         }
 
-        function createLocalVideoElement(): HTMLVideoElement {
-            const element = document.createElement("video");
-            const name = document.createElement("span");
-            name.innerText = userName;
-            name.contentEditable = "true";
-            name.classList.add("userName");
-            name.addEventListener("input", function (ev: Event) {
-                ev.stopImmediatePropagation();
-                ev.stopPropagation();
-                if (name.innerText.includes("\n")) {
-                    name.innerText = name.innerText.trim();
-                    name.blur();
-                }
-            }, false);
-            name.addEventListener("blur", function () {
-                if (name.innerText !== "") {
-                    userName = name.innerText;
-                }
-                room.setDisplayName(userName);
-            }, false);
-            const wrapper = document.createElement("div");
-            wrapper.style.position = "relative";
-            const hoverOver = new HoverOver();
-            hoverOver.addButton("🎙️", (val) => {
-                if (val) {
-                    room.getLocalAudioTrack()?.mute();
-                } else {
-                    room.getLocalAudioTrack()?.unmute();
-                }
-            }, "❌", "Mute", "Unmute");
-            hoverOver.addButton("📹", (val) => {
-                if (val) {
-                    room.getLocalVideoTrack()?.mute();
-                } else {
-                    room.getLocalVideoTrack()?.unmute();
-                }
-            }, "❌", "Hide video", "Show video");
-            hoverOver.style.position = "absolute";
-            hoverOver.style.bottom = "2em";
-            hoverOver.style.zIndex = "1008";
-            wrapper.classList.add("userVideo");
-            wrapper.appendChild(element);
-            wrapper.appendChild(hoverOver);
-            wrapper.appendChild(name);
-            element.autoplay = true;
-            element.id = "localVideo";
-            element.style.borderRadius = "500px";
-            element.style.width = "150px";
-            element.style.height = "150px";
-            element.style.objectFit = "cover";
-            element.poster = "https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg";
-            document.getElementById("videos")?.append(wrapper);
-            return element;
+        async function createLocalVideoElement(): Promise<UserVideoElement> {
+            await sleep(1000);
+            const videoElement = new UserVideoElement("You", room);
+            document.getElementById("videos")?.append(videoElement);
+            return videoElement;
         }
 
         function onRemoteTrackRemoved(track: JitsiRemoteTrack) {
@@ -168,12 +119,7 @@ export default async function (): Promise<JitsiConference | any> {
             const participant = track.getParticipantId();
 
             if (track.getType() === "video") {
-                const element = document.getElementById(`${participant}video`);
-                if (element?.parentElement?.classList.contains("userVideo")) {
-                    element.parentElement.remove();
-                } else {
-                    element?.remove();
-                }
+                removeVideoTrackForUser(participant);
             } else {
                 const element = document.getElementById(`${participant}audio`);
                 element?.remove();
@@ -281,7 +227,10 @@ export default async function (): Promise<JitsiConference | any> {
             if (connection == null) {
                 return;
             }
-            room = connection.initJitsiConference(isDev() ?  "mylittleconference" : "gather", confOptions);
+            room = connection.initJitsiConference(isDev() ? "mylittleconference" : "gather", confOptions);
+            room.setReceiverConstraints({
+                defaultConstraints: { maxHeight: 1080 }
+            });
             (window as any)["room"] = room;
             room.on(JitsiConferenceEvents.TRACK_ADDED, onRemoteTrack);
             room.on(JitsiConferenceEvents.TRACK_REMOVED, onRemoteTrackRemoved);
@@ -304,7 +253,6 @@ export default async function (): Promise<JitsiConference | any> {
                 } else if (track.isVideoTrack()) {
                     resumeVideoTrackForUser(track);
                 }
-                console.log(`${track.getType()} - ${track.isMuted()}`);
             });
             room.on(
                 JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
@@ -346,30 +294,17 @@ export default async function (): Promise<JitsiConference | any> {
             player?.say(text, 5);
         }
 
-        function createVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): HTMLDivElement {
+        function createVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): UserVideoElement {
             const nameOfParticipant = room.getParticipantById(track.getParticipantId())?.getDisplayName() ?? "anonymous";
-            const element = document.createElement("video");
-            const name = document.createElement("span");
-            name.classList.add("userName");
-            name.innerText = nameOfParticipant;
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("userVideo");
-            wrapper.appendChild(element);
-            wrapper.appendChild(name);
-            element.autoplay = true;
-            element.id = `${track.getParticipantId()}video`;
-            element.style.borderRadius = "500px";
-            element.style.width = "150px";
-            element.style.height = "150px";
-            element.style.objectFit = "cover";
-            element.poster = "https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg";
-            track.attach(element);
-            return wrapper;
+            const videoElement = new UserVideoElement(nameOfParticipant, undefined, track.getParticipantId());
+            videoElement.id = `${track.getParticipantId()}video`;
+            videoElement.setTrack(track);
+            return videoElement;
         }
 
         function removeVideoTrackForUser(userID: string): void {
-            const vidEl = document.getElementById(`${userID}video`) as HTMLVideoElement;
-            vidEl?.parentElement?.remove();
+            const vidEl = document.getElementById(`${userID}video`) as UserVideoElement;
+            vidEl?.remove();
         }
 
         function pauseVideoTrackForUser(userID: string): void {
@@ -386,20 +321,20 @@ export default async function (): Promise<JitsiConference | any> {
             wrapper.appendChild(name);
             const imEl = document.createElement("img");
             imEl.src = "https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg";
-            imEl.id = `${userID}placeholder`;
+            wrapper.id = `${userID}placeholder`;
             imEl.style.borderRadius = "500px";
             imEl.style.width = "150px";
             imEl.style.height = "150px";
             imEl.style.objectFit = "cover";
             wrapper.appendChild(imEl);
             wrapper.appendChild(name);
-            vidEl.parentElement?.replaceWith(wrapper);
+            vidEl?.replaceWith(wrapper);
             vidEl.srcObject = null;
         }
 
         function resumeVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): void {
             const newWrapper = createVideoTrackForUser(track);
-            document.getElementById(`${track.getParticipantId()}placeholder`)?.parentElement?.replaceWith(newWrapper);
+            document.getElementById(`${track.getParticipantId()}placeholder`)?.replaceWith(newWrapper);
         }
 
         /**
@@ -454,7 +389,7 @@ export default async function (): Promise<JitsiConference | any> {
             })
                 .then(tracks => {
                     if (tracks instanceof Array) {
-                        const element = document.getElementById("localVideo");
+                        const element = document.getElementById("localUserVideo") as UserVideoElement;
                         localTracks.push(tracks[0]);
                         localTracks[1].addEventListener(
                             JitsiTrackEvents.TRACK_MUTE_CHANGED,
@@ -468,7 +403,7 @@ export default async function (): Promise<JitsiConference | any> {
                                 if (previousTrack) {
                                     localTracks.push(previousTrack);
                                     if (element) {
-                                        previousTrack?.attach(element);
+                                        element.setTrack(previousTrack);
                                     }
                                     if (room.getLocalVideoTrack()) {
                                         room.replaceTrack(room.getLocalVideoTrack()!, previousTrack);
@@ -478,7 +413,7 @@ export default async function (): Promise<JitsiConference | any> {
                                 }
                             });
                         if (element != null) {
-                            localTracks[1].attach(element);
+                            element.setTrack(localTracks[1]);
                         }
 
                         if (previousTrack) {

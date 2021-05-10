@@ -10,6 +10,8 @@
 
 [X] **add option for user to mute/un-mute and show/hide video**
 
+[X] **let users maximize videos of other users**
+
 [ ] _optimize layout of joined members_
 
 [ ] distance based video chat
@@ -36,7 +38,7 @@
 
 [ ] map-making
 
-[ ] volume per user
+[X] mute other users
 
 [ ] _let moderator of room sync bots_
 
