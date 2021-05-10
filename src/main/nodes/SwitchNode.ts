@@ -36,13 +36,13 @@ export class SwitchNode extends InteractiveNode {
             anchor: Direction.CENTER,
             tag: "off",
             ...args
-        }, "PRESS E TO PULL LEVER");
+        }, "PRESS E TO START MIRO");
         this.onlyOnce = onlyOnce;
         this.onUpdate = onUpdate;
     }
 
     public update(dt: number, time: number): void {
-        this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO PULL LEVER`;
+        this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO START MIRO`;
         super.update(dt, time);
     }
 
@@ -57,6 +57,38 @@ export class SwitchNode extends InteractiveNode {
     public interact(): void {
         if (this.canInteract()) {
             const newState = !this.turnedOn;
+            if (newState) {
+                const miroBoard = document.createElement("iframe");
+                miroBoard.src = "https://miro.com/app/live-embed/o9J_lGBRCiU=/?moveToViewport=-717,-438,1433,876";
+                miroBoard.frameBorder = "0";
+                miroBoard.scrolling = "no";
+                miroBoard.allowFullscreen = true;
+                miroBoard.height = this.getGame().canvas.height * this.getGame().canvasScale + "";
+                miroBoard.width = this.getGame().canvas.width * this.getGame().canvasScale + "";
+                miroBoard.style.position = "absolute";
+                miroBoard.style.zIndex = "4000";
+                miroBoard.style.left = `calc(50% - ${miroBoard.width}px / 2)`;
+                miroBoard.style.top = `calc(50% - ${miroBoard.height}px / 2)`;
+                const videos = document.getElementById("videos");
+                if (videos) {
+                    videos.style.zIndex = "4001";
+                }
+                const backdrop = document.createElement("div");
+                backdrop.classList.add("backdrop");
+                backdrop.addEventListener("click", (ev) => {e
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    backdrop.remove();
+                    miroBoard.remove();
+                    this.turnedOn = !this.turnedOn;
+
+                    if (videos) {
+                        videos.style.zIndex = "1000";
+                    }
+                });
+                document.body.append(backdrop);
+                document.body.append(miroBoard);
+            }
             if (!this.onUpdate || this.onUpdate(newState) !== false) {
                 SwitchNode.clickSound.stop();
                 SwitchNode.clickSound.play();
@@ -78,16 +110,5 @@ export class SwitchNode extends InteractiveNode {
     public getTurnedOn(): boolean {
         return this.turnedOn;
     }
-
-    // public draw(context: CanvasRenderingContext2D): void {
-    //     // Render switch
-    //     const offY = 0;
-    //     context.fillStyle = "#666";
-    //     context.fillRect(-4, offY - 4, 8, 8);
-    //     context.fillStyle = this.turnedOn ? "#ff0000" : "#603030";
-    //     context.fillRect(-3, offY - 3, 6, 6);
-
-    //     super.draw(context);
-    // }
 
 }
