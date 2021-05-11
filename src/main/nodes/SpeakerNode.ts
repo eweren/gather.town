@@ -82,7 +82,7 @@ export class SpeakerNode extends InteractiveNode {
             this.sound = SpeakerNode.sounds[this.soundIndex].shallowClone();
             if (this.sound != null) {
                 this.soundNode?.remove();
-                this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity });
+                this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity, pauses: false });
                 this.appendChild(this.soundNode);
             }
         }

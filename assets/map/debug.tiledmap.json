@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt1CEOgDAURMGmSAwX4BzYHp2bAQ7bBLEkfyapaGr2mbb2unobzzln7wAAAHt6AAAAAExal2\/vlWw9vSDr0F+a\/vSCLP3pBVn60wuyqvcDdVX\/\/\/SnF2TpTy\/I0p9ekFW9HwAAgP+7AUQLDRs=",
+         "data":"eJzt1CEOgDAQRNFNkRhug+Xo3AxwWBLEQPa9pKKpmW9adTtGbdfZn94BAAAAAADgL+bp3Xsny0gvyFr1t6Y\/vSBLf3pBlv70gqzu\/UBf3f8\/\/ekFWfrTC7L0pxdkde8HAADg+05pNQz+",
          "encoding":"base64",
          "height":64,
          "id":8,
@@ -699,29 +699,6 @@
                  "width":0,
                  "x":112.060733521938,
                  "y":176.860384511728
-                }, 
-                {
-                 "height":0,
-                 "id":461,
-                 "name":"Surf",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"range",
-                         "type":"float",
-                         "value":450
-                        }, 
-                        {
-                         "name":"sound",
-                         "type":"string",
-                         "value":"surf"
-                        }],
-                 "rotation":0,
-                 "type":"sound",
-                 "visible":true,
-                 "width":0,
-                 "x":688.898400246301,
-                 "y":399.376202516883
                 }, 
                 {
                  "height":0,

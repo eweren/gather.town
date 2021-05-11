@@ -16,6 +16,9 @@ export interface SoundNodeArgs extends SceneNodeArgs {
 
     /** The sound intensity between 0.0 and 1.0. Defaults to 1.0. */
     intensity?: number;
+
+    /** Whether the sound should pause when to far away. */
+    pauses?: boolean;
 }
 
 /**
@@ -33,13 +36,16 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
     /** The sound intensity. */
     private intensity: number;
 
+    private pauses: boolean;
+
     /**
      * Creates a new scene node displaying the given Aseprite.
      */
-    public constructor({ sound, range, intensity = 1.0, ...args }: SoundNodeArgs) {
+    public constructor({ sound, range, intensity = 1.0, pauses = true, ...args }: SoundNodeArgs) {
         super({ ...args });
         this.sound = sound;
         this.range = range;
+        this.pauses = pauses;
         this.intensity = intensity;
         this.sound.setLoop(true);
     }
@@ -115,24 +121,23 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
         super.update(dt, time);
         let distance = 0;
         let horizontalDistance = 0;
+        let verticalDistance = 0;
         const scene = this.getScene();
         if (scene) {
             distance = this.getScenePosition().getDistance(new Vector2(scene.camera.getX(), scene.camera.getY()));
             horizontalDistance = this.getScenePosition().x - scene.camera.getX();
+            verticalDistance = Math.abs(this.getScenePosition().y - scene.camera.getY());
         }
         const volume = clamp(Math.max(0, this.range - distance) / this.range * this.intensity, 0, 1);
         if (volume > 0) {
-            let soundDirection = horizontalDistance > 0 ? 1 : -1;
-            if (Math.abs(distance) < 100) {
-                soundDirection = horizontalDistance / 100;
-            }
+            const soundDirection = clamp(horizontalDistance / verticalDistance, -1, 1);
             this.sound.setVolume(volume, soundDirection);
             if (!this.sound.isPlaying()) {
                 this.sound.play();
             } else {
                 this.sound.resume();
             }
-        } else {
+        } else if (this.pauses) {
             this.sound.pause();
         }
     }
