@@ -23,8 +23,8 @@ export class SpeakerNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
 
-    @asset(soundAssets)
-    private static sounds: Sound[];
+    @asset("sounds/ambient/surf.ogg")
+    private static sounds: Sound;
 
     private sound?: Sound;
     private soundNode?: SoundNode<Gather>;
@@ -60,7 +60,7 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public interact(): void {
-        this.sound = SpeakerNode.sounds[0].shallowClone();
+        this.sound = SpeakerNode.sounds.shallowClone();
         if (this.sound != null) {
             this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity });
             this.appendChild(this.soundNode);
