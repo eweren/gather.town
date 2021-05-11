@@ -10,8 +10,9 @@ import { Gather } from "../Gather";
 import { InteractiveNode } from "./InteractiveNode";
 
 export const soundAssets = [
-    "music/surf.ogg"
-
+    "music/surf.ogg",
+    "music/fun.ogg",
+    "music/norf_norf.ogg"
 ];
 export const soundMapping: {[index: string]: number} = {
     "surf": 0
@@ -32,6 +33,7 @@ export class SpeakerNode extends InteractiveNode {
     private range: number;
     private intensity: number;
     private soundbox: number;
+    private soundIndex = -1;
 
     public constructor(args?: TiledSceneArgs) {
         super({
@@ -60,10 +62,21 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public interact(): void {
-        this.sound = SpeakerNode.sounds[0].shallowClone();
-        if (this.sound != null) {
-            this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity });
-            this.appendChild(this.soundNode);
+        this.soundIndex++;
+        if (this.soundIndex === SpeakerNode.sounds.length) {
+            this.soundIndex = -1;
+            this.soundNode?.remove();
+            this.soundNode = undefined;
+            this.sound?.stop();
+            this.sound = undefined;
+        } else {
+            this.sound?.stop();
+            this.sound = SpeakerNode.sounds[this.soundIndex].shallowClone();
+            if (this.sound != null) {
+                this.soundNode?.remove();
+                this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity });
+                this.appendChild(this.soundNode);
+            }
         }
     }
 }
