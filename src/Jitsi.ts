@@ -2,6 +2,7 @@ import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
 import { sleep } from "./engine/util/time";
 import { Gather } from "./main/Gather";
+import { SpeakerNode } from "./main/nodes/SpeakerNode";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
 import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
 import { JitsiConferenceEvents } from "./typings/Jitsi/JitsiConferenceEvents";
@@ -273,6 +274,17 @@ export default async function (): Promise<JitsiConference | any> {
                 const parsedObj = JSON.parse(values.value);
                 if (parsedObj.id !== room.myUserId()) {
                     Gather.instance.handleOtherPlayerPresentationUpdate(parsedObj);
+                }
+            });
+            room.addCommandListener("speakerUpdate", (values: any) => {
+                const parsedObj = JSON.parse(values.value);
+                if (parsedObj.id !== room.myUserId()) {
+                    const speakersToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType(SpeakerNode)
+                        .filter(n => n.getSoundbox() === parsedObj.soundBox);
+                    console.log(speakersToUpdate);
+                    speakersToUpdate.forEach(s => {
+                        s.handleNewSoundIndex(parsedObj.soundIndex ?? -1);
+                    });
                 }
             });
             room.on(

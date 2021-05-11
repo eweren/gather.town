@@ -42,7 +42,7 @@ export class SpeakerNode extends InteractiveNode {
             tag: "off",
             ...args
         }, "PRESS E TO START MUSIC");
-        this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 300.0;
+        this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 800.0;
         this.intensity = args?.tiledObject?.getOptionalProperty("intensity", "float")?.getValue() ?? 1;
         this.soundbox = args?.tiledObject?.getOptionalProperty("soundbox", "int")?.getValue() ?? -1;
     }
@@ -62,7 +62,15 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public interact(): void {
-        this.soundIndex++;
+        this.handleNewSoundIndex(this.soundIndex + 1);
+        this.getGame().sendCommand("speakerUpdate", {soundIndex: this.soundIndex, soundBox: this.soundbox});
+    }
+
+    public handleNewSoundIndex(soundIndex: number): void {
+        if (this.soundIndex === soundIndex) {
+            return;
+        }
+        this.soundIndex = soundIndex;
         if (this.soundIndex === SpeakerNode.sounds.length) {
             this.soundIndex = -1;
             this.soundNode?.remove();
@@ -78,5 +86,6 @@ export class SpeakerNode extends InteractiveNode {
                 this.appendChild(this.soundNode);
             }
         }
+
     }
 }
