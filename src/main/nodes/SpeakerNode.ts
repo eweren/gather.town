@@ -42,6 +42,7 @@ export class SpeakerNode extends InteractiveNode {
         this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 300.0;
         this.intensity = args?.tiledObject?.getOptionalProperty("intensity", "float")?.getValue() ?? 1;
         this.soundbox = args?.tiledObject?.getOptionalProperty("soundbox", "int")?.getValue() ?? -1;
+        console.log(SpeakerNode.sounds);
     }
 
     public update(dt: number, time: number): void {
