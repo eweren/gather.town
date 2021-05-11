@@ -177,20 +177,20 @@ export class UserVideoElement extends HTMLElement {
         this.videoElement.style.transformOrigin = "center";
         this.videoElement.style.objectFit = "contain";
         if (videoWidth > videoHeight) {
-            const newPlacement = -(xCenter * width - width / 2);
+            const newPlacement = -(xCenter * 250 - 125);
             if (Math.abs(newPlacement - this.oldPlacement) > 5) {
-                this.videoElement.style.transform = `translateX(${-(xCenter * width - width / 2)}px)`;
+                this.videoElement.style.transform = `translateX(${-(xCenter * 250 - 125)}px)`;
             }
-            this.videoElement.style.height = "150px";
-            this.videoElement.style.minWidth = "150px";
+            this.videoElement.style.height = "250px";
+            this.videoElement.style.minWidth = "250px";
             this.videoElement.style.width = "auto";
         } else {
-            const newPlacement = -(yCenter * height - height / 2);
+            const newPlacement = -(yCenter * 250 - 125);
             if (Math.abs(newPlacement - this.oldPlacement) > 5) {
-                this.videoElement.style.transform = `translateY(${-(yCenter * height - height / 2)}px)`;
+                this.videoElement.style.transform = `translateY(${-(yCenter * 250 - 125)}px)`;
             }
-            this.videoElement.style.minHeight = "150px";
-            this.videoElement.style.width = "150px";
+            this.videoElement.style.minHeight = "250px";
+            this.videoElement.style.width = "250px";
             this.videoElement.style.height = "auto";
         }
     }
