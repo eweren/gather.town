@@ -10,8 +10,10 @@ export class UserVideoElement extends HTMLElement {
     private readonly nameSpan = document.createElement("span");
     private readonly videoElement = document.createElement("video");
     private readonly wrapperElement = document.createElement("div");
+    private readonly videoWrapperElement = document.createElement("div");
     private readonly hoverOver = new HoverOver();
     private track?: JitsiLocalTrack | JitsiRemoteTrack;
+    private oldPlacement = 0;
 
     public constructor(private userName: string, private readonly room?: JitsiConference, private readonly participantId?: string) {
         super();
@@ -27,6 +29,10 @@ export class UserVideoElement extends HTMLElement {
         }
         this.videoElement.poster = "https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg";
         this.videoElement.classList.add("smallVideo");
+        this.videoElement.style.height = "150px";
+        this.videoElement.style.width = "150px";
+        this.videoWrapperElement.classList.add("videoWrapper");
+        this.videoWrapperElement.appendChild(this.videoElement);
     }
 
     private initNameSpanElement(): void {
@@ -60,7 +66,7 @@ export class UserVideoElement extends HTMLElement {
         }
 
         this.wrapperElement.classList.add("userVideo");
-        this.wrapperElement.appendChild(this.videoElement);
+        this.wrapperElement.appendChild(this.videoWrapperElement);
         this.wrapperElement.appendChild(this.nameSpan);
         this.wrapperElement.addEventListener("click", this.handleWrapperClick.bind(this));
         this.wrapperElement.addEventListener("contextmenu", this.handleWrapperContext.bind(this));
@@ -158,6 +164,31 @@ export class UserVideoElement extends HTMLElement {
         return this.style.display === "none";
     }
 
+    public resetPlacement(): void {
+        // this.videoElement.style.transform = "";
+        //this.videoElement.style.objectFit = "cover";
+    }
+
+    public updatePlacement(xCenter: number, yCenter: number): void {
+        const width = this.videoElement.offsetWidth;
+        const height = this.videoElement.offsetHeight;
+        const videoWidth = this.videoElement.videoWidth;
+        const videoHeight = this.videoElement.videoHeight;
+        this.videoElement.style.transformOrigin = "center";
+        this.videoElement.style.objectFit = "contain";
+        if (videoWidth > videoHeight) {
+            const newPlacement = -(xCenter * width - width / 2);
+            if (Math.abs(newPlacement - this.oldPlacement) > 5) {
+                this.videoElement.style.transform = `translateX(${-(xCenter * width - width / 2)}px) scale(2)`;
+            }
+        } else {
+            const newPlacement = -(yCenter * height - height / 2);
+            if (Math.abs(newPlacement - this.oldPlacement) > 5) {
+                this.videoElement.style.transform = `translateY(${-(yCenter * height - height / 2)}px) scale(2)`;
+            }
+        }
+    }
+
     public remove(): void {
         this.minimize();
         super.remove();
@@ -190,10 +221,14 @@ export class UserVideoElement extends HTMLElement {
             span {
                 color: white;
             }
-            .smallVideo {
+            .videoWrapper {
                 border-radius: 500px;
                 width: 150px;
                 height: 150px;
+                overflow: hidden;
+            }
+            .smallVideo {
+                transition: transform 0.2s;
                 object-fit: cover;
             }
         `;

@@ -1,3 +1,4 @@
+import * as faceapi from "face-api.js";
 import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
 import { sleep } from "./engine/util/time";
@@ -16,7 +17,9 @@ import JitsiLocalTrack from "./typings/Jitsi/modules/RTC/JitsiLocalTrack";
 import JitsiRemoteTrack from "./typings/Jitsi/modules/RTC/JitsiRemoteTrack";
 
 export default async function (): Promise<JitsiConference | any> {
+    await faceapi.loadTinyFaceDetectorModel("/assets/models");
     return new Promise((resolve, reject) => {
+
 
         // Get the jitsi object from window (:D)
         const JitsiMeetJS = (window as any)["JitsiMeetJS"] as JitsiMeetJSType;
@@ -73,6 +76,15 @@ export default async function (): Promise<JitsiConference | any> {
                     const localVideo = (document.getElementById("localUserVideo") as UserVideoElement ?? await createLocalVideoElement());
                     if (localVideo) {
                         localVideo.setTrack(localTracks[i]);
+                        setInterval(async () => {
+                            if (!localVideo.isExpanded()) {
+                                const detections = await faceapi.detectSingleFace(localVideo.getVideoElement(), new faceapi.TinyFaceDetectorOptions());
+                                if (detections) {
+                                    const { left, top, right, bottom } = detections.relativeBox;
+                                    localVideo.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2);
+                                }
+                            }
+                        }, 250);
                     }
                     if (isJoined) {
                         if (room.getLocalVideoTrack() != null) {
@@ -82,7 +94,7 @@ export default async function (): Promise<JitsiConference | any> {
                         }
                     }
                 } else {
-                    const localAudio = document.getElementById("localAudi") ?? createLocalAudio();
+                    const localAudio = document.getElementById("localAudio") ?? createLocalAudio();
                     if (localAudio) {
                         localTracks[i].attach(localAudio);
                     }
@@ -308,6 +320,16 @@ export default async function (): Promise<JitsiConference | any> {
         function createVideoTrackForUser(track: JitsiRemoteTrack | JitsiLocalTrack): UserVideoElement {
             const nameOfParticipant = room.getParticipantById(track.getParticipantId())?.getDisplayName() ?? "anonymous";
             const videoElement = new UserVideoElement(nameOfParticipant, undefined, track.getParticipantId());
+
+            setInterval(async () => {
+                if (!videoElement.isExpanded()) {
+                    const detections = await faceapi.detectSingleFace(videoElement.getVideoElement(), new faceapi.TinyFaceDetectorOptions());
+                    if (detections) {
+                        const { left, top, right, bottom } = detections.relativeBox;
+                        videoElement.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2);
+                    }
+                }
+            }, 250);
             videoElement.id = `${track.getParticipantId()}video`;
             videoElement.setTrack(track);
             return videoElement;
