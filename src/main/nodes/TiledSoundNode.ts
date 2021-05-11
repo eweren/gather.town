@@ -5,7 +5,7 @@ import { TiledSceneArgs } from "../../engine/scene/TiledMapNode";
 import { Gather } from "../Gather";
 
 const soundAssets = [
-    "sounds/ambient/surf.ogg"
+    "music/surf.ogg"
 ];
 const soundMapping: {[index: string]: number} = {
     "surf": 0

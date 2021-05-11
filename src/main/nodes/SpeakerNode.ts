@@ -10,7 +10,8 @@ import { Gather } from "../Gather";
 import { InteractiveNode } from "./InteractiveNode";
 
 export const soundAssets = [
-    "sounds/ambient/surf.ogg"
+    "music/surf.ogg"
+
 ];
 export const soundMapping: {[index: string]: number} = {
     "surf": 0
@@ -23,8 +24,8 @@ export class SpeakerNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
 
-    @asset("sounds/ambient/surf.ogg")
-    private static sounds: Sound;
+    @asset(soundAssets)
+    private static sounds: Sound[];
 
     private sound?: Sound;
     private soundNode?: SoundNode<Gather>;
@@ -42,7 +43,6 @@ export class SpeakerNode extends InteractiveNode {
         this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 300.0;
         this.intensity = args?.tiledObject?.getOptionalProperty("intensity", "float")?.getValue() ?? 1;
         this.soundbox = args?.tiledObject?.getOptionalProperty("soundbox", "int")?.getValue() ?? -1;
-        console.log(SpeakerNode.sounds);
     }
 
     public update(dt: number, time: number): void {
@@ -60,7 +60,7 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public interact(): void {
-        this.sound = SpeakerNode.sounds.shallowClone();
+        this.sound = SpeakerNode.sounds[0].shallowClone();
         if (this.sound != null) {
             this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity });
             this.appendChild(this.soundNode);
