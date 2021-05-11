@@ -21,6 +21,8 @@ import { SwitchNode } from "../nodes/SwitchNode";
 import { NpcNode } from "../nodes/NpcNode";
 import { PresentationBoardNode } from "../nodes/PresentationBoardNode";
 import { PresentationNode } from "../nodes/PresentationNode";
+import { MiroNode } from "../nodes/MiroNode";
+import { SpeakerNode } from "../nodes/SpeakerNode";
 
 export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
@@ -42,7 +44,9 @@ export class GameScene extends Scene<Gather> {
         "focus": FocusNode,
         "npc": NpcNode,
         "presentationBoard": PresentationBoardNode,
-        "presentation": PresentationNode
+        "presentation": PresentationNode,
+        "miro": MiroNode,
+        "speaker": SpeakerNode
     }});
 
     public setup() {

@@ -32,7 +32,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztmU1uwkAMhSeBfRGV+neLrip6m6Juuu4FeoGuUK7RC6Bco3tW5Rg4UhHGmmB1xDymmvckyxnjyfOnkM1k04Swkuh+80qtO7O29W6kz\/bo+o9ESbpqw8daZuol1ip6U+sj9X6kz\/bo+qzNw\/E6Sdv3mGmeMT2RP4vIn7aP\/OedwxP589yX\/Gn7yH\/eOTyRP899a+dP0eekbv5BaP7SRP5LT3BZ8f3H+pEf6+eJ\/Fg\/8mP9PJEf6zfwv0\/LCT5\/rF9p\/JsmhIXM9Nwe8iC9jmV9vW2Oa3vZviGX+P3rReZaSuzzjVnHsr6emdqdxH2kb9nm+\/6Vqtr\/\/+TH+tXOfy3xNsV6nhKafx7q5i9NfP+xfuTH+nkiP9aP\/Fg\/T+TH+pEf6+eJ\/Fg\/8mP9PJEf60d+rJ+nv55\/W8XOxPVv\/\/H8+9R5963ie3D2xDLPv7F+nsiP9SM\/1s8T+bF+5Mf6eSI\/1o\/8WL\/S9FU5\/3dh\/DvFRnZf",
+         "data":"eJztmU1Ow0AMhSdp91RF4u8WrFB7Gyo2rLkAF2BV5RpcoMo12BeQ2mPUkagw1iQWUfI6MO9JljuuZ54\/tdlMtkUIa4nqK6\/VujJrW69a+myPru8kUtJZGZ43MlMtsVFRm1odqdctfbZH12flOBwPk377bgee513O+5D4bDn37p\/zeyL\/OOeSv98+8g87hyfyj3Mu+fvtI\/+wc3giP9avSy+TvPkboflTE\/lPPcFpxecf60d+rJ8n8mP9yI\/180R+rF\/D\/zRNJ\/j7Y\/1S498WISxkpmX5nRvpdSzrz\/viZ+0o29fkFN9\/3ctcK4ljvjDrWNafZ6Z2JXEd6VuV473\/6qvc\/\/\/kx\/rlzn8u8TjFenYJzT8PefOnJj7\/WD\/yY\/08kR\/rR36snyfyY\/3Ij\/XzRH6sH\/mxfp7Ij\/UjP9bP02\/vv61id+L6u794\/911332p+G6cPbHM+2+snyfyY\/3Ij\/XzRH6sH\/mxfp7Ij\/UjP9YvNb1mzv+WGP8BT4Z5Dg==",
          "encoding":"base64",
          "height":64,
          "id":3,
@@ -52,7 +52,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt2dEKgCAMAEAhrD6+\/rn3iKIi3PIOfJcxxzZLAYB2xtr6BkRX5QhwYBlKWW8e4prUeqAjT2rek7lJH00v7BWAvVldgPC8U3gn87ynf\/+3zLkJxOLfCCAn\/f458QGu2JsC5GQvCsCXNucOCA8=",
+         "data":"eJzt2VEKgCAQBcCFsDpP56w79x9RZISaM+C\/iC67zwgAKGdMpXdA7ZI7ApxYh4jt4aJek1oPdCSn5uXMTfpoeiFXAI5mdYEHFnlBEd4pvNPyvKd\/\/7eW7yZQF\/9GAG3S719zPsAduSlAm+SiAHxpBx47CEQ=",
          "encoding":"base64",
          "height":64,
          "id":5,
@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt1LENg0AQRcETFdCA6yB16XQGzkgdWHqWdkba4LL\/klvrcW3r\/bnz2zcAAMCrHgAAAAD83L7VC1qH\/tH01wta+usFLf31gtb0fmCu6f+f\/npBS3+9oKW\/XtCa3g8AAMD\/uwE8NQz\/",
+         "data":"eJzt1CEOgDAURMGmSAwX4BzYHp2bAQ7bBLEkfyapaGr2mbb2unobzzln7wAAAHt6AAAAAExal2\/vlWw9vSDr0F+a\/vSCLP3pBVn60wuyqvcDdVX\/\/\/SnF2TpTy\/I0p9ekFW9HwAAgP+7AUQLDRs=",
          "encoding":"base64",
          "height":64,
          "id":8,
@@ -98,8 +98,8 @@
                  "type":"player",
                  "visible":true,
                  "width":0,
-                 "x":115.743375199181,
-                 "y":157.581489766615
+                 "x":103.132973865172,
+                 "y":765.695481647862
                 }, 
                 {
                  "height":0,
@@ -667,14 +667,20 @@
                 {
                  "height":0,
                  "id":454,
-                 "name":"PowerSwitch",
+                 "name":"Miro",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"url",
+                         "type":"string",
+                         "value":"https:\/\/miro.com\/app\/live-embed\/o9J_lGBRCiU=\/?moveToViewport=-717,-438,1433,876"
+                        }],
                  "rotation":0,
-                 "type":"powerswitch",
+                 "type":"miro",
                  "visible":true,
                  "width":0,
-                 "x":453.422526713878,
-                 "y":44.5745337922029
+                 "x":656.549606444882,
+                 "y":88.8782623387368
                 }, 
                 {
                  "height":0,
@@ -716,6 +722,60 @@
                  "width":0,
                  "x":688.898400246301,
                  "y":399.376202516883
+                }, 
+                {
+                 "height":0,
+                 "id":463,
+                 "name":"Miro",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"url",
+                         "type":"string",
+                         "value":"https:\/\/miro.com\/app\/live-embed\/o9J_lGBRCiU=\/?moveToViewport=-717,-438,1433,876"
+                        }],
+                 "rotation":0,
+                 "type":"miro",
+                 "visible":true,
+                 "width":0,
+                 "x":688.59321758933,
+                 "y":88.9846864259455
+                }, 
+                {
+                 "height":0,
+                 "id":464,
+                 "name":"Miro",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"url",
+                         "type":"string",
+                         "value":"https:\/\/miro.com\/app\/live-embed\/o9J_lGBRCiU=\/?moveToViewport=-717,-438,1433,876"
+                        }],
+                 "rotation":0,
+                 "type":"miro",
+                 "visible":true,
+                 "width":0,
+                 "x":720.723344603739,
+                 "y":88.9846864259455
+                }, 
+                {
+                 "height":0,
+                 "id":467,
+                 "name":"Soundbox",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"soundbox",
+                         "type":"int",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"speaker",
+                 "visible":true,
+                 "width":0,
+                 "x":336.190688633249,
+                 "y":940.377935693573
                 }],
          "opacity":1,
          "properties":[
@@ -1787,6 +1847,40 @@
                  "width":21.7628014856082,
                  "x":101.191689339744,
                  "y":177.297425391877
+                }, 
+                {
+                 "height":31.4973513617185,
+                 "id":465,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":95.3131742232451,
+                 "x":639.675595473725,
+                 "y":34.8362878787879
+                }, 
+                {
+                 "height":22.0811205574914,
+                 "id":466,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":30.8608061450744,
+                 "x":320.760040653513,
+                 "y":906.646256574948
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1912,7 +2006,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztm00vA0EYx2d7qPYgONDECRd8AW9JSajihE9AJTh4ueKk38FL4rN4SRxwxMU3aKoHLW5O\/CU7sR07dna7dmd25pc8edqp3e5vnzH7mETVImUSIVWLkHvkh5DjMUoJCfmI+wJixvjrTRj+hyGcIy5M\/fUmDP8FO0\/becbOc3Yu2LkYwneFjal\/a7A1LzLj7ByQDd3rP4C+us9nsD0zrTGdA\/N2pnNhlvlcdXSfM05\/WlP6+05rXuB8ngRM\/ZuZYTKtPV0HFpgchJFUCweHjKm\/3hh\/vTH+emP89cb46823f80i5XH0pBMImutW83u37Hz9bP2MNfD6FfGGeLd+H4vvk4b\/qH\/O0d\/3uvT6nab\/lwbjrzfGXz2qaTxvELV06+eKw7\/V\/Z+ONjxDEF1tzeOf3+8zhFgZ8XOpWP9ReI4hxhn\/QXgPIYYT7r8C71VEifFfhPcSYjnh\/jz24L2POEiIP2+dO\/Ph54XM\/rx17lrQfwv3bdvjGSGzP2+dqwn6H8H9WGF\/3jpHeYFbHdHgOJ5j\/EJhfy+6cV96EDnO\/RFBZf88vCcRUwnx97uur8N7A7Hp4r+Deb8r0B\/L5M+u60H6WcoJ3E8V82fX9SD9LOUS7leK+bP46WeD9kQy+\/vpZ0V7IhaZ\/f0g2hOx8Pa\/\/8pu+9vtLnvibvvkOux\/q4Tx1xvjrzfGPz5u8My+Rdxloh1zEqf\/C66pjmhkoh1zEqd\/d5aQHkQuG+2Ykzj987imScRUNtoxJ2b9I6SC\/l+k9xf9+8DrmIpk\/X8J17SW8s4iPyNyzFPqf\/7\/PUj0oxZfo7LwXQ==",
+         "data":"eJztm8suBEEUhqtbwoxEsGASK2zwAm4JEncrPIFLgoXLFiuewS3xKgaJBZbYeAMZszCDnRX\/RFf0lC5T1dO6q7vqT\/6cmeqe7v761Jw+UyFnkX0SoA5sQg7hI9t7e84i5A7xPmA\/BAlRhc7AnYXPOfz\/pY9wT6ecDL\/eCoJ\/L4BjRCWTf70VBP+ME0edOObEKSeOO3EygHMFLZP\/6sTmfJIZZ+eAatI9\/53oq9slzfbMNMd0Dkw7kc6FCWZ73KX7nHHz05zS7zvN+ThnexJk8l+uMSbS3NM6MMNEP+oN+XfxXzL511uGX28Zfr1l+PWW4ddbJf68RfYH0JMOwjQWrPL3vEhfP1vfseQiXr\/Cb\/C79fszOJ8yksl\/fY3YfhlXf9\/m0es3mf5fGRl+vWX446dcLZ43cL62+mNFwV\/t+k9jHZ4hcHNd+fhn6X2KECslfqw45r8PnP3wAMPfBe5uuCfh\/AvgXoSXGP5ZcM\/B8wnn52kb3DvwbkL4eXXuVIKvklTm59W5K0H+ddy3jQrPCJX5eXUuL8h\/CPajGPPz6hzVC9gKcJHDmMX4eYz5K6kF96UVznDuj4jizD8E7mF4JCH8snV9Bdyr8JoH\/ybm\/ZZAf6wSP1vX\/fSzVMdgP4kZP1vX\/fSzVBdgv4wZPyuZftZvT6Qyv0w\/K9oTsVKZX0aiPREr3vr3X9FrfbvB\/ln\/ZvdPyvp3EmX49Zbh11uGPzpd45l9A9+mwh1zK0r+F1xTAS6mwh1zK0r+ljQhrXAmHe6YW1HyD+GahuGRdLhjbpn6R8gT+n+Zv3WRiV5jT4r1\/0u4pmW7chTZR+Qzj\/b\/\/P+7H3cgF1+lX\/Rh",
          "encoding":"base64",
          "height":64,
          "id":1,
@@ -1930,8 +2024,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":11,
- "nextobjectid":462,
+ "nextlayerid":12,
+ "nextobjectid":470,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
