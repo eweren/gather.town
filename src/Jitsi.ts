@@ -281,7 +281,6 @@ export default async function (): Promise<JitsiConference | any> {
                 if (parsedObj.id !== room.myUserId()) {
                     const speakersToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType(SpeakerNode)
                         .filter(n => n.getSoundbox() === parsedObj.soundBox);
-                    console.log(speakersToUpdate);
                     speakersToUpdate.forEach(s => {
                         s.handleNewSoundIndex(parsedObj.soundIndex ?? -1);
                     });
