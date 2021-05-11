@@ -1,4 +1,4 @@
-# TODOS
+# TODO
 
 [X] fix tilemap not getting rendered correctly
 
@@ -17,6 +17,8 @@
 [ ] distance based video chat
 
 [ ] add interactive objects
+
+[X] add iframe objects
 
 [X] optimize presentation
 
@@ -37,6 +39,8 @@
 [X] implement collaborative whiteboard thing of jitsi or miro
 
 [ ] map-making
+
+[ ] face recognition and repositioning for user videos
 
 [X] mute other users
 

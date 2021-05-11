@@ -21,7 +21,7 @@ import { SwitchNode } from "../nodes/SwitchNode";
 import { NpcNode } from "../nodes/NpcNode";
 import { PresentationBoardNode } from "../nodes/PresentationBoardNode";
 import { PresentationNode } from "../nodes/PresentationNode";
-import { MiroNode } from "../nodes/MiroNode";
+import { IFrameNode } from "../nodes/IFrameNode";
 import { SpeakerNode } from "../nodes/SpeakerNode";
 
 export class GameScene extends Scene<Gather> {
@@ -45,7 +45,7 @@ export class GameScene extends Scene<Gather> {
         "npc": NpcNode,
         "presentationBoard": PresentationBoardNode,
         "presentation": PresentationNode,
-        "miro": MiroNode,
+        "iframe": IFrameNode,
         "speaker": SpeakerNode
     }});
 

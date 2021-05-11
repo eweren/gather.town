@@ -5,31 +5,35 @@ import { SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { asset } from "../../engine/assets/Assets";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
-export interface MiroNodeArgs extends SceneNodeArgs {
+export interface IFrameNodeArgs extends SceneNodeArgs {
     onUpdate?: (state: boolean) => boolean | undefined;
 }
 
-export class MiroNode extends InteractiveNode {
+export class IFrameNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
 
     private inMiro: boolean = false;
     private url: string;
     private onUpdate?: (state: boolean) => boolean | undefined;
+    private toStartString: string;
+    private range: number;
 
-    public constructor({ onUpdate, ...args }: MiroNodeArgs) {
+    public constructor({ onUpdate, ...args }: IFrameNodeArgs) {
         super({
-            aseprite: MiroNode.noSprite,
+            aseprite: IFrameNode.noSprite,
             anchor: Direction.CENTER,
             tag: "off",
             ...args
-        }, "PRESS E TO START MIRO");
+        }, "PRESS E TO INTERACT");
         this.onUpdate = onUpdate;
         this.url = args.tiledObject?.getOptionalProperty("url", "string")?.getValue() ?? "";
+        this.toStartString = args.tiledObject?.getOptionalProperty("startstring", "string")?.getValue() ?? "TO INTERACT";
+        this.range = args.tiledObject?.getOptionalProperty("range", "int")?.getValue() ?? 30;
     }
 
     public update(dt: number, time: number): void {
-        this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO START MIRO`;
+        this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} ${this.toStartString}`;
         super.update(dt, time);
     }
 
@@ -84,6 +88,6 @@ export class MiroNode extends InteractiveNode {
     }
 
     protected getRange(): number {
-        return 10;
+        return this.range;
     }
 }

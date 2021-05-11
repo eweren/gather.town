@@ -350,6 +350,7 @@
         "SSRCs",
         "staggeraxis",
         "staggerindex",
+        "startstring",
         "startx",
         "starty",
         "statechange",
