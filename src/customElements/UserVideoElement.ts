@@ -98,8 +98,11 @@ export class UserVideoElement extends HTMLElement {
         Array.from((document.getElementsByTagName("user-video") as HTMLCollectionOf<UserVideoElement>))
             .filter(el => el.isExpanded())
             .forEach(el => el.minimize());
-        if (this.videoElement.parentElement === this.wrapperElement && this.track != null) {
+        if (this.videoElement.parentElement === this.videoWrapperElement && this.track != null) {
             document.body.append(this.videoElement);
+            this.videoElement.style.width = "auto";
+            this.videoElement.style.height = "auto";
+            this.videoElement.style.transform = "";
             this.videoElement.addEventListener("click", this.minimize.bind(this), { once: true });
             this.videoElement.classList.add("bigVideo");
             this.style.display = "none";
@@ -151,7 +154,7 @@ export class UserVideoElement extends HTMLElement {
     private minimize(): void {
         this.videoElement.removeEventListener("click", this.handleWrapperClick.bind(this));
         this.videoElement.classList.remove("bigVideo");
-        this.wrapperElement.prepend(this.videoElement);
+        this.videoWrapperElement.prepend(this.videoElement);
         this.style.display = "block";
     }
 
@@ -173,6 +176,9 @@ export class UserVideoElement extends HTMLElement {
     }
 
     public updatePlacement(xCenter: number, yCenter: number, area: number): void {
+        if (this.isExpanded()) {
+            return;
+        }
         const zoomFactor = clamp(area * 7, 0.2, 1);
         let newWidth = 150 / zoomFactor;
         let newHeight = 150 / zoomFactor;
@@ -182,8 +188,8 @@ export class UserVideoElement extends HTMLElement {
         } else {
             newWidth *= factor;
         }
-        this.videoElement.style.height = `${newHeight}`;
-        this.videoElement.style.width = `${newWidth}`;
+        this.videoElement.style.height = "150px";
+        this.videoElement.style.width = "150px";
         this.videoElement.style.transformOrigin = "center";
         this.videoElement.style.objectFit = "contain";
         const newXPlacement = -(xCenter * newWidth) + newWidth / 2;
