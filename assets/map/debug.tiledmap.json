@@ -818,7 +818,7 @@
                 {
                  "height":0,
                  "id":477,
-                 "name":"GarticPhone",
+                 "name":"Hyperloop",
                  "point":true,
                  "properties":[
                         {
@@ -829,12 +829,12 @@
                         {
                          "name":"startstring",
                          "type":"string",
-                         "value":"TO START GARTIC PHONE"
+                         "value":"TO START MP HYPERLOOP"
                         }, 
                         {
                          "name":"url",
                          "type":"string",
-                         "value":"https:\/\/garticphone.com\/de"
+                         "value":"https:\/\/hyperloop.vercel.app\/?room=ways"
                         }],
                  "rotation":0,
                  "type":"iframe",
