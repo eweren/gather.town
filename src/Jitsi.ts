@@ -2,6 +2,7 @@ import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
 import { sleep } from "./engine/util/time";
 import { Gather } from "./main/Gather";
+import { IFrameNode } from "./main/nodes/IFrameNode";
 import { SpeakerNode } from "./main/nodes/SpeakerNode";
 import JitsiConference from "./typings/Jitsi/JitsiConference";
 import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
@@ -283,6 +284,20 @@ export default async function (): Promise<JitsiConference | any> {
                         .filter(n => n.getSoundbox() === parsedObj.soundBox);
                     speakersToUpdate.forEach(s => {
                         s.handleNewSoundIndex(parsedObj.soundIndex ?? -1);
+                    });
+                }
+            });
+            room.addCommandListener("IFrameUpdate", (values: any) => {
+                const parsedObj = JSON.parse(values.value);
+                if (parsedObj.id !== room.myUserId()) {
+                    const iFrameToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType(IFrameNode)
+                        .filter(iFrame => iFrame.url === parsedObj.originalUrl);
+                    iFrameToUpdate.forEach(iFrame => {
+                        iFrame.url = parsedObj.newUrl;
+                        if (iFrame.isOpen()) {
+                            iFrame.close();
+                            iFrame.open();
+                        }
                     });
                 }
             });

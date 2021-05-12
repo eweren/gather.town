@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt1LEJAkEURdHPuoJgYjemtqfdaAW2sTajkxmqGDzxnwMTDJO8m0zV032qwzjXd++8dpyrTnN6Rc55tF8a9y+j\/da4H+DfbdbpBQAAAAB8Yrv67r2T3ZRekLXX35r+9IIs\/ekFWfrTC7K69wN9df\/\/9KcXZOlPL8jSn16Q1b0fAACA3\/cAvQARTA==",
+         "data":"eJzt1LENwjAURVErBAmJhh0Ygpb1YBuYIGuQZYI7yiBRvIh\/juTCcvNu49Y+lqFd+5m+vbPuNrZ2H9Mrch69\/Vm4\/9Xb58L9AP\/usE8v2JZzegAAAADAiuPut\/dKTkN6QdZFf2n60wuy9KcXZOlPL8iq3g\/UVf3\/059ekKU\/vSBLf3pBVvV+AAAAtu8NE3ARbw==",
          "encoding":"base64",
          "height":64,
          "id":8,
@@ -702,8 +702,8 @@
                  "type":"iframe",
                  "visible":true,
                  "width":0,
-                 "x":591.17186752061,
-                 "y":302.450188437919
+                 "x":594.497686965568,
+                 "y":300.232975474614
                 }, 
                 {
                  "height":0,
@@ -814,6 +814,34 @@
                  "width":0,
                  "x":719.931102169006,
                  "y":92.293453724605
+                }, 
+                {
+                 "height":0,
+                 "id":477,
+                 "name":"GarticPhone",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"needpasting",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"startstring",
+                         "type":"string",
+                         "value":"TO START GARTIC PHONE"
+                        }, 
+                        {
+                         "name":"url",
+                         "type":"string",
+                         "value":"https:\/\/garticphone.com\/de"
+                        }],
+                 "rotation":0,
+                 "type":"iframe",
+                 "visible":true,
+                 "width":0,
+                 "x":720.594213074166,
+                 "y":338.124976904032
                 }],
          "opacity":1,
          "properties":[
@@ -2114,7 +2142,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":477,
+ "nextobjectid":478,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
