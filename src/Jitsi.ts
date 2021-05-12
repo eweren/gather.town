@@ -81,10 +81,10 @@ export default async function (): Promise<JitsiConference | any> {
                                 const detections = await faceapi.detectSingleFace(localVideo.getVideoElement(), new faceapi.TinyFaceDetectorOptions());
                                 if (detections) {
                                     const { left, top, right, bottom } = detections.relativeBox;
-                                    localVideo.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2);
+                                    localVideo.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2, detections.relativeBox.area);
                                 }
                             }
-                        }, 250);
+                        }, 1000);
                     }
                     if (isJoined) {
                         if (room.getLocalVideoTrack() != null) {
@@ -326,10 +326,10 @@ export default async function (): Promise<JitsiConference | any> {
                     const detections = await faceapi.detectSingleFace(videoElement.getVideoElement(), new faceapi.TinyFaceDetectorOptions());
                     if (detections) {
                         const { left, top, right, bottom } = detections.relativeBox;
-                        videoElement.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2);
+                        videoElement.updatePlacement(left + (right - left) / 2, top + (bottom - top) / 2, detections.relativeBox.area);
                     }
                 }
-            }, 250);
+            }, 1000);
             videoElement.id = `${track.getParticipantId()}video`;
             videoElement.setTrack(track);
             return videoElement;

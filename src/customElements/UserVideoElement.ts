@@ -1,3 +1,4 @@
+import { clamp } from "../engine/util/math";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
 import JitsiLocalTrack from "../typings/Jitsi/modules/RTC/JitsiLocalTrack";
 import JitsiRemoteTrack from "../typings/Jitsi/modules/RTC/JitsiRemoteTrack";
@@ -13,7 +14,9 @@ export class UserVideoElement extends HTMLElement {
     private readonly videoWrapperElement = document.createElement("div");
     private readonly hoverOver = new HoverOver();
     private track?: JitsiLocalTrack | JitsiRemoteTrack;
-    private oldPlacement = 0;
+    private oldXPlacement = 0;
+    private oldYPlacement = 0;
+    private oldZoomFactor = 1;
 
     public constructor(private userName: string, private readonly room?: JitsiConference, private readonly participantId?: string) {
         super();
@@ -169,29 +172,34 @@ export class UserVideoElement extends HTMLElement {
         //this.videoElement.style.objectFit = "cover";
     }
 
-    public updatePlacement(xCenter: number, yCenter: number): void {
-        const width = this.videoElement.offsetWidth;
-        const height = this.videoElement.offsetHeight;
-        const videoWidth = this.videoElement.videoWidth;
-        const videoHeight = this.videoElement.videoHeight;
+    public updatePlacement(xCenter: number, yCenter: number, area: number): void {
+        const zoomFactor = clamp(area * 7, 0.2, 1);
+        let newWidth = 150 / zoomFactor;
+        let newHeight = 150 / zoomFactor;
+        const factor = this.videoElement.videoHeight / this.videoElement.videoWidth;
+        if (factor > 1) {
+            newHeight /= factor;
+        } else {
+            newWidth *= factor;
+        }
+        this.videoElement.style.height = `${newHeight}`;
+        this.videoElement.style.width = `${newWidth}`;
         this.videoElement.style.transformOrigin = "center";
         this.videoElement.style.objectFit = "contain";
-        if (videoWidth > videoHeight) {
-            const newPlacement = -(xCenter * 250 - 125);
-            if (Math.abs(newPlacement - this.oldPlacement) > 5) {
-                this.videoElement.style.transform = `translateX(${-(xCenter * 250 - 125)}px)`;
+        const newXPlacement = -(xCenter * newWidth) + newWidth / 2;
+        const newYPlacement = -(yCenter * newHeight) + newHeight / 2;
+        if (factor > 1) {
+            if (Math.abs(newYPlacement - this.oldYPlacement) > 5 || Math.abs(this.oldZoomFactor - zoomFactor) > 0.1) {
+                this.oldYPlacement = newYPlacement;
+                this.oldZoomFactor = zoomFactor;
+                this.videoElement.style.transform = `translateY(${newYPlacement / zoomFactor}px) scale(${1 / zoomFactor})`;
             }
-            this.videoElement.style.height = "250px";
-            this.videoElement.style.minWidth = "250px";
-            this.videoElement.style.width = "auto";
         } else {
-            const newPlacement = -(yCenter * 250 - 125);
-            if (Math.abs(newPlacement - this.oldPlacement) > 5) {
-                this.videoElement.style.transform = `translateY(${-(yCenter * 250 - 125)}px)`;
+            if (Math.abs(newXPlacement - this.oldXPlacement) > 5 || Math.abs(this.oldZoomFactor - zoomFactor) > 0.1) {
+                this.oldXPlacement = newXPlacement;
+                this.oldZoomFactor = zoomFactor;
+                this.videoElement.style.transform = `translateX(${newXPlacement / zoomFactor}px) scale(${1 / zoomFactor})`;
             }
-            this.videoElement.style.minHeight = "250px";
-            this.videoElement.style.width = "250px";
-            this.videoElement.style.height = "auto";
         }
     }
 
@@ -234,7 +242,7 @@ export class UserVideoElement extends HTMLElement {
                 overflow: hidden;
             }
             .smallVideo {
-                transition: transform 0.2s;
+                transition: transform 0.4s;
                 object-fit: cover;
             }
         `;
