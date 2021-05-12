@@ -40,7 +40,7 @@
 
 [ ] map-making
 
-[ ] face recognition and repositioning for user videos
+[X] face recognition and repositioning for user videos
 
 [X] mute other users
 

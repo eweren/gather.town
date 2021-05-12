@@ -182,28 +182,9 @@ export class PlayerNode extends CharacterNode {
 
     public startPresentation(): void {
         this.getGame().preventPlayerInteraction++;
-
-        this.getGame().room?.getParticipants()?.forEach(p => {
-            const pId = p.getId();
-            const parentElement = document.getElementById(`${pId}video`)?.parentElement;
-            if (parentElement) {
-                parentElement.hidden = true;
-                console.log("Hide element");
-            }
-        });
     }
     public endPresentation(): void {
         this.getGame().preventPlayerInteraction = clamp(this.getGame().preventPlayerInteraction - 1, 0, Infinity);
-
-        this.getGame().room?.getParticipants()?.forEach(p => {
-            const pId = p.getId();
-            const parentElement = document.getElementById(`${pId}video`)?.parentElement;
-            if (parentElement) {
-                parentElement.hidden = false;
-                console.log("Show element");
-            }
-        });
-
     }
 
     private updatePreviouslyPressed(): void {
