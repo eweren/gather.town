@@ -14,12 +14,12 @@ export class IFrameNode extends InteractiveNode {
     private static readonly noSprite: Aseprite;
 
     private inIFrame: boolean = false;
+    public pasteInput?: HTMLInputElement;
     public url: string;
     private onUpdate?: (state: boolean) => boolean | undefined;
     private toStartString: string;
     private range: number;
     private needpasting: boolean;
-    private pasteInput?: HTMLInputElement;
     private backdrop?: HTMLDivElement;
     private videos?: HTMLElement;
     private iFrame?: HTMLIFrameElement;
@@ -36,7 +36,6 @@ export class IFrameNode extends InteractiveNode {
         this.toStartString = args.tiledObject?.getOptionalProperty("startstring", "string")?.getValue() ?? "TO INTERACT";
         this.range = args.tiledObject?.getOptionalProperty("range", "int")?.getValue() ?? 30;
         this.needpasting = args.tiledObject?.getOptionalProperty("needpasting", "bool")?.getValue() ?? false;
-        console.log(this.needpasting);
     }
 
     public deactivate() {
@@ -153,7 +152,6 @@ export class IFrameNode extends InteractiveNode {
             this.pasteInput.style.left = `calc(50% - ${this.pasteInput.width}px / 2)`;
             this.pasteInput.style.top = "10px";
             document.body.append(this.pasteInput);
-            console.log(this.pasteInput);
         }
         this.videos = document.getElementById("videos") ?? undefined;
         if (this.videos) {

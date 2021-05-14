@@ -294,6 +294,7 @@ export default async function (): Promise<JitsiConference | any> {
                         .filter(iFrame => iFrame.url === parsedObj.originalUrl);
                     iFrameToUpdate.forEach(iFrame => {
                         iFrame.url = parsedObj.newUrl;
+                        iFrame.pasteInput?.remove();
                         if (iFrame.isOpen()) {
                             iFrame.close();
                             iFrame.open();
