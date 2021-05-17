@@ -126,11 +126,11 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
         if (scene) {
             distance = this.getScenePosition().getDistance(new Vector2(scene.camera.getX(), scene.camera.getY()));
             horizontalDistance = this.getScenePosition().x - scene.camera.getX();
-            verticalDistance = Math.abs(this.getScenePosition().y - scene.camera.getY());
+            verticalDistance = Math.max(Math.abs(this.getScenePosition().y - scene.camera.getY()), 10);
         }
         const volume = clamp(Math.max(0, this.range - distance) / this.range * this.intensity, 0, 1);
         if (volume > 0) {
-            const soundDirection = clamp(horizontalDistance / verticalDistance, -1, 1);
+            const soundDirection = Math.sin(clamp(horizontalDistance / 10 / verticalDistance, -1, 1));
             this.sound.setVolume(volume, soundDirection);
             if (!this.sound.isPlaying()) {
                 this.sound.play();

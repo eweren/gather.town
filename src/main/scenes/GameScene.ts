@@ -91,7 +91,7 @@ export class GameScene extends Scene<Gather> {
     }
 
     private handleKeyDown(event: KeyboardEvent): void {
-        if (event.key === "Tab") {
+        if (event.key === "o") {
             if (!event.repeat) {
                 this.enterDebugMode();
             }
@@ -101,7 +101,7 @@ export class GameScene extends Scene<Gather> {
     }
 
     private handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === "Tab") {
+        if (event.key === "o") {
             if (!event.repeat) {
                 this.leaveDebugMode();
             }
