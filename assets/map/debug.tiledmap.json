@@ -2315,6 +2315,23 @@
                  "width":18.0854376811594,
                  "x":135.261628985507,
                  "y":706.09713115942
+                }, 
+                {
+                 "height":198.8311,
+                 "id":517,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":71.2774666666668,
+                 "x":667.3196,
+                 "y":1044.87611666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -2459,7 +2476,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":517,
+ "nextobjectid":518,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
