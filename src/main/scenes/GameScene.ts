@@ -122,7 +122,7 @@ export class GameScene extends Scene<Gather> {
 
     public leaveDebugMode(): void {
         if (this.debugMode) {
-            const player = this.mapNode.getDescendantById("Player");
+            const player = this.rootNode.getDescendantById("Player");
             if (player != null) {
                 this.camera.setFollow(player).setZoom(1);
             }
@@ -132,7 +132,7 @@ export class GameScene extends Scene<Gather> {
     }
 
     private handleTeleportClick(event: ScenePointerDownEvent): void {
-        const player = this.mapNode.getDescendantById("Player");
+        const player = this.rootNode.getDescendantById("Player");
         if (player != null) {
             player.moveTo(event.getX(), event.getY());
         }

@@ -21,6 +21,7 @@ export class IFrameNode extends InteractiveNode {
     private range: number;
     private needpasting: boolean;
     private backdrop?: HTMLDivElement;
+    private closeBtn?: HTMLDivElement;
     private videos?: HTMLElement;
     private iFrame?: HTMLIFrameElement;
 
@@ -38,8 +39,15 @@ export class IFrameNode extends InteractiveNode {
         this.needpasting = args.tiledObject?.getOptionalProperty("needpasting", "bool")?.getValue() ?? false;
     }
 
-    public deactivate() {
+    /** @inheritdoc */
+    public activate(): void {
+        this.closeBtn = document.getElementById("close-in-frame-btn") as HTMLDivElement;
+    }
+
+    /** @inheritdoc */
+    public deactivate(): void {
         this.pasteInput?.remove();
+        this.closeBtn?.removeEventListener("click", this.close.bind(this));
         super.deactivate();
     }
 
@@ -56,60 +64,7 @@ export class IFrameNode extends InteractiveNode {
         if (this.canInteract()) {
             const newState = !this.inIFrame;
             if (newState) {
-                const miroBoard = document.createElement("iframe");
-                miroBoard.src = this.url;
-                miroBoard.frameBorder = "0";
-                miroBoard.scrolling = "no";
-                miroBoard.allowFullscreen = true;
-                miroBoard.height = this.getGame().canvas.height * this.getGame().canvasScale + "";
-                miroBoard.width = this.getGame().canvas.width * this.getGame().canvasScale + "";
-                miroBoard.style.position = "absolute";
-                miroBoard.style.zIndex = "4000";
-                miroBoard.style.left = `calc(50% - ${miroBoard.width}px / 2)`;
-                miroBoard.style.top = `calc(50% - ${miroBoard.height}px / 2)`;
-                if (this.needpasting) {
-                    this.pasteInput = document.createElement("input");
-                    this.pasteInput.addEventListener("keydown", (ev) => {
-                        if (ev.key === "Enter") {
-                            ev.preventDefault();
-                            this.pasteInput?.blur();
-                        }
-                    });
-                    this.pasteInput.addEventListener("blur", () => {
-                        const copied = this.pasteInput?.value;
-                        if (copied != null && copied !== "") {
-                            this.getGame().sendCommand("IFrameUpdate", { originalUrl: this.url, newUrl: copied });
-                            this.url = copied;
-                        }
-                        this.pasteInput?.remove();
-                    });
-                    this.pasteInput.style.position = "absolute";
-                    this.pasteInput.placeholder = "Paste code here";
-                    this.pasteInput.style.zIndex = "4001";
-                    this.pasteInput.style.left = `calc(50% - ${this.pasteInput.width}px / 2)`;
-                    this.pasteInput.style.top = "10px";
-                    document.body.append(this.pasteInput);
-                    console.log(this.pasteInput);
-                }
-                const videos = document.getElementById("videos");
-                if (videos) {
-                    videos.style.zIndex = "4001";
-                }
-                const backdrop = document.createElement("div");
-                backdrop.classList.add("backdrop");
-                backdrop.addEventListener("click", (ev) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    backdrop.remove();
-                    miroBoard.remove();
-                    this.inIFrame = !this.inIFrame;
-
-                    if (videos) {
-                        videos.style.zIndex = "1000";
-                    }
-                });
-                document.body.append(backdrop);
-                document.body.append(miroBoard);
+                this.open();
             }
             if (!this.onUpdate || this.onUpdate(newState) !== false) {
                 this.inIFrame = newState;
@@ -124,12 +79,13 @@ export class IFrameNode extends InteractiveNode {
         this.iFrame.frameBorder = "0";
         this.iFrame.scrolling = "no";
         this.iFrame.allowFullscreen = true;
-        this.iFrame.height = this.getGame().canvas.height * this.getGame().canvasScale + "";
-        this.iFrame.width = this.getGame().canvas.width * this.getGame().canvasScale + "";
         this.iFrame.style.position = "absolute";
         this.iFrame.style.zIndex = "4000";
-        this.iFrame.style.left = `calc(50% - ${this.iFrame.width}px / 2)`;
-        this.iFrame.style.top = `calc(50% - ${this.iFrame.height}px / 2)`;
+        this.iFrame.style.left = "0";
+        this.iFrame.style.top = "0";
+        this.iFrame.style.bottom = "0";
+        this.iFrame.style.right = "0";
+        this.iFrame.classList.add("in-frame");
         if (this.needpasting) {
             this.pasteInput = document.createElement("input");
             this.pasteInput.addEventListener("keydown", (ev) => {
@@ -153,6 +109,10 @@ export class IFrameNode extends InteractiveNode {
             this.pasteInput.style.top = "10px";
             document.body.append(this.pasteInput);
         }
+        if (this.closeBtn) {
+            this.closeBtn.style.display = "flex";
+            this.closeBtn.addEventListener("click", this.close.bind(this));
+        }
         this.videos = document.getElementById("videos") ?? undefined;
         if (this.videos) {
             this.videos.style.zIndex = "4001";
@@ -166,14 +126,21 @@ export class IFrameNode extends InteractiveNode {
         });
         document.body.append(this.backdrop);
         document.body.append(this.iFrame);
+        setTimeout(() => {
+            this.iFrame?.focus();
+            this.iFrame?.ownerDocument.body.focus();
+        }, 1000);
     }
 
     public close(): void {
-
         this.backdrop?.remove();
         this.iFrame?.remove();
         this.pasteInput?.remove();
         this.inIFrame = !this.inIFrame;
+
+        if (this.closeBtn) {
+            this.closeBtn.style.display = "none";
+        }
 
         if (this.videos) {
             this.videos.style.zIndex = "1000";

@@ -23,7 +23,7 @@ keyToIntentMappings.set("ArrowRight", [ControllerIntent.PLAYER_MOVE_RIGHT, Contr
 keyToIntentMappings.set("Enter", [ControllerIntent.CONFIRM]);
 keyToIntentMappings.set("NumpadEnter", [ControllerIntent.CONFIRM]);
 keyToIntentMappings.set(" ", [ControllerIntent.CONFIRM]);
-keyToIntentMappings.set("Escape", [ControllerIntent.PAUSE]);
+keyToIntentMappings.set("KeyP", [ControllerIntent.PAUSE]);
 keyToIntentMappings.set("ShiftLeft", [ControllerIntent.PLAYER_RUN]);
 keyToIntentMappings.set("ShiftRight", [ControllerIntent.PLAYER_RUN]);
 keyToIntentMappings.set("KeyE", [ControllerIntent.PLAYER_INTERACT, ControllerIntent.CONFIRM]);

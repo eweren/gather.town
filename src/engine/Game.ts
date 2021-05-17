@@ -63,9 +63,9 @@ export abstract class Game {
                     }
                     await document.exitFullscreen();
                 } else {
-                    if (lockingEnabled) {
-                        await navigator.keyboard.lock(["Escape"]);
-                    }
+                    // if (lockingEnabled) {
+                    //     await navigator.keyboard.lock(["Escape"]);
+                    // }
                     await document.body.requestFullscreen();
                 }
             }

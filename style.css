@@ -119,3 +119,21 @@ html, body {
 button {
     cursor: pointer;
 }
+.in-frame {
+    width: 100%;
+    height: 100%;
+}
+#close-in-frame-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: none;
+    z-index: 4001;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 20px;
+    width: 24px;
+    height: 24px;
+}
