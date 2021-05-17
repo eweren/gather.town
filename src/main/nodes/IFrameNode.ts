@@ -126,6 +126,7 @@ export class IFrameNode extends InteractiveNode {
         });
         document.body.append(this.backdrop);
         document.body.append(this.iFrame);
+        this.getGame().pauseGame();
         setTimeout(() => {
             this.iFrame?.focus();
             this.iFrame?.ownerDocument.body.focus();
@@ -137,6 +138,7 @@ export class IFrameNode extends InteractiveNode {
         this.iFrame?.remove();
         this.pasteInput?.remove();
         this.inIFrame = !this.inIFrame;
+        this.getGame().pauseGame();
 
         if (this.closeBtn) {
             this.closeBtn.style.display = "none";
