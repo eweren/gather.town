@@ -15,6 +15,7 @@ import { Gather } from "../Gather";
 import { clamp } from "../../engine/util/math";
 import { AsepriteNode } from "../../engine/scene/AsepriteNode";
 import { isDev } from "../../engine/util/env";
+import { InteractiveNode } from "./InteractiveNode";
 
 const groundColors = [
     "#806057",
@@ -167,8 +168,7 @@ export class PlayerNode extends CharacterNode {
         } else {
             PlayerNode.footsteps.stop(0.3);
         }
-        // Reload
-        if (this.canInteract(ControllerIntent.PLAYER_RELOAD) || this.rightMouseDown) {
+        if (this.rightMouseDown) {
             this.rightMouseDown = false;
         }
         // TODO
@@ -180,6 +180,13 @@ export class PlayerNode extends CharacterNode {
             const node = this.getNodeToInteractWith();
             if (node) {
                 node.interact();
+            }
+        }
+        // Interact
+        if (this.canInteract(ControllerIntent.ABORT)) {
+            const node = this.getNodeToInteractWith();
+            if (node && node instanceof InteractiveNode) {
+                node.reverseInteract();
             }
         }
 

@@ -69,6 +69,7 @@ export abstract class InteractiveNode extends AsepriteNode<Gather> {
     }
 
     public abstract interact(): void;
+    public reverseInteract(): void {}
 
     public canInteract(): boolean {
         return true;

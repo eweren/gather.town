@@ -42,8 +42,16 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public update(dt: number, time: number): void {
-        this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"}`
-            + (this.sound != null ? (this.soundIndex === SpeakerNode.sounds.length - 1) ? " TO STOP MUSIC" : " TO PLAY NEXT SONG" : " TO START MUSIC");
+        this.caption = `${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"}`
+            + (this.sound != null ? (this.soundIndex === SpeakerNode.sounds.length - 1) ? " ◾" : " ↠" : " ►");
+        if (this.soundIndex > 0) {
+            this.caption += "\nQ ↞";
+        } else if (this.soundIndex === 0) {
+            this.caption += "\nQ ◾";
+        }
+        // if (this.soundIndex >= 0) {
+        //     this.caption += "\nPlaying: " + soundAssets[this.soundIndex].replace("music/", "").replace(".ogg", "");
+        // }
         super.update(dt, time);
     }
 
@@ -55,8 +63,16 @@ export class SpeakerNode extends InteractiveNode {
         return this.sound;
     }
 
-    public interact(): void {
-        this.handleNewSoundIndex(this.soundIndex + 1);
+    public reverseInteract(): void {
+        if (this.soundIndex > 0) {
+            this.interact(-1);
+        } else {
+            this.handleNewSoundIndex(SpeakerNode.sounds.length);
+        }
+    }
+
+    public interact(update = 1): void {
+        this.handleNewSoundIndex(this.soundIndex + update);
         this.getGame().sendCommand("speakerUpdate", {soundIndex: this.soundIndex, soundBox: this.soundbox});
     }
 
