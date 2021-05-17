@@ -56,20 +56,6 @@ export default async function (): Promise<JitsiConference | any> {
             }
             localTracks = tracks;
             for (let i = 0; i < localTracks.length; i++) {
-                localTracks[i].addEventListener(
-                    JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                    (audioLevel: number) => console.log(`Audio Level local: ${audioLevel}`));
-                localTracks[i].addEventListener(
-                    JitsiTrackEvents.TRACK_MUTE_CHANGED,
-                    () => console.log("local track muted"));
-                localTracks[i].addEventListener(
-                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => console.log("local track stopped"));
-                localTracks[i].addEventListener(
-                    JitsiTrackEvents.TRACK_AUDIO_OUTPUT_CHANGED,
-                    (deviceId: string) =>
-                        console.log(
-                            `track audio output device was changed to ${deviceId}`));
                 if (localTracks[i].getType() === "video") {
                     const localVideo = (document.getElementById("localUserVideo") as UserVideoElement ?? await createLocalVideoElement());
                     if (localVideo) {
@@ -159,19 +145,24 @@ export default async function (): Promise<JitsiConference | any> {
 
             track.addEventListener(
                 JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                (audioLevel: number) => console.log(`Audio Level remote: ${audioLevel}`));
+                (audioLevel: number) => {
+                    console.log(`Audio Level remote: ${audioLevel}`);
+                });
             track.addEventListener(
                 JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
-                (ev: "desktop" | "camera") => console.log("Other videotype", ev));
+                (ev: "desktop" | "camera") => {
+                    console.log("Other videotype", ev);
+                });
             track.addEventListener(
                 JitsiTrackEvents.NO_DATA_FROM_SOURCE,
-                (ev) => console.log("NO DATA"));
+                (ev) => {
+                    console.log("NO DATA");
+                });
             track.addEventListener(
                 JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                () => console.log("remote track stopped"));
-            track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_OUTPUT_CHANGED,
-                (deviceId: string) =>
-                    console.log(`track audio output device was changed to ${deviceId}`));
+                () => {
+                    console.log("remote track stopped");
+                });
             let element;
 
             if (track.getType() === "video") {
@@ -304,10 +295,9 @@ export default async function (): Promise<JitsiConference | any> {
             });
             room.on(
                 JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                (userID: string, audioLevel: number) => console.log(`${userID} - ${audioLevel}`));
-            room.on(
-                JitsiConferenceEvents.PHONE_NUMBER_CHANGED,
-                () => console.log(`${room.getPhoneNumber()} - ${room.getPhonePin()}`));
+                (userID: string, audioLevel: number) => {
+                    console.log(`${userID} - ${audioLevel}`);
+                });
             room.join();
             resolve(room);
         }
@@ -409,18 +399,15 @@ export default async function (): Promise<JitsiConference | any> {
         }
 
         function switchVideo() {
+            // TODO if presentation try to redirect pc audio
             const previousTrack = localTracks.pop();
             const isVideo = !!room.getLocalVideoTrack()?.isScreenSharing();
             JitsiMeetJS.createLocalTracks({
                 devices: [ isVideo ? "video" : "desktop" ]
-            })
-                .then(tracks => {
+            }).then(tracks => {
                     if (tracks instanceof Array) {
                         const element = document.getElementById("localUserVideo") as UserVideoElement;
                         localTracks.push(tracks[0]);
-                        localTracks[1].addEventListener(
-                            JitsiTrackEvents.TRACK_MUTE_CHANGED,
-                            () => console.log("local track muted"));
                         localTracks[1].addEventListener(
                             JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
                                 if (localTracks[1]) {
@@ -453,17 +440,28 @@ export default async function (): Promise<JitsiConference | any> {
                 .catch(error => console.log(error));
         }
         function changeAudioOutput(deviceId: string) {
+            localStorage.setItem("gatherDefaultAudioOutput", deviceId);
             JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId);
         }
-        function changeAudioInput(deviceId: string) {
 
-            JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"], micDeviceId: deviceId })
+        function changeAudioInput(deviceId: string) {
+            localStorage.setItem("gatherDefaultAudioSrc", deviceId);
+            const cameraDeviceId = localStorage.getItem("gatherDefaultVideoSrc") ?? undefined;
+            JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"], micDeviceId: deviceId, cameraDeviceId })
                 .then(onLocalTracks)
                 .catch(error => {
                     throw error;
                 });
-            // TODO: fix change of inputDevices
-            // JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId);
+        }
+
+        function changeVideoInput(deviceId: string) {
+            localStorage.setItem("gatherDefaultVideoSrc", deviceId);
+            const micDeviceId = localStorage.getItem("gatherDefaultAudioSrc") ?? undefined;
+            JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"], cameraDeviceId: deviceId, micDeviceId })
+                .then(onLocalTracks)
+                .catch(error => {
+                    throw error;
+                });
         }
 
         window.addEventListener("beforeunload", unload);
@@ -494,7 +492,11 @@ export default async function (): Promise<JitsiConference | any> {
 
         connection?.connect(undefined);
 
-        JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"] })
+        const micDeviceId = localStorage.getItem("gatherDefaultAudioSrc") ?? undefined;
+        const cameraDeviceId = localStorage.getItem("gatherDefaultVideoSrc") ?? undefined;
+        const audioOutputDevice = localStorage.getItem("gatherDefaultAudioOutput") ?? undefined;
+
+        JitsiMeetJS.createLocalTracks({ devices: ["audio", "video"], cameraDeviceId, micDeviceId })
             .then(onLocalTracks)
             .catch(error => {
                 throw error;
@@ -509,6 +511,19 @@ export default async function (): Promise<JitsiConference | any> {
                 }
                 optionsButton.addEventListener("click", (ev) => {
                     ev.stopImmediatePropagation();
+                    const backdrop = document.createElement("div");
+                    backdrop.classList.add("backdrop");
+                    document.body.appendChild(backdrop);
+                    setTimeout(() => {
+                        backdrop.addEventListener("click", (e) => {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            e.stopPropagation();
+                            backdrop.remove();
+                            optionsContainer.style.display = "none";
+                            optionsButton.innerText = "Options ↧";
+                        }, { once: true });
+                    });
                     optionsContainer.style.display = optionsContainer.style.display === "flex" ? "none" : "flex";
                     optionsButton.innerText = optionsContainer.style.display === "flex" ? "Options ↥" : "Options ↧";
                 });
@@ -518,6 +533,8 @@ export default async function (): Promise<JitsiConference | any> {
                         = devices.filter(d => d.kind === "audiooutput");
                     const audioInputDevices
                         = devices.filter(d => d.kind === "audioinput");
+                    const videoInputDevices
+                        = devices.filter(d => d.kind === "videoinput");
 
                     if (audioOutputDevices.length > 1) {
                         const selectAudioOutput = document.createElement("select");
@@ -526,6 +543,7 @@ export default async function (): Promise<JitsiConference | any> {
                         optionsContainer.appendChild(selectAudioOutput);
                         const options = audioOutputDevices.map(d => {
                             const option = document.createElement("option");
+                            option.selected = audioOutputDevice === d.deviceId;
                             option.value = d.deviceId;
                             option.innerText = d.label;
                             return option;
@@ -542,6 +560,7 @@ export default async function (): Promise<JitsiConference | any> {
                         optionsContainer.appendChild(selectAudioInput);
                         const options = audioInputDevices.map(d => {
                             const option = document.createElement("option");
+                            option.selected = micDeviceId === d.deviceId;
                             option.value = d.deviceId;
                             option.innerText = d.label;
                             return option;
@@ -549,6 +568,23 @@ export default async function (): Promise<JitsiConference | any> {
                         options.forEach(o => selectAudioInput.appendChild(o));
                         selectAudioInput.addEventListener("input", (ev) => {
                             changeAudioInput((ev.target as any).value);
+                        });
+                    }
+                    if (videoInputDevices.length > 1) {
+                        const selectVideoInput = document.createElement("select");
+                        selectVideoInput.title = "Select video input device";
+                        selectVideoInput.id = "videoInputSelect";
+                        optionsContainer.appendChild(selectVideoInput);
+                        const options = videoInputDevices.map(d => {
+                            const option = document.createElement("option");
+                            option.selected = cameraDeviceId === d.deviceId;
+                            option.value = d.deviceId;
+                            option.innerText = d.label;
+                            return option;
+                        });
+                        options.forEach(o => selectVideoInput.appendChild(o));
+                        selectVideoInput.addEventListener("input", (ev) => {
+                            changeVideoInput((ev.target as any).value);
                         });
                     }
 

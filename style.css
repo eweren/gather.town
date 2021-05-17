@@ -73,7 +73,7 @@ html, body {
     align-items: flex-start;
     right: 0;
     top: 25px;
-    z-index: 1000;
+    z-index: 3001;
     width: 200px;
     overflow: hidden;
 }
