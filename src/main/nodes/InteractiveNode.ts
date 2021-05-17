@@ -61,6 +61,11 @@ export abstract class InteractiveNode extends AsepriteNode<Gather> {
 
         this.textNode.setOpacity(this.captionOpacity);
         this.textNode.setText(this.captionOpacity > 0 ? this.caption : "");
+        super.update(dt, time);
+    }
+
+    protected isInRange(): boolean {
+        return !!this.target;
     }
 
     public abstract interact(): void;

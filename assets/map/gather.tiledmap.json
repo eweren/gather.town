@@ -870,6 +870,18 @@
                  "width":0,
                  "x":110.928236207088,
                  "y":1074.09833339492
+                }, 
+                {
+                 "height":0,
+                 "id":479,
+                 "name":"Cat",
+                 "point":true,
+                 "rotation":0,
+                 "type":"cat",
+                 "visible":true,
+                 "width":0,
+                 "x":148.666666666667,
+                 "y":186.666666666667
                 }],
          "opacity":1,
          "properties":[
@@ -2170,7 +2182,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":479,
+ "nextobjectid":480,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",

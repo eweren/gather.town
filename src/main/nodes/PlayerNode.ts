@@ -13,6 +13,8 @@ import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
 import { Gather } from "../Gather";
 import { clamp } from "../../engine/util/math";
+import { AsepriteNode } from "../../engine/scene/AsepriteNode";
+import { isDev } from "../../engine/util/env";
 
 const groundColors = [
     "#806057",
@@ -28,6 +30,8 @@ export class PlayerNode extends CharacterNode {
 
     @asset("sprites/characters/character.aseprite.json")
     private static readonly sprite: Aseprite;
+    @asset("sprites/pet.aseprite.json")
+    private static readonly petSprite: Aseprite;
 
     // Character settings
     private readonly speed = 100;
@@ -42,6 +46,7 @@ export class PlayerNode extends CharacterNode {
     public isPlayer = true;
 
     private dustParticles: ParticleNode;
+    private petNode: AsepriteNode<Gather>;
 
     public constructor(args?: SceneNodeArgs) {
         super({
@@ -56,7 +61,12 @@ export class PlayerNode extends CharacterNode {
         });
         const ambientPlayerLight = new AmbientPlayerNode();
         this.appendChild(ambientPlayerLight);
-        (<any>window)["player"] = this;
+        this.petNode = new AsepriteNode<Gather>({ aseprite: PlayerNode.petSprite, tag: "idle" });
+        this.appendChild(this.petNode);
+
+        if (isDev()) {
+            (<any>window)["player"] = this;
+        }
 
         this.dustParticles = new ParticleNode({
             y: this.getHeight() / 2,
@@ -92,6 +102,17 @@ export class PlayerNode extends CharacterNode {
 
     public updatePlayerPosition(): void {
         this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, spriteIndex: this.spriteIndex, direction: this.direction });
+    }
+
+    public isPetting(): boolean {
+        return this.petNode.getTag() === "pet";
+    }
+
+    public startPetting(): void {
+        this.petNode.setTag("pet");
+    }
+    public stopPetting(): void {
+        this.petNode.setTag("idle");
     }
 
     public activate(): void {

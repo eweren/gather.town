@@ -24,7 +24,6 @@ export class ChairNode extends InteractiveNode {
         }, "PRESS E TO SIT DOWN");
     }
 
-
     protected getRange(): number {
         return 10;
     }

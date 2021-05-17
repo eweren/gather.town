@@ -23,6 +23,7 @@ import { PresentationBoardNode } from "../nodes/PresentationBoardNode";
 import { PresentationNode } from "../nodes/PresentationNode";
 import { IFrameNode } from "../nodes/IFrameNode";
 import { SpeakerNode } from "../nodes/SpeakerNode";
+import { CatNode } from "../nodes/CatNode";
 
 export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
@@ -46,7 +47,8 @@ export class GameScene extends Scene<Gather> {
         "presentationBoard": PresentationBoardNode,
         "presentation": PresentationNode,
         "iframe": IFrameNode,
-        "speaker": SpeakerNode
+        "speaker": SpeakerNode,
+        "cat": CatNode
     }});
 
     public setup() {

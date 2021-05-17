@@ -116,14 +116,7 @@ export class Gather extends Game {
         if (stage !== this.gameStage) {
             this.gameStage = stage;
             this.stageStartTime = this.getTime();
-            switch (this.gameStage) {
-                case GameStage.GAME:
-                    this.initGame();
-                    break;
-                case GameStage.DONE:
-                    this.initDone();
-                    break;
-            }
+            this.initGame();
         }
     }
 
@@ -382,16 +375,6 @@ export class Gather extends Game {
         MusicManager.getInstance().loopTrack(0);
         FxManager.getInstance().playSounds();
         // this.turnOnAllLights();
-    }
-
-    private initDone(): void {
-        this.startDialog(6 - this.npcs.length);
-        // Place player into train initially
-        // const player = this.getPlayer();
-        // const train = this.getTrain();
-        // player.moveTo(25, 50).appendTo(train);
-        // this.getCamera().setFollow(player);
-        this.getCamera().moveTo(1740, 370); // hacky workaround
     }
 
     public getPlayer(id?: string): PlayerNode {
