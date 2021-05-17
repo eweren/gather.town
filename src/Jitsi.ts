@@ -230,7 +230,9 @@ export default async function (): Promise<JitsiConference | any> {
             room.on(JitsiConferenceEvents.CONFERENCE_JOINED, onConferenceJoined);
             room.on(JitsiConferenceEvents.USER_JOINED, id => {
                 setTimeout(() => {
-                    Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
+                    if (Gather.instance.isInGameScene()) {
+                        Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
+                    }
                 }, 100);
                 remoteTracks[id] = [];
             });
@@ -258,7 +260,7 @@ export default async function (): Promise<JitsiConference | any> {
                 });
             room.addCommandListener("playerUpdate", (values: any) => {
                 const parsedObj = JSON.parse(values.value);
-                if (parsedObj.id !== room.myUserId()) {
+                if (parsedObj.id !== room.myUserId() && Gather.instance.isInGameScene()) {
                     Gather.instance.updatePlayer(parsedObj);
                 }
             });
@@ -303,7 +305,7 @@ export default async function (): Promise<JitsiConference | any> {
         }
 
         function handleMessageReceived(participantId: string, text: string, ts: number): void {
-            if (participantId === room.myUserId()) {
+            if (participantId === room.myUserId() && Gather.instance.isInGameScene()) {
                 Gather.instance.getPlayer()?.say(text, 5);
                 return;
             }

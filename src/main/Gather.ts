@@ -410,6 +410,10 @@ export class Gather extends Game {
         return scene;
     }
 
+    public isInGameScene(): boolean {
+        return this.scenes.getScene(GameScene) != null;
+    }
+
     public getFader(): FadeToBlack {
         return this.getCamera().fadeToBlack;
     }

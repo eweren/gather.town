@@ -30,7 +30,7 @@ export class PlayerNode extends CharacterNode {
     private static readonly sprite: Aseprite;
 
     // Character settings
-    private readonly speed = 60;
+    private readonly speed = 100;
     private readonly acceleration = 10000;
     private readonly deceleration = 600;
     private leftMouseDown = false;

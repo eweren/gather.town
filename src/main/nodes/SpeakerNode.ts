@@ -14,12 +14,6 @@ export const soundAssets = [
     "music/fun.ogg",
     "music/norf_norf.ogg"
 ];
-export const soundMapping: {[index: string]: number} = {
-    "surf": 0
-};
-export function getAssetIndexForName(name: string): number {
-    return soundMapping[name] ?? -1;
-}
 
 export class SpeakerNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
@@ -42,14 +36,14 @@ export class SpeakerNode extends InteractiveNode {
             tag: "off",
             ...args
         }, "PRESS E TO START MUSIC");
-        this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 800.0;
+        this.range = args?.tiledObject?.getOptionalProperty("range", "float")?.getValue() ?? 400.0;
         this.intensity = args?.tiledObject?.getOptionalProperty("intensity", "float")?.getValue() ?? 1;
         this.soundbox = args?.tiledObject?.getOptionalProperty("soundbox", "int")?.getValue() ?? -1;
     }
 
     public update(dt: number, time: number): void {
         this.caption = `PRESS ${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"}`
-            + (this.sound != null ? " TO PLAY NEXT SONG" : " TO START MUSIC");
+            + (this.sound != null ? (this.soundIndex === SpeakerNode.sounds.length - 1) ? " TO STOP MUSIC" : " TO PLAY NEXT SONG" : " TO START MUSIC");
         super.update(dt, time);
     }
 

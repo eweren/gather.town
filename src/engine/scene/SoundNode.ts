@@ -38,6 +38,8 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
 
     private pauses: boolean;
 
+    private isDirectional: boolean;
+
     /**
      * Creates a new scene node displaying the given Aseprite.
      */
@@ -47,6 +49,7 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
         this.range = range;
         this.pauses = pauses;
         this.intensity = intensity;
+        this.isDirectional = !!args.tiledObject?.getOptionalProperty("notDirectional", "bool");
         this.sound.setLoop(true);
     }
 
@@ -121,12 +124,14 @@ export class SoundNode<T extends Game = Game> extends SceneNode<T> {
         super.update(dt, time);
         let distance = 0;
         let horizontalDistance = 0;
-        let verticalDistance = 0;
+        let verticalDistance = 1;
         const scene = this.getScene();
         if (scene) {
             distance = this.getScenePosition().getDistance(new Vector2(scene.camera.getX(), scene.camera.getY()));
-            horizontalDistance = this.getScenePosition().x - scene.camera.getX();
-            verticalDistance = Math.max(Math.abs(this.getScenePosition().y - scene.camera.getY()), 10);
+            if (this.isDirectional) {
+                horizontalDistance = this.getScenePosition().x - scene.camera.getX();
+                verticalDistance = Math.max(Math.abs(this.getScenePosition().y - scene.camera.getY()), 10);
+            }
         }
         const volume = clamp(Math.max(0, this.range - distance) / this.range * this.intensity, 0, 1);
         if (volume > 0) {
