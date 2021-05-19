@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztljkOwkAMRQ1JbkBBwXIMWi4Valo4AyXQsxyAA7CWbBI9FBRACw6LGIVATAgZj+QnfUWgKOMnZ5wBeHJOQxkzoP6OygQzJcSjYcGmYgF4ce9XNY\/\/uKN6fAp3gjxc5WpyP5LyWNnxPevh4Vqve8TEfnD1aGLPWph2SO+4ewyx\/hFmHMHD9Tno9Dhg\/UfMiegRlH\/0o\/\/l3s45AHlMwfl8n\/87GBQT9vnWurqEhjueByVcCJpfxRTtHDZLvNr3UOcXd6jzizvU+SUIYVDPWNzRPaNquG49hrV1z6gOrtuNYW3dM2qODgvD32nhRimtu4J4EA9eiAcvxOP\/cKutF\/Ebzc1j+cZjHeKneuyUe\/c2VH8uKkFUj4xy5ss65npIP\/Qj\/RD8XACvB47J",
+         "data":"eJztlrlOw0AURR+xLZGegiXAZ9CydQgQFPwIchCraOEXHFEBBdCwfABSWAIkYW3YJHooWJK08AwzYhjs8Z6MJV\/pajIjK77H8+bZAL\/6TEEvet\/t3K\/O0RcubCqnwFNWATCtk5E1XQuitjRAO7oDnUGfNAOcos+YsYgukd9l9FDa2z1YDpGDqA8z9aMH0IPoN8z5jv5gxgq6Sn7X0JMhcOjMGMZ+OKmgAqyof9fiwFEgmR9U+2v8cujK\/zMSFUeO5C9w4wHDFQcOVgaTPW\/BsYpra+h1wd6ZqjcHfeZHqvU6FeUo4noJXfbBoXMMYXIYXJ48Nz8mc8pRwXkVXeOum+XqTtR3o9iPPZLHsDgTbM8ySM6MBtCJ7tLE\/8u\/B60cdd89tKiZvMdz\/qx8szg6bPH1ZCrncAZEMjncWBZZ9a\/uJnffYZd1T2svUf+a8FiLjZRd\/zK1ECMOt\/2L1bzkfHM2+cbJ+rDk+Z00Q\/LrknG4\/caSXaIeRWtnLMJnv4T3XQ7hGYp6FK2daRuOEbI+GoBzG++7EwKHnx5FlSX5pwJw3CLDXcxrOtGPelKNThCOEg655IVjA3vRJnpLsve3KS8cV5j\/Gn0Tcw6ZJTOHbNl2fb6jZeO4t+F4dOBjOV6Ya19VWAwcqo5iOVqYb75WLb4cyX40Xsl+JOL1BZ0EwYg=",
          "encoding":"base64",
          "height":40,
          "id":8,
@@ -98,8 +98,8 @@
                  "type":"player",
                  "visible":true,
                  "width":0,
-                 "x":174.027264922261,
-                 "y":593.601212590553
+                 "x":112.91299545097,
+                 "y":155.852491726426
                 }, 
                 {
                  "height":0,
@@ -875,6 +875,98 @@
                  "width":0,
                  "x":110.928236207088,
                  "y":1074.09833339492
+                }, 
+                {
+                 "height":0,
+                 "id":518,
+                 "name":"GameArea",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"font",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"GAME AREA"
+                        }],
+                 "rotation":0,
+                 "type":"text",
+                 "visible":true,
+                 "width":0,
+                 "x":173.837770122142,
+                 "y":986.071093015972
+                }, 
+                {
+                 "height":0,
+                 "id":532,
+                 "name":"MusicArea",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"font",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"MUSIC AND CHILL"
+                        }],
+                 "rotation":0,
+                 "type":"text",
+                 "visible":true,
+                 "width":0,
+                 "x":372.690259943627,
+                 "y":744.597557156279
+                }, 
+                {
+                 "height":0,
+                 "id":533,
+                 "name":"PresentationArea",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"font",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"ONE MORE THING"
+                        }],
+                 "rotation":0,
+                 "type":"text",
+                 "visible":true,
+                 "width":0,
+                 "x":249.765111180708,
+                 "y":202.004384591293
+                }, 
+                {
+                 "height":0,
+                 "id":534,
+                 "name":"MusicArea",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"font",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"WORK OR TWERK"
+                        }],
+                 "rotation":0,
+                 "type":"text",
+                 "visible":true,
+                 "width":0,
+                 "x":703.100532414657,
+                 "y":998.277481991857
                 }],
          "opacity":1,
          "properties":[
@@ -894,7 +986,7 @@
          "name":"collisions",
          "objects":[
                 {
-                 "height":32,
+                 "height":43.8967953007659,
                  "id":335,
                  "name":"collision",
                  "properties":[
@@ -2033,7 +2125,7 @@
                  "y":898.69255
                 }, 
                 {
-                 "height":18.6149,
+                 "height":49.1778048444485,
                  "id":500,
                  "name":"collision",
                  "properties":[
@@ -2045,9 +2137,9 @@
                  "rotation":0,
                  "type":"collision",
                  "visible":true,
-                 "width":12.4558,
-                 "x":1353.7721,
-                 "y":950.69255
+                 "width":2.87638206368047,
+                 "x":1269.38198960861,
+                 "y":873.60104375057
                 }, 
                 {
                  "height":22.0811,
@@ -2332,6 +2424,108 @@
                  "width":71.2774666666668,
                  "x":667.3196,
                  "y":1044.87611666667
+                }, 
+                {
+                 "height":17.2794028073585,
+                 "id":519,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":128,
+                 "x":480,
+                 "y":44.3826976492625
+                }, 
+                {
+                 "height":23.2547522864663,
+                 "id":520,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":287.479929223744,
+                 "x":608.520070776256,
+                 "y":45.633375567415
+                }, 
+                {
+                 "height":267.112101316083,
+                 "id":521,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":17.9546434679158,
+                 "x":902.614618187226,
+                 "y":59.0233232731058
+                }, 
+                {
+                 "height":10.0749967953636,
+                 "id":523,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":21.8527550754284,
+                 "x":1316.09995843774,
+                 "y":447.958325347311
+                }, 
+                {
+                 "height":49.1778,
+                 "id":524,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":2.87638,
+                 "x":1321.43381072986,
+                 "y":873.595572219688
+                }, 
+                {
+                 "height":3.73910791319599,
+                 "id":528,
+                 "name":"collision",
+                 "properties":[
+                        {
+                         "name":"showBounds",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"collision",
+                 "visible":true,
+                 "width":51.698666875772,
+                 "x":1270.89328231315,
+                 "y":860.470855979608
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -2457,7 +2651,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztl7lSFFEUhnu0gBE3fAMGAjV0RQwFgYFAUQzcNdZAIFBQy31LhUTfAFzAVEj0AawCFzB0wWEM3BJrMMDvlveWh0u39vQ008MMf9VX5\/Zdps\/fZ24vqZhz2cmjUjH\/c18sXBp51c+oEwhJSz4KS0F9XAo1i9xV6vUoNAX1kdRxl44NOjbr2KhjU8Dfz1alXA+7Bk1Wv12TfKiU66FkrrmpSYuOpja7rfElhauMaJtrbPaDqUGjx3ghKfP\/KYtCto8GK5pamH2StGIQ1S3LYbGHirUei1XKR5rv2npqvRNM\/BKbe+wVTXs69icqvtL+Bt\/hR2z+mnQW37XZ+PCjjjLHqVw+v39fmftco\/3WeDvHVRHujwsu+Sr1uvTLueet8R6P38lVxbQ\/ikFh+uhYoP+MH4Xpw2sP+VGmwnFm4FdFwPXBT52T7sXnHic4roFauA+nyh3ndLn72gGu16B1zaLy8Uz4UJ6S0Apt8Bz68NAvfMyqOtEfgzE8jAf0cVfc8\/tEu1+31TuT27PES+n437yUp07ogm74DCN4GBU+1tO3ATZChvPMBPTxVOQ+Itqjwofbs8RLMi\/laYi1w3CL634b7lj7ZA9z9kK79X+8wryrcC3gvrLl9x3WPN\/tvCbon4Qh8hmGJ1BDPWp1Tc4y7xz0xOfmPgCD8CAkH35lnu8yL6VZ1U\/OE+QzCW+hleM27UPWSeY+BuPwMs8+pD6S4xR88rgvddHfrcdknWTu1YwnyqN9nq8ij9WwRlxLk5ctWacU49OQhhZIRuBD3dPMXtpKTttgu\/Bh8vqX1jK\/CtbBGeZ2RuCjV\/g4Qh5H4ZjwYfJ6B+\/hg\/Z0nTk34CbUwQ6oF+sK4T1R5mi0gnYlrNR9D4mP4DEchxNwMkIfB1yeMTJHo020N8MW3feK+BreeNyX8u3joosPtxwP0j4Eh33eT5WPKb7Ps\/kWzya69XE+pxmqQyQBvwHNvK4F",
+         "data":"eJztl8lT1EAchRMthglu+B+wHNSjK+JREBg4KIoHdz3rQeCgoBbg7lW4aJW7loILWOVJuGiV+wqo4NEFYTy4XazBg36R7qqekEAmhFmKeVVfdae7M\/NeftPJZFDXGrU4alB3v\/bl5NmIq34n2oBPSudILnnN0eCri4lrqtcj2eQ1R0i0K0VbJNpS0RaLtsTj58eqqVwPaw1KLOPWmsRDU7kepuQ1lzUpE62szSrLfFr+KqL05TWW+0HWoNhhPpkUGX9JSsiao8jSylrIfRKytF5UMM37uecNTbsAF43o8VSrx2P8P4GnKZ7DSWaOMO+1hdR6Bcj2mx597NTK\/pA+0pp8p\/8DfsIvffQ5YZfvtWe45mfhnDH+Wrf1qMrQtKzpo8fXZtivlVpnma\/kONvl\/niA\/4fwyCHHJcYvwxXDfY79Nn5N1duMq2v3WebrHD7Hi57h\/zm8iCFHsiudY7SqfPzNxCo\/czjtITeKZGraMPzJ9Hi+96+ekE4Fo49zOc6DfDgNOwOatgsa2MON0KTcs1q5Xm2Wa5aoHPeUHGamEJRDBdyHZjK0wFX8X4NWkUNnrpsMPR5znFTu+c1Kv0X0zf9Mds8SJ4XNHMERX2amaqiBWvgKnWToglf4fw3dSj0ifM+wxxx3Fe+dSr9LyWH3LHHSPLzOhwXBkUztnNsBx9gfx+GEy33SxLqDcMjjvrLK7X9Y+Xxfjfc1UCl+X32M90M7fjrgNuRRj\/zA2N5boQ2u+5TDreTzfQ\/+90KdyPHXHMdzH3764T2Uc1whcqh1Ur13Qw\/0xjmHqs94HIAvNtfcVA3jtWJOrZPqPYf53MDk3a\/uGP9pHGvNTHzMgtnKtZS+rFLrNMj8EIShDEIJyGHe0+ReWoKnpbBMySF9jaU5rM+GubCbtdUJyFGv5NiMjy2wVckhfX2Aj\/BJZDrMmiNwFApgORQq5yXydyWlepQy6GfBDDF2g\/Ym3IJtsB12JDDHeptnjOpRaiH9RbBYjL2hfQvvHO5L8f5fcsAmh53HDfQ3wiaX91MzxwDv57G8i8fS2o3xfVop5PhILvwDErrHVg==",
          "encoding":"base64",
          "height":40,
          "id":1,
@@ -2476,7 +2670,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":518,
+ "nextobjectid":535,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",

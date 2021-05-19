@@ -36,12 +36,14 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
 
     private headlineNode = new TextNode<Gather>({ font: Gather.headlineFont, outlineColor: "grey" });
     private textNode = new TextNode<Gather>({ font: Gather.standardFont, });
+    private controlsNode = new TextNode<Gather>({ font: Gather.standardFont, text: "→ next\n← previous\nQ quit", anchor: Direction.TOP_LEFT});
 
     public slideIndex = 0;
 
     private lightNode = new LightNode({ x: this.x, y: this.y, width: PresentationBoardNode.sprite.width, height: PresentationBoardNode.sprite.height, anchor: Direction.CENTER, layer: Layer.LIGHT });
     private presentationIndex: number;
     private currentLine?: { slide: number; headline: string; subHeadline?: string, lines?: string[]; };
+    private isPresenter = false;
 
     public constructor(args: SceneNodeArgs) {
         super({
@@ -141,16 +143,24 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         }
     }
 
-    public startPresentation(startIndex = 0): void {
+    public startPresentation(startIndex = 0, isPresenter = false): void {
         if (this.getTag() !== PresentationBoardTags.OUT && this.getTag() !== PresentationBoardTags.ROLL_OUT) {
             this.slideIndex = startIndex;
             this.setTag(PresentationBoardTags.ROLL_OUT);
+            this.appendChild(this.controlsNode);
+            if (isPresenter) {
+                this.controlsNode.moveTo(this.getWidth() / 2 + 4, -this.getHeight() / 2);
+            }
+            this.isPresenter = isPresenter;
         }
     }
 
     public endPresentation(): void {
         if (this.getTag() !== PresentationBoardTags.IN && this.getTag() !== PresentationBoardTags.ROLL_IN) {
             this.setTag(PresentationBoardTags.ROLL_IN);
+        }
+        if (this.isPresenter) {
+            this.controlsNode.remove();
         }
     }
 

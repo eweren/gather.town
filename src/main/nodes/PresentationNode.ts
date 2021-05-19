@@ -56,7 +56,7 @@ export class PresentationNode extends InteractiveNode {
                 input.onButtonDown.connect(this.handleButtonPress, this);
                 this.getScene()?.camera.focus(this.presentationBoard).then((successful) => {
                     if (successful) {
-                        this.presentationBoard?.startPresentation();
+                        this.presentationBoard?.startPresentation(0, true);
                         if (player != null) {
                             player.startPresentation();
                         }

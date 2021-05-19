@@ -32,13 +32,15 @@
 
     [X] check how screensharing to canvas looks -> is shit
 
+    [X] show controls for presentation
+
 [X] add chat option (public)
 
 [X] add chat option (private)
 
 [X] implement collaborative whiteboard thing of jitsi or miro
 
-[ ] map-making
+[X] map-making
 
 [X] face recognition and repositioning for user videos
 
