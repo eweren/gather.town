@@ -31,7 +31,7 @@ export const enum JitsiConferenceEvents {
   NOISY_MIC = "conference.noisy_mic",
   PRIVATE_MESSAGE_RECEIVED = "conference.privateMessageReceived",
   PARTICIPANT_CONN_STATUS_CHANGED = "conference.participant_conn_status_changed",
-  PARTCIPANT_FEATURES_CHANGED = "conference.partcipant_features_changed",
+  PARTICIPANT_FEATURES_CHANGED = "conference.participant_features_changed",
   PARTICIPANT_PROPERTY_CHANGED = "conference.participant_property_changed",
   P2P_STATUS = "conference.p2pStatus",
   PHONE_NUMBER_CHANGED = "conference.phoneNumberChanged",
