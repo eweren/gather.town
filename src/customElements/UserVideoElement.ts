@@ -43,6 +43,7 @@ export class UserVideoElement extends HTMLElement {
         if (this.room != null) {
             this.hoverOver.addButton("🎙️", (val) => {
                 if (val) {
+                    // debugger
                     this.room!.getLocalAudioTrack()?.mute();
                 } else {
                     this.room!.getLocalAudioTrack()?.unmute();

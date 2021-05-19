@@ -1,6 +1,7 @@
 import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
 import { sleep } from "./engine/util/time";
+import { AudioMixerEffect as MusicSource } from "./JitsiMixer";
 import { Gather } from "./main/Gather";
 import { IFrameNode } from "./main/nodes/IFrameNode";
 import { SpeakerNode } from "./main/nodes/SpeakerNode";
@@ -124,6 +125,28 @@ export default async function (): Promise<JitsiConference | any> {
             }
             const participant = track.getParticipantId();
 
+            if (track.getOriginalStream().getAudioTracks().length > 1) {
+                track.getOriginalStream().getAudioTracks().forEach(t => {
+                    console.log("MUSIC IS SHARED");
+                    if (document.getElementById(`${participant + t.id}audio`) == null) {
+                        const element = document.createElement("audio");
+                        element.autoplay = true;
+                        element.id = `${participant + t.id}audio`;
+                        document.body.append(element);
+                        const stream = new MediaStream([t]);
+                        element.srcObject = stream;
+                    }
+                });
+            } else if (track.getOriginalStream().getAudioTracks().length === 1) {
+                if (document.getElementById(`${participant + track.getOriginalStream().getAudioTracks()[0].id}audio`) == null) {
+                    const element = document.createElement("audio");
+                    element.autoplay = true;
+                    element.id = `${participant + track.getOriginalStream().getAudioTracks()[0].id}audio`;
+                    document.body.append(element);
+                    element.srcObject = track.getOriginalStream();
+                }
+            }
+
             track.addEventListener(JitsiTrackEvents.NO_DATA_FROM_SOURCE, (val) => {
                 const indexOfTrackToRemove = remoteTracks[participant].indexOf(track);
                 if (indexOfTrackToRemove !== -1) {
@@ -136,6 +159,14 @@ export default async function (): Promise<JitsiConference | any> {
                     }
                 }
             });
+
+            track.getOriginalStream().onremovetrack = (ev) => {
+                console.log(ev);
+                if (ev.track) {
+                    console.log(document.getElementById(`${participant + ev.track.id}audio`));
+                    document.getElementById(`${participant + ev.track.id}audio`)?.remove();
+                }
+            };
 
             if (!remoteTracks[participant]) {
                 remoteTracks[participant] = [];
@@ -163,17 +194,10 @@ export default async function (): Promise<JitsiConference | any> {
                 () => {
                     console.log("remote track stopped");
                 });
-            let element;
 
             if (track.getType() === "video") {
                 const wrapper = createVideoTrackForUser(track);
                 document.getElementById("videos")?.append(wrapper);
-            } else {
-                element = document.createElement("audio");
-                element.autoplay = true;
-                element.id = `${participant}audio`;
-                document.body.append(element);
-                track.attach(element);
             }
         }
 
@@ -400,21 +424,62 @@ export default async function (): Promise<JitsiConference | any> {
             connection?.disconnect();
         }
 
+        function shareTabAudio() {
+            const audioMixer = JitsiMeetJS.createAudioMixer();
+            const localStream = room.getLocalAudioTrack()?.getOriginalStream();
+            if (localStream != null) {
+                audioMixer.addMediaStream(localStream);
+            }
+            JitsiMeetJS.createLocalTracks({
+                devices: [ "desktop" ],
+            }).then(async (tracks: Array<JitsiLocalTrack> | JitsiConferenceErrors) => {
+                if (tracks instanceof Array) {
+                    const filteredTracks = tracks.filter(t => t.isLocalAudioTrack());
+                    if (filteredTracks.length === 0) {
+                        window.alert("You should have ticked the 'share audio' box");
+                        return;
+                    }
+                    const newAudioTrack = filteredTracks[0];
+                    const localAudioTrack = room.getLocalAudioTrack();
+                    audioMixer.addMediaStream(newAudioTrack.getOriginalStream());
+                    if (localAudioTrack) {
+                        if (newAudioTrack != null) {
+                            const stream = newAudioTrack.getOriginalStream();
+                            newAudioTrack.addEventListener(JitsiTrackEvents.LOCAL_TRACK_STOPPED, async () => {
+                                localAudioTrack.getOriginalStream().removeTrack(stream.getAudioTracks()[0]);
+                                await localAudioTrack.setEffect(undefined);
+                                console.log(localAudioTrack.getOriginalStream().getAudioTracks());
+                                console.log("stoppend ");
+                            });
+                            await localAudioTrack.setEffect(new MusicSource(stream));
+                            return;
+                        }
+                        room.replaceTrack(localAudioTrack, newAudioTrack);
+
+                    }
+                }
+            }).catch(error => console.log(error));
+        }
+
         function switchVideo() {
             // TODO if presentation try to redirect pc audio
-            const previousTrack = localTracks.pop();
+            const previousTrack = room.getLocalVideoTrack();
+            if (previousTrack != null) {
+                localTracks.splice(localTracks.indexOf(previousTrack), 1);
+            }
             const isVideo = !!room.getLocalVideoTrack()?.isScreenSharing();
             JitsiMeetJS.createLocalTracks({
                 devices: [ isVideo ? "video" : "desktop" ]
             }).then(tracks => {
                     if (tracks instanceof Array) {
                         const element = document.getElementById("localUserVideo") as UserVideoElement;
-                        localTracks.push(tracks[0]);
+                        localTracks.push(...tracks);
                         localTracks[1].addEventListener(
                             JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
-                                if (localTracks[1]) {
-                                    const trackToDispose = localTracks.pop();
-                                    room.removeTrack(trackToDispose!);
+                                const trackToDispose = room.getLocalVideoTrack();
+                                if (trackToDispose != null) {
+                                    localTracks.splice(localTracks.indexOf(trackToDispose), 1);
+                                    room.removeTrack(trackToDispose);
                                 }
                                 if (previousTrack) {
                                     localTracks.push(previousTrack);
@@ -441,6 +506,7 @@ export default async function (): Promise<JitsiConference | any> {
                 })
                 .catch(error => console.log(error));
         }
+
         function changeAudioOutput(deviceId: string) {
             localStorage.setItem("gatherDefaultAudioOutput", deviceId);
             JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId);
@@ -591,12 +657,20 @@ export default async function (): Promise<JitsiConference | any> {
                     }
 
                     const selectVideoBtn = document.createElement("button");
-
                     selectVideoBtn.id = "shareScreenBtn";
                     selectVideoBtn.innerText = "Share screen 🖥️";
                     optionsContainer.appendChild(selectVideoBtn);
                     selectVideoBtn.addEventListener("click", (ev) => {
                         switchVideo();
+                    });
+
+                    const shareAudioButton = document.createElement("button");
+
+                    shareAudioButton.id = "shareAudioBtn";
+                    shareAudioButton.innerText = "Share audio ♪";
+                    optionsContainer.appendChild(shareAudioButton);
+                    shareAudioButton.addEventListener("click", (ev) => {
+                        shareTabAudio();
                     });
                 });
             }, 1000);
