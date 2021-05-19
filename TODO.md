@@ -22,6 +22,10 @@
 
 [ ] let users share their audio-tab to a speaker-node
 
+    [X] share audio capability
+
+    [ ] attach audio_stream of user to soundbox
+
 [X] optimize presentation
 
     [X] other members of room should be focused to presentation
