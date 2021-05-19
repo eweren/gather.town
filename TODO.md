@@ -20,6 +20,8 @@
 
 [X] add iframe objects
 
+[ ] let users share their audio-tab to a speaker-node
+
 [X] optimize presentation
 
     [X] other members of room should be focused to presentation
