@@ -449,7 +449,7 @@ export default async function (): Promise<JitsiConference | any> {
                                 localAudioTrack.getOriginalStream().removeTrack(stream.getAudioTracks()[0]);
                                 await localAudioTrack.setEffect(undefined);
                                 console.log(localAudioTrack.getOriginalStream().getAudioTracks());
-                                console.log("stoppend ");
+                                console.log("stopped ");
                             });
                             await localAudioTrack.setEffect(new MusicSource(stream));
                             return;
