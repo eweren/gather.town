@@ -45,13 +45,13 @@ export function getGlobalGainNode(): GainNode {
 }
 
 export class Sound {
-    private source: AudioBufferSourceNode | null = null;
+    private source: AudioBufferSourceNode | MediaStreamAudioSourceNode | null = null;
     private loop: boolean = false;
     private stereoPannerNode: StereoPannerNode | null = null;
     private gainNode: GainNode | null = null;
     private isPaused = false;
 
-    private constructor(private readonly buffer: AudioBuffer, private defaultVolume = 1) {
+    public constructor(private readonly buffer: AudioBuffer | MediaStreamAudioSourceNode, private defaultVolume = 1) {
         this.setStereo();
     }
 
@@ -72,6 +72,20 @@ export class Sound {
         this.stereoPannerNode = ctx.createStereoPanner();
         this.gainNode.connect(getGlobalGainNode());
         this.stereoPannerNode.connect(this.gainNode);
+    }
+
+    public setSoundSrc(src?: MediaStreamTrack): void {
+        if (src) {
+            this.source = getAudioContext().createMediaStreamSource(new MediaStream([src]));
+            if (this.stereoPannerNode) {
+                console.log("Hier");
+                this.source.connect(this.stereoPannerNode);
+            } else if (this.gainNode) {
+                console.log("Hier");
+                this.source.connect(this.gainNode);
+            }
+        }
+        src ?? null;
     }
 
     public static shallowClone(sound: Sound): Sound {
@@ -101,10 +115,14 @@ export class Sound {
      */
     public play(args?: {fadeIn?: number, delay?: number, duration?: number, direction?: number}): void {
         if (!this.isPlaying()) {
-            const source = getAudioContext().createBufferSource();
-            source.buffer = this.buffer;
-            source.loop = this.loop;
+            console.log("PLAY");
+            const source = this.buffer instanceof AudioBuffer ? getAudioContext().createBufferSource() : this.buffer;
+            if (source instanceof AudioBufferSourceNode) {
+                source.buffer = this.buffer as AudioBuffer;
+                source.loop = this.loop;
+            }
             if (this.stereoPannerNode) {
+                console.log("SHOULD CONNECT");
                 source.connect(this.stereoPannerNode);
             }
 
@@ -122,7 +140,9 @@ export class Sound {
             if (args?.direction) {
                 this.setDirection(args.direction);
             }
-            source.start(this.source.context.currentTime, args?.delay, args?.duration);
+            if (source instanceof AudioBufferSourceNode) {
+                source.start(this.source.context.currentTime, args?.delay, args?.duration);
+            }
         }
     }
 
@@ -131,10 +151,18 @@ export class Sound {
             if (fadeOut > 0 && this.gainNode) {
                 const stopTime = this.source.context.currentTime + fadeOut;
                 this.gainNode.gain.linearRampToValueAtTime(0, stopTime);
-                this.source.stop(stopTime);
+                if (this.source instanceof AudioBufferSourceNode) {
+                    this.source.stop(stopTime);
+                } else {
+                    this.source.disconnect();
+                }
             } else {
                 try {
-                    this.source.stop();
+                    if (this.source instanceof AudioBufferSourceNode) {
+                        this.source.stop();
+                    } else {
+                        this.source.disconnect();
+                    }
                 } catch (e) {
                     // Ignored. Happens on Safari sometimes. Can't stop a sound which may not be really playing?
                 }
@@ -162,7 +190,9 @@ export class Sound {
         this.loop = loop;
 
         if (this.source) {
-            this.source.loop = loop;
+            if (this.source instanceof AudioBufferSourceNode) {
+                this.source.loop = loop;
+            }
         }
     }
 

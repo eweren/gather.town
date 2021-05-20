@@ -1,7 +1,7 @@
 
 import { Aseprite } from "../../engine/assets/Aseprite";
 import { asset } from "../../engine/assets/Assets";
-import { Sound } from "../../engine/assets/Sound";
+import { getAudioContext, Sound } from "../../engine/assets/Sound";
 import { Direction } from "../../engine/geom/Direction";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 import { SoundNode, } from "../../engine/scene/SoundNode";
@@ -9,25 +9,16 @@ import { TiledSceneArgs } from "../../engine/scene/TiledMapNode";
 import { Gather } from "../Gather";
 import { InteractiveNode } from "./InteractiveNode";
 
-export const soundAssets = [
-    "music/surf.ogg",
-    "music/fun.ogg",
-    "music/norf_norf.ogg"
-];
-
 export class SpeakerNode extends InteractiveNode {
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
-
-    @asset(soundAssets)
-    private static sounds: Sound[];
 
     private sound?: Sound;
     private soundNode?: SoundNode<Gather>;
     private range: number;
     private intensity: number;
     private soundbox: number;
-    private soundIndex = -1;
+    private userId?: string;
 
     public constructor(args?: TiledSceneArgs) {
         super({
@@ -42,16 +33,9 @@ export class SpeakerNode extends InteractiveNode {
     }
 
     public update(dt: number, time: number): void {
-        this.caption = `${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"}`
-            + (this.sound != null ? (this.soundIndex === SpeakerNode.sounds.length - 1) ? " ◾" : " ↠" : " ►");
-        if (this.soundIndex > 0) {
-            this.caption += "\nQ ↞";
-        } else if (this.soundIndex === 0) {
-            this.caption += "\nQ ◾";
-        }
-        // if (this.soundIndex >= 0) {
-        //     this.caption += "\nPlaying: " + soundAssets[this.soundIndex].replace("music/", "").replace(".ogg", "");
-        // }
+        this.caption = this.canInteractHere()
+            ? `${this.getGame().input.currentControllerFamily === ControllerFamily.GAMEPAD ? "Y" : "E"} TO SHARE AUDIO`
+            : this.userId ? (this.getGame().JitsiInstance?.room.getParticipantById(this.userId).getDisplayName() ?? "Anonymous") + " IS SHARING AUDIO" : "";
         super.update(dt, time);
     }
 
@@ -63,39 +47,29 @@ export class SpeakerNode extends InteractiveNode {
         return this.sound;
     }
 
-    public reverseInteract(): void {
-        if (this.soundIndex > 0) {
-            this.interact(-1);
-        } else {
-            this.handleNewSoundIndex(SpeakerNode.sounds.length);
-        }
+    public canInteractHere(): boolean {
+        return this.soundNode == null;
     }
 
-    public interact(update = 1): void {
-        this.handleNewSoundIndex(this.soundIndex + update);
-        this.getGame().sendCommand("speakerUpdate", {soundIndex: this.soundIndex, soundBox: this.soundbox});
-    }
-
-    public handleNewSoundIndex(soundIndex: number): void {
-        if (this.soundIndex === soundIndex) {
-            return;
-        }
-        this.soundIndex = soundIndex;
-        if (this.soundIndex === SpeakerNode.sounds.length) {
-            this.soundIndex = -1;
-            this.soundNode?.remove();
-            this.soundNode = undefined;
-            this.sound?.stop();
-            this.sound = undefined;
-        } else {
-            this.sound?.stop();
-            this.sound = SpeakerNode.sounds[this.soundIndex].shallowClone();
-            if (this.sound != null) {
-                this.soundNode?.remove();
-                this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity, pauses: false });
-                this.appendChild(this.soundNode);
+    public async interact(): Promise<void> {
+        if (this.canInteractHere()) {
+            const sharedId = await this.getGame().JitsiInstance?.shareTabAudio();
+            if (sharedId) {
+                this.getPlayer()?.setSpeakerNode(this, sharedId);
             }
         }
+    }
 
+    public setAudioStream(userId?: string, streamTrack?: MediaStreamTrack): void {
+        this.userId = userId;
+        if (streamTrack) {
+            this.sound = new Sound(getAudioContext().createMediaStreamSource(new MediaStream([streamTrack])));
+            this.soundNode = new SoundNode({ sound: this.sound, range: this.range, intensity: this.intensity, pauses: false });
+            this.appendChild(this.soundNode);
+        } else {
+            this.sound = undefined;
+            this.soundNode?.remove();
+            this.soundNode = undefined;
+        }
     }
 }

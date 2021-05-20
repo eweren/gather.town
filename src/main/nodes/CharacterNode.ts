@@ -3,9 +3,11 @@ import { BitmapFont } from "../../engine/assets/BitmapFont";
 import { SimpleDirection } from "../../engine/geom/Direction";
 import { Vector2 } from "../../engine/graphics/Vector2";
 import { AsepriteNode, AsepriteNodeArgs } from "../../engine/scene/AsepriteNode";
+import { SceneNode } from "../../engine/scene/SceneNode";
 import { cacheResult } from "../../engine/util/cache";
 import { clamp } from "../../engine/util/math";
 import { rnd } from "../../engine/util/random";
+import { sleep } from "../../engine/util/time";
 import { Layer, STANDARD_FONT } from "../constants";
 import { Gather } from "../Gather";
 import { CollisionNode } from "./CollisionNode";
@@ -64,6 +66,9 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     private particleAngle = 0;
 
     private dialogNode: DialogNode;
+
+    protected speakerNode?: SceneNode;
+    protected shareAudioId?: string;
 
     public constructor(args: AsepriteNodeArgs) {
         super(args);
@@ -332,5 +337,35 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
 
     public getNodeToInteractWith(): InteractiveNode | NpcNode | null {
         return this.canInteractWith;
+    }
+
+    public async setSpeakerNode(node: SceneNode, id: string): Promise<void> {
+        this.speakerNode = node;
+        this.shareAudioId = id;
+        await sleep(1000);
+        this.getGame().sendCommand("speakerUpdate", { speakerNode: node.getId(), shareAudioId: id });
+    }
+
+    public activateSpeakerNode(userId: string, nodeId: string, id?: string): void {
+        const node = this.getScene()?.rootNode.getDescendantById(nodeId);
+        if (node) {
+            if (id != null) {
+                Object.values(this.getGame().JitsiInstance!.remoteTracks)
+                    .map(tracks => tracks.filter(t => t.isAudioTrack()))
+                    .filter(v => v.length > 0)
+                    .forEach(tracks => {
+                        console.log(tracks);
+                        tracks.forEach(track => {
+                            const t = track.getOriginalStream().getAudioTracks()
+                                .filter(track => track.id.includes(id))[0];
+                            if (t) {
+                                (node as any).setAudioStream(userId, t);
+                            }
+                        });
+                    });
+            } else {
+                (node as any).setAudioStream();
+            }
+        }
     }
 }

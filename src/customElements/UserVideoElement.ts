@@ -34,6 +34,7 @@ export class UserVideoElement extends HTMLElement {
         this.nameSpan.contentEditable = this.room != null ? "true" : "false";
         this.nameSpan.classList.add("userName");
         if (this.room != null) {
+            this.nameSpan.addEventListener("click", ev => ev.stopImmediatePropagation());
             this.nameSpan.addEventListener("input", this.handleInput.bind(this), false);
             this.nameSpan.addEventListener("blur", this.handleBlur.bind(this), false);
         }

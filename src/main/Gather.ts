@@ -9,7 +9,7 @@ import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
 import { rnd } from "../engine/util/random";
-import Jitsi from "../Jitsi";
+import JitsiInstance from "../Jitsi";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
 import { HEADLINE_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
@@ -51,6 +51,7 @@ export class Gather extends Game {
     public static instance: Gather;
 
     public preventPlayerInteraction = 0;
+    public JitsiInstance?: JitsiInstance;
 
     private stageStartTime = 0;
     private stageTime = 0;
@@ -77,7 +78,8 @@ export class Gather extends Game {
 
     public constructor() {
         super();
-        Jitsi().then(room => {
+        this.JitsiInstance = new JitsiInstance();
+        this.JitsiInstance.create().then(room => {
             this.room = room;
         });
     }
