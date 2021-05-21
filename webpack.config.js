@@ -3,7 +3,6 @@ const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
 const GitRevisionPlugin = require("git-revision-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
@@ -69,9 +68,6 @@ module.exports = {
         ]})
     ],
     optimization: {
-        minimize: true,
-        minimizer: [new UglifyJsPlugin({
-          include: /\.min\.js$/
-        })]
+        minimize: true
     }
 };
