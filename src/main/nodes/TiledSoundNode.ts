@@ -1,13 +1,10 @@
-import { asset } from "../../engine/assets/Assets";
+/* import { asset } from "../../engine/assets/Assets";
 import { Sound } from "../../engine/assets/Sound";
 import { SoundNode, } from "../../engine/scene/SoundNode";
 import { TiledSceneArgs } from "../../engine/scene/TiledMapNode";
 import { Gather } from "../Gather";
 
 const soundAssets = [
-    "music/surf.ogg",
-    "music/fun.ogg",
-    "music/norf_norf.ogg"
 ];
 const soundMapping: {[index: string]: number} = {
     "surf": 0
@@ -36,3 +33,4 @@ export class TiledSoundNode extends SoundNode<Gather> {
         super({ ...args, range, intensity, sound });
     }
 }
+ */

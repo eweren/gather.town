@@ -13,7 +13,6 @@ import { isDev } from "../../engine/util/env";
 import { BitmapFont } from "../../engine/assets/BitmapFont";
 import { FpsCounterNode } from "../../engine/scene/FpsCounterNode";
 import { Direction } from "../../engine/geom/Direction";
-import { TiledSoundNode } from "../nodes/TiledSoundNode";
 import { FadeToBlackTransition } from "../../engine/transitions/FadeToBlackTransition";
 import { ChairNode } from "../nodes/ChairNode";
 import { FocusNode } from "../nodes/FocusNode";
@@ -30,7 +29,7 @@ export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
     private static font: BitmapFont;
 
-    @asset("map/debug.tiledmap.json")
+    @asset("map/map.tiledmap.json")
     private static map: TiledMap;
 
     private debugMode: boolean = false;
@@ -40,7 +39,7 @@ export class GameScene extends Scene<Gather> {
         "player": PlayerNode,
         "light": LightNode,
         "cameraLimit": CameraLimitNode,
-        "sound": TiledSoundNode,
+        /* "sound": TiledSoundNode, */
         "chair": ChairNode,
         "powerswitch": SwitchNode,
         "focus": FocusNode,
