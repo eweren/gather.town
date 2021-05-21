@@ -257,7 +257,13 @@ export default class JitsiInstance {
         if (track.isLocal()) {
             return;
         }
+
         const participant = track.getParticipantId();
+
+        const indexOfTrackToRemove = this.remoteTracks[participant].indexOf(track);
+        if (indexOfTrackToRemove !== -1) {
+            this.remoteTracks[participant].splice(indexOfTrackToRemove, 1);
+        }
 
         if (track.getType() === "video") {
             this.removeVideoTrackForUser(participant);
@@ -280,21 +286,24 @@ export default class JitsiInstance {
         if (track.getOriginalStream().getAudioTracks().length > 1) {
             track.getOriginalStream().getAudioTracks().forEach(t => {
                 console.log(t);
-                if (document.getElementById(`${participant + t.id}audio`) == null) {
+                if (document.getElementById(`${participant}audio`) == null) {
                     const element = document.createElement("audio");
                     element.autoplay = true;
-                    element.id = `${participant + t.id}audio`;
+                    element.id = `${participant}audio`;
                     document.body.append(element);
                     const stream = new MediaStream([t]);
                     element.srcObject = stream;
                     element.muted = true;
+                } else {
+                    const stream = new MediaStream([t]);
+                    (document.getElementById(`${participant}audio`) as HTMLAudioElement).srcObject = stream;
                 }
             });
         } else if (track.getOriginalStream().getAudioTracks().length === 1) {
-            if (document.getElementById(`${participant + track.getOriginalStream().getAudioTracks()[0].id}audio`) == null) {
+            if (document.getElementById(`${participant}audio`) == null) {
                 const element = document.createElement("audio");
                 element.autoplay = true;
-                element.id = `${participant + track.getOriginalStream().getAudioTracks()[0].id}audio`;
+                element.id = `${participant}audio`;
                 document.body.append(element);
                 element.srcObject = track.getOriginalStream();
             }
@@ -601,9 +610,12 @@ export default class JitsiInstance {
                                 localAudioTrack.getOriginalStream().removeTrack(stream.getAudioTracks()[0]);
                                 await localAudioTrack.setEffect(undefined);
                             });
-                            await localAudioTrack.setEffect(new MusicSource(stream));
+                            console.log(new MusicSource(stream));
+                            await newAudioTrack.setEffect(new MusicSource(localAudioTrack.getOriginalStream()));
+                            console.log(localAudioTrack);
+                            console.log(stream.getAudioTracks()[0].id);
+                            console.log(localAudioTrack.getOriginalStream().getAudioTracks().map(l => l.id));
                             resolve(stream.getAudioTracks()[0].id);
-                            return;
                         }
                         this.room.replaceTrack(localAudioTrack, newAudioTrack);
                     }

@@ -43,11 +43,11 @@ export class UserVideoElement extends HTMLElement {
         this.wrapperElement.style.position = "relative";
         if (this.room != null) {
             this.hoverOver.addButton("🎙️", (val) => {
-                if (val) {
-                    // debugger
-                    this.room!.getLocalAudioTrack()?.mute();
-                } else {
-                    this.room!.getLocalAudioTrack()?.unmute();
+                const track = this.room!.getLocalAudioTrack()?.getOriginalStream().getAudioTracks().slice(-1)[0];
+                if (val && track) {
+                    track.enabled = false;
+                } else if (track) {
+                    track.enabled = true;
                 }
             }, "❌", "Mute", "Unmute");
             this.hoverOver.addButton("📹", (val) => {
@@ -138,6 +138,7 @@ export class UserVideoElement extends HTMLElement {
         document.body.append(context);
         context.style.position = "absolute";
         context.style.zIndex = "100000";
+        button.style.cursor = "pointer";
         context.style.transform = `translate3d(${event.pageX}px, ${event.pageY}px, 0px)`;
     }
 

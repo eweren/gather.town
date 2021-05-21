@@ -51,7 +51,7 @@ export class Sound {
     private gainNode: GainNode | null = null;
     private isPaused = false;
 
-    public constructor(private readonly buffer: AudioBuffer | MediaStreamAudioSourceNode, private defaultVolume = 1) {
+    public constructor(private readonly buffer?: AudioBuffer | MediaStreamAudioSourceNode, private defaultVolume = 1) {
         this.setStereo();
     }
 
@@ -78,14 +78,13 @@ export class Sound {
         if (src) {
             this.source = getAudioContext().createMediaStreamSource(new MediaStream([src]));
             if (this.stereoPannerNode) {
-                console.log("Hier");
                 this.source.connect(this.stereoPannerNode);
             } else if (this.gainNode) {
-                console.log("Hier");
                 this.source.connect(this.gainNode);
             }
+        } else {
+            this.source = null;
         }
-        src ?? null;
     }
 
     public static shallowClone(sound: Sound): Sound {
@@ -114,15 +113,13 @@ export class Sound {
      *                    Values between -1 (left) and 1 (right) are possible.
      */
     public play(args?: {fadeIn?: number, delay?: number, duration?: number, direction?: number}): void {
-        if (!this.isPlaying()) {
-            console.log("PLAY");
+        if (!this.isPlaying() && this.buffer != null) {
             const source = this.buffer instanceof AudioBuffer ? getAudioContext().createBufferSource() : this.buffer;
             if (source instanceof AudioBufferSourceNode) {
                 source.buffer = this.buffer as AudioBuffer;
                 source.loop = this.loop;
             }
             if (this.stereoPannerNode) {
-                console.log("SHOULD CONNECT");
                 source.connect(this.stereoPannerNode);
             }
 

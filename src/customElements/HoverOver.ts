@@ -56,6 +56,7 @@ export class HoverOver extends HTMLElement {
                 pointer-event: none;
                 display: flex;
                 gap: 8px;
+                pointer: cursor;
             }
             .actionButtonWrapper:hover {
                 opacity: 1;
