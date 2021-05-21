@@ -2,7 +2,6 @@ import { Aseprite } from "../../engine/assets/Aseprite";
 import { Direction } from "../../engine/geom/Direction";
 import { InteractiveNode } from "./InteractiveNode";
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
-import { Sound } from "../../engine/assets/Sound";
 import { asset } from "../../engine/assets/Assets";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
@@ -18,12 +17,6 @@ export class SwitchNode extends InteractiveNode {
 
     @asset("sprites/empty.aseprite.json")
     private static readonly noSprite: Aseprite;
-
-    @asset("sounds/fx/breakerSwitch.ogg")
-    private static readonly clickSound: Sound;
-
-    @asset("sounds/fx/stuck.ogg")
-    private static readonly stuckSound: Sound;
 
     private turnedOn: boolean = false;
     private onlyOnce: boolean;
@@ -90,15 +83,9 @@ export class SwitchNode extends InteractiveNode {
                 document.body.append(miroBoard);
             }
             if (!this.onUpdate || this.onUpdate(newState) !== false) {
-                SwitchNode.clickSound.stop();
-                SwitchNode.clickSound.play();
                 this.turnedOn = newState;
                 this.setTag(this.turnedOn ? "on" : "off");
                 this.stateChanges++;
-            } else {
-                // Switch blocked
-                SwitchNode.stuckSound.stop();
-                SwitchNode.stuckSound.play();
             }
         }
     }

@@ -3,7 +3,6 @@ import { CharacterNode, PostCharacterTags } from "./CharacterNode";
 import { ControllerIntent } from "../../engine/input/ControllerIntent";
 import { Direction, SimpleDirection } from "../../engine/geom/Direction";
 import { SceneNodeArgs, SceneNodeAspect } from "../../engine/scene/SceneNode";
-import { Sound } from "../../engine/assets/Sound";
 import { Vector2 } from "../../engine/graphics/Vector2";
 import { asset } from "../../engine/assets/Assets";
 import { ParticleNode, valueCurves } from "./ParticleNode";
@@ -25,9 +24,6 @@ const groundColors = [
 ];
 
 export class PlayerNode extends CharacterNode {
-
-    @asset("sounds/fx/footsteps.ogg")
-    private static readonly footsteps: Sound;
 
     @asset("sprites/characters/character.aseprite.json")
     private static readonly sprite: Aseprite;
@@ -161,12 +157,6 @@ export class PlayerNode extends CharacterNode {
 
         if (input.currentActiveIntents & ControllerIntent.PLAYER_RELOAD && this.getGame().preventPlayerInteraction === 0) {
             this.setTag(PostCharacterTags.DANCE);
-        }
-        if (this.getTag() === "walk") {
-            PlayerNode.footsteps.setLoop(true);
-            PlayerNode.footsteps.play({fadeIn: 0.5});
-        } else {
-            PlayerNode.footsteps.stop(0.3);
         }
         if (this.rightMouseDown) {
             this.rightMouseDown = false;

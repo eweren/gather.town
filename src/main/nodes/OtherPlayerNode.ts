@@ -1,9 +1,7 @@
 import { CharacterNode } from "./CharacterNode";
 import { Direction } from "../../engine/geom/Direction";
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
-import { Sound } from "../../engine/assets/Sound";
 import { Vector2 } from "../../engine/graphics/Vector2";
-import { asset } from "../../engine/assets/Assets";
 import { ParticleNode, valueCurves } from "./ParticleNode";
 import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Rect } from "../../engine/geom/Rect";
@@ -18,9 +16,6 @@ const groundColors = [
 ];
 
 export class OtherPlayerNode extends CharacterNode {
-
-    @asset("sounds/fx/footsteps.ogg")
-    private static readonly footsteps: Sound;
 
     // Character settings
     private readonly speed = 60;
@@ -78,12 +73,6 @@ export class OtherPlayerNode extends CharacterNode {
         super.update(dt, time);
         if (this.isInScene() && !this.initDone) {
             this.initDone = true;
-        }
-        if (this.getTag() === "walk") {
-            OtherPlayerNode.footsteps.setLoop(true);
-            OtherPlayerNode.footsteps.play({fadeIn: 0.5});
-        } else {
-            OtherPlayerNode.footsteps.stop(0.3);
         }
 
         // Spawn random dust particles while walking

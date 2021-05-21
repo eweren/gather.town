@@ -11,7 +11,6 @@ import { MusicManager } from "../MusicManager";
 import { FadeTransition } from "../../engine/transitions/FadeTransition";
 import { GAME_HEIGHT, GAME_WIDTH } from "../constants";
 import { Sound } from "../../engine/assets/Sound";
-import { SuccessScene } from "./SuccessScene";
 import { ControllerFamily } from "../../engine/input/ControllerFamily";
 
 export class TitleScene extends Scene<Gather> {
@@ -58,10 +57,6 @@ export class TitleScene extends Scene<Gather> {
         this.game.scenes.setScene(GameScene);
     }
 
-    public gotoCredits (): void {
-        this.game.scenes.setScene(SuccessScene);
-    }
-
     public activate(): void {
         this.input.onButtonDown.connect(this.handleButton, this);
     }
@@ -74,9 +69,6 @@ export class TitleScene extends Scene<Gather> {
         if (event instanceof MouseEvent || event.intents & ControllerIntent.CONFIRM) {
             TitleScene.confirmSound.play();
             this.startGame();
-        } else if (event.intents & ControllerIntent.PLAYER_RELOAD) {
-            TitleScene.confirmSound.play();
-            this.gotoCredits();
         }
     }
 }

@@ -8,7 +8,6 @@ import { Game } from "../engine/Game";
 import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
-import { rnd } from "../engine/util/random";
 import JitsiInstance from "../Jitsi";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
 import { HEADLINE_FONT, STANDARD_FONT } from "./constants";
@@ -22,12 +21,10 @@ import { PlayerNode } from "./nodes/PlayerNode";
 import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
 import { GameScene } from "./scenes/GameScene";
 import { LoadingScene } from "./scenes/LoadingScene";
-import { SuccessScene } from "./scenes/SuccessScene";
 
 export enum GameStage {
     NONE = 0,
-    GAME = 1,
-    DONE = 2
+    GAME = 1
 }
 
 export class Gather extends Game {
@@ -54,7 +51,7 @@ export class Gather extends Game {
     public JitsiInstance?: JitsiInstance;
 
     private stageStartTime = 0;
-    private stageTime = 0;
+    protected stageTime = 0;
     private dialogs: Dialog[] = [];
     private npcs: CharacterNode[] = [];
     private players: Record<string, OtherPlayerNode> = {};
@@ -64,7 +61,6 @@ export class Gather extends Game {
     // Game progress
     private gameStage = GameStage.NONE;
     public keyTaken = false; // key taken from corpse
-    private fadeOutInitiated = false;
 
     // Dialog
     private currentDialogLine = 0;
@@ -106,9 +102,6 @@ export class Gather extends Game {
         switch (this.gameStage) {
             case GameStage.GAME:
                 this.updateGame();
-                break;
-            case GameStage.DONE:
-                this.updateDone(dt);
                 break;
         }
         super.update(dt, time);
@@ -344,29 +337,6 @@ export class Gather extends Game {
         try {
             player = this.getPlayer();
         } catch (e) { return; } */
-    }
-
-    private updateDone(dt: number) {
-        this.handleCamera(this.stageTime > 5 ? 1 : 0, this.stageTime / 3);
-        // Fade out
-        if (this.stageTime > 12 && !this.fadeOutInitiated) {
-            this.fadeOutInitiated = true;
-           this.getFader().fadeOut({ duration: 24 }).then(() => this.scenes.setScene(SuccessScene as any));
-        }
-    }
-
-    private handleCamera(shakeForce = 0, toCenterForce = 1): void {
-        const cam = this.getCamera();
-        // Force towards center
-        toCenterForce = clamp(toCenterForce, 0, 1);
-        const p = 0.5 - 0.5 * Math.cos(toCenterForce * Math.PI);
-        const playerX = this.getPlayer().getScenePosition().x;
-        const diff = playerX;
-        // Shake
-        const angle = rnd(Math.PI * 2);
-        const distance = rnd(shakeForce) ** 3;
-        const dx = distance * Math.sin(angle), dy = distance * Math.cos(angle);
-        cam.transform(m => m.setTranslation(diff * p + dx, dy));
     }
 
     public initGame(): void {

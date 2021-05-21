@@ -20,11 +20,15 @@
 
 [X] add iframe objects
 
-[ ] let users share their audio-tab to a speaker-node
+[X] let users share their audio-tab to a speaker-node
 
     [X] share audio capability
 
-    [ ] attach audio_stream of user to soundbox
+    [X] attach audio_stream of user to soundbox
+
+[ ] React to input/output-devices changes
+
+[ ] Add a Join-Screen
 
 [X] optimize presentation
 
