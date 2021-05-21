@@ -98,9 +98,14 @@ export default class JitsiInstance {
                     if (optionsButton == null || optionsContainer == null) {
                         return;
                     }
+                    const backdrop = document.createElement("div");
+                    const closeDropdown = () => {
+                        backdrop.remove();
+                        optionsContainer.style.display = "none";
+                        optionsButton.innerText = "Options ↧";
+                    };
                     optionsButton.addEventListener("click", (ev) => {
                         ev.stopImmediatePropagation();
-                        const backdrop = document.createElement("div");
                         backdrop.classList.add("backdrop");
                         document.body.appendChild(backdrop);
                         setTimeout(() => {
@@ -108,9 +113,7 @@ export default class JitsiInstance {
                                 e.preventDefault();
                                 e.stopImmediatePropagation();
                                 e.stopPropagation();
-                                backdrop.remove();
-                                optionsContainer.style.display = "none";
-                                optionsButton.innerText = "Options ↧";
+                                closeDropdown();
                             }, { once: true });
                         });
                         optionsContainer.style.display = optionsContainer.style.display === "flex" ? "none" : "flex";
@@ -140,6 +143,7 @@ export default class JitsiInstance {
                             options.forEach(o => selectAudioOutput.appendChild(o));
                             selectAudioOutput.addEventListener("input", (ev) => {
                                 this.changeAudioOutput((ev.target as any).value);
+                                closeDropdown();
                             });
                         }
                         if (audioInputDevices.length > 1) {
@@ -157,6 +161,7 @@ export default class JitsiInstance {
                             options.forEach(o => selectAudioInput.appendChild(o));
                             selectAudioInput.addEventListener("input", (ev) => {
                                 this.changeAudioInput((ev.target as any).value);
+                                closeDropdown();
                             });
                         }
                         if (videoInputDevices.length > 1) {
@@ -174,6 +179,7 @@ export default class JitsiInstance {
                             options.forEach(o => selectVideoInput.appendChild(o));
                             selectVideoInput.addEventListener("input", (ev) => {
                                 this.changeVideoInput((ev.target as any).value);
+                                closeDropdown();
                             });
                         }
 
@@ -183,15 +189,7 @@ export default class JitsiInstance {
                         optionsContainer.appendChild(selectVideoBtn);
                         selectVideoBtn.addEventListener("click", (ev) => {
                             this.switchVideo();
-                        });
-
-                        const shareAudioButton = document.createElement("button");
-
-                        shareAudioButton.id = "shareAudioBtn";
-                        shareAudioButton.innerText = "Share audio ♪";
-                        optionsContainer.appendChild(shareAudioButton);
-                        shareAudioButton.addEventListener("click", (ev) => {
-                            this.shareTabAudio();
+                                closeDropdown();
                         });
                     });
                 }, 1000);
