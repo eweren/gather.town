@@ -1,3 +1,4 @@
+import { SvgIcon } from "./customElements/SvgIcon";
 import { UserVideoElement } from "./customElements/UserVideoElement";
 import { isDev } from "./engine/util/env";
 import { sleep } from "./engine/util/time";
@@ -185,7 +186,8 @@ export default class JitsiInstance {
 
                         const selectVideoBtn = document.createElement("button");
                         selectVideoBtn.id = "shareScreenBtn";
-                        selectVideoBtn.innerText = "Share screen 🖥️";
+                        selectVideoBtn.innerText = "Share screen";
+                        selectVideoBtn.appendChild(new SvgIcon("assets/images/screenshare.svg", 15, "black"));
                         optionsContainer.appendChild(selectVideoBtn);
                         selectVideoBtn.addEventListener("click", (ev) => {
                             this.switchVideo();
