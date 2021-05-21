@@ -1,3 +1,5 @@
+import { SvgIcon } from "./SvgIcon";
+
 /**
  * Class for showing/hiding elements on hover over.
  */
@@ -9,24 +11,26 @@ export class HoverOver extends HTMLElement {
         super();
     }
 
-    public addButton(text: string, callback: (action: boolean) => void, toggleText?: string, textHover?: string, toggleTextHover?: string) {
-        this.buttons.set(text, { element: this.createButton(text, callback, toggleText, textHover, toggleTextHover), toggleText });
+    public addButton(imageUrl: string, callback: (action: boolean) => void, toggleImageUrl?: string, textHover?: string, toggleTextHover?: string) {
+        this.buttons.set(imageUrl, { element: this.createButton(imageUrl, callback, toggleImageUrl, textHover, toggleTextHover), toggleText: toggleImageUrl });
     }
 
-    public createButton(text: string, callback: (action: boolean) => void, toggleText?: string, textHover?: string, toggleTextHover?: string): HTMLElement {
+    public createButton(imageUrl: string, callback: (action: boolean) => void, toggleImageUrl?: string, textHover?: string, toggleTextHover?: string, color = "#FFF"): HTMLElement {
         const button = document.createElement("div");
         button.classList.add("actionButton");
-        button.innerText = text;
+        const icon = new SvgIcon(imageUrl, 20);
         button.title = textHover ?? "";
+        button.appendChild(icon);
         button.onclick = (ev) => {
+            console.log("click");
             ev.stopImmediatePropagation();
-            callback(button.innerText === text && toggleText != null);
-            if (button.innerText === text && toggleText != null) {
-                button.innerText = toggleText;
+            callback(icon.getUrl() === imageUrl && toggleImageUrl != null);
+            if (icon.getUrl() === imageUrl && toggleImageUrl != null) {
                 button.title = textHover ?? "";
+                icon.updateSrc(toggleImageUrl);
             } else {
-                button.innerText = text;
                 button.title = toggleTextHover ?? "";
+                icon.updateSrc(imageUrl);
             }
         };
         this.wrapper.append(button);
@@ -51,7 +55,7 @@ export class HoverOver extends HTMLElement {
                 cursor: pointer;
             }
             .actionButtonWrapper {
-                opacity: 0;
+                opacity: 1;
                 transition: opacity 0.2s ease-in-out;
                 pointer-event: none;
                 display: flex;
@@ -60,7 +64,13 @@ export class HoverOver extends HTMLElement {
             }
             .actionButtonWrapper:hover {
                 opacity: 1;
-                pointer-event: all;
+                pointer-events: all;
+            }
+            .actionButtonIcon {
+                width: 20px;
+                height: 20px;
+                pointer-events: none;
+                user-select: none;
             }
         `;
         shadowRoot.append(style, this.wrapper);

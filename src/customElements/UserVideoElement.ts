@@ -42,21 +42,22 @@ export class UserVideoElement extends HTMLElement {
     private initWrapperElement(): void {
         this.wrapperElement.style.position = "relative";
         if (this.room != null) {
-            this.hoverOver.addButton("🎙️", (val) => {
+            this.hoverOver.addButton("assets/images/mic.svg", (val) => {
+                console.log(val);
                 const track = this.room!.getLocalAudioTrack()?.getOriginalStream().getAudioTracks().slice(-1)[0];
                 if (val && track) {
                     track.enabled = false;
                 } else if (track) {
                     track.enabled = true;
                 }
-            }, "❌", "Mute", "Unmute");
-            this.hoverOver.addButton("📹", (val) => {
+            }, "assets/images/mic_off.svg", "Mute", "Unmute");
+            this.hoverOver.addButton("assets/images/video.svg", (val) => {
                 if (val) {
                     this.room!.getLocalVideoTrack()?.mute();
                 } else {
                     this.room!.getLocalVideoTrack()?.unmute();
                 }
-            }, "❌", "Hide video", "Show video");
+            }, "assets/images/video_off.svg", "Hide video", "Show video");
             this.hoverOver.classList.add("hoverOver");
             this.wrapperElement.appendChild(this.hoverOver);
         }
