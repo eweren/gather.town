@@ -88,12 +88,11 @@ export class PlayerNode extends CharacterNode {
         return this.deceleration;
     }
 
-    public changeSprite(previous = false): void {
-        const spriteIndex = (this.spriteIndex + Gather.characterSprites.length + (previous ? -1 : 1)) % Gather.characterSprites.length;
-        if (Gather.characterSprites.length > spriteIndex && spriteIndex >= 0) {
-            this.spriteIndex = spriteIndex;
-            this.setAseprite(Gather.characterSprites[spriteIndex]);
-            this.getGame().sendCommand("playerUpdate", { spriteIndex });
+    public changeSprite(index = 0): void {
+        if (Gather.characterSprites.length > index && index >= 0) {
+            this.spriteIndex = index;
+            this.setAseprite(Gather.characterSprites[index]);
+            this.getGame().sendCommand("playerUpdate", { index });
         }
     }
 
@@ -110,13 +109,6 @@ export class PlayerNode extends CharacterNode {
     }
     public stopPetting(): void {
         this.petNode.setTag("idle");
-    }
-
-    public activate(): void {
-        super.activate();
-        const input = this.getScene()!.game.input;
-        input.onButtonPress.filter(b => b.isPlayerDance1).connect(() => this.changeSprite(true), this);
-        input.onButtonPress.filter(b => b.isPlayerDance2).connect(() => this.changeSprite(), this);
     }
 
     public update(dt: number, time: number) {

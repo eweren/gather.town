@@ -30,6 +30,12 @@
 
 [ ] Add a Join-Screen
 
+    [x] Add titleScreen with choose options
+
+    [ ] Add option to choose name
+
+    [ ] Join when both done
+
 [X] optimize presentation
 
     [X] other members of room should be focused to presentation

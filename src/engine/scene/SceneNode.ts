@@ -113,6 +113,8 @@ export interface SceneNodeArgs {
      * offset.
      */
     cameraTargetOffset?: ReadonlyVector2Like;
+
+    scale?: number;
 }
 
 /**
@@ -235,12 +237,14 @@ export class SceneNode<T extends Game = Game> {
     /** List of nodes this node is currently colliding with. */
     protected collidingWith: SceneNode[] = [];
 
+    protected scale: number = 1;
+
     /**
      * Creates a new scene node with the given initial settings.
      */
     public constructor({ id = null, x = 0, y = 0, width = 0, height = 0, anchor = Direction.CENTER,
             childAnchor = Direction.CENTER, opacity = 1, showBounds = false, layer = null, hidden = false,
-            collisionMask = 0, cameraTargetOffset }: SceneNodeArgs = {}) {
+            collisionMask = 0, cameraTargetOffset, scale = 1 }: SceneNodeArgs = {}) {
         this.id = id;
         this.position.setComponents(x, y);
         this.size.setDimensions(width, height);
@@ -251,6 +255,7 @@ export class SceneNode<T extends Game = Game> {
         this.layer = layer == null ? null : (1 << layer);
         this.hidden = hidden;
         this.collisionMask = collisionMask;
+        this.scale = scale;
         if (cameraTargetOffset != null) {
             this.cameraTargetOffset.setVector(cameraTargetOffset);
         }
@@ -612,6 +617,11 @@ export class SceneNode<T extends Game = Game> {
             this.invalidate(SceneNodeAspect.BOUNDS);
         }
         return this;
+    }
+
+    public scaleBy(factor = 1): void {
+        this.resizeTo(this.width * factor / this.scale, this.height * factor / this.scale);
+        this.scale = factor;
     }
 
     /**
@@ -1711,13 +1721,16 @@ export class SceneNode<T extends Game = Game> {
             return 0;
         }
 
+        width *= this.scale;
+        height *= this.scale;
+
         ctx.save();
         ctx.globalAlpha *= this.getEffectiveOpacity();
         ctx.translate(this.position.x, this.position.y);
         this.transformation.transformCanvas(ctx);
         ctx.translate(
-            -(Direction.getX(this.anchor) + 1) / 2 * this.size.width,
-            -(Direction.getY(this.anchor) + 1) / 2 * this.size.height
+            -(Direction.getX(this.anchor) + 1) / 2 * this.width,
+            -(Direction.getY(this.anchor) + 1) / 2 * this.height
         );
 
         // Ugly hack to correct node positions to exact pixel boundaries because Chrome renders broken character images
@@ -1729,12 +1742,13 @@ export class SceneNode<T extends Game = Game> {
                 Math.round(transform.f) - transform.f
             );
         }
+        ctx.scale(this.scale, this.scale);
 
         const postDraw = layer === this.getEffectiveLayer() ? this.draw(ctx, width, height) : null;
         ctx.save();
         ctx.translate(
-            (Direction.getX(this.childAnchor) + 1) / 2 * this.size.width,
-            (Direction.getY(this.childAnchor) + 1) / 2 * this.size.height
+            (Direction.getX(this.childAnchor) + 1) / 2 * this.width,
+            (Direction.getY(this.childAnchor) + 1) / 2 * this.height
         );
         let flags = this.drawChildren(ctx, layer, width, height);
         ctx.restore();
@@ -1748,6 +1762,7 @@ export class SceneNode<T extends Game = Game> {
         ctx.restore();
         const hints = this.showBounds ? flags | PostDrawHints.DRAW_BOUNDS | PostDrawHints.CONTINUE_DRAWING : flags;
         this.valid |= SceneNodeAspect.RENDERING;
+        ctx.scale(1, 1);
         return hints;
     }
 

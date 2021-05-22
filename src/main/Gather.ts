@@ -24,7 +24,8 @@ import { LoadingScene } from "./scenes/LoadingScene";
 
 export enum GameStage {
     NONE = 0,
-    GAME = 1
+    START = 1,
+    GAME = 2
 }
 
 export class Gather extends Game {
@@ -59,7 +60,7 @@ export class Gather extends Game {
     public room: JitsiConference | null = null;
 
     // Game progress
-    private gameStage = GameStage.NONE;
+    private gameStage = GameStage.START;
     public keyTaken = false; // key taken from corpse
 
     // Dialog
@@ -71,6 +72,7 @@ export class Gather extends Game {
     private dialogChar?: CharacterNode;
     private wasAudioMuted = false;
     private wasVideoMuted = false;
+    public initialPlayerSprite = 0;
 
     public constructor() {
         super();
@@ -342,11 +344,11 @@ export class Gather extends Game {
     public initGame(): void {
         // Place player into world
         const player = this.getPlayer();
+        player.changeSprite(this.initialPlayerSprite);
         const pos = player.getScenePosition();
         player.remove().moveTo(pos.x, pos.y).appendTo(this.getGameScene().rootNode);
         MusicManager.getInstance().loopTrack(0);
         FxManager.getInstance().playSounds();
-        // this.turnOnAllLights();
     }
 
     public getPlayer(id?: string): PlayerNode {

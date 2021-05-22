@@ -667,6 +667,11 @@
             "char": "↞",
             "width": 6,
             "compactablePrecursors": []
+        },
+        {
+            "char": "⤶",
+            "width": 6,
+            "compactablePrecursors": []
         }
     ],
     "margin": 1,
