@@ -1,3 +1,5 @@
+import { getAudioContext } from "../engine/assets/Sound";
+import { SoundMeter } from "../SoundMeter";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
 import JitsiLocalTrack from "../typings/Jitsi/modules/RTC/JitsiLocalTrack";
 import JitsiRemoteTrack from "../typings/Jitsi/modules/RTC/JitsiRemoteTrack";
@@ -12,12 +14,39 @@ export class UserVideoElement extends HTMLElement {
     private readonly wrapperElement = document.createElement("div");
     private readonly hoverOver = new HoverOver();
     private track?: JitsiLocalTrack | JitsiRemoteTrack;
+    private meterRefresh: any;
+    private soundMeter?: SoundMeter;
 
     public constructor(private userName: string, private readonly room?: JitsiConference, private readonly participantId?: string) {
         super();
         if (room != null) {
             this.id = "localUserVideo";
         }
+    }
+
+    public connectAudioSource(stream?: MediaStream): void {
+        this.soundMeter?.stop();
+        if (stream == null) {
+            this.soundMeter = undefined;
+            return;
+        }
+        this.soundMeter = new SoundMeter(getAudioContext());
+        clearInterval(this.meterRefresh);
+        this.soundMeter.connectToSource(stream, (e) => {
+            if (e) {
+                return;
+            }
+            this.meterRefresh = setInterval(() => {
+                if (this.soundMeter == null) {
+                    return;
+                }
+                if (this.soundMeter.slow >= 0.01) {
+                    this.videoElement.classList.add("speaking");
+                } else {
+                    this.videoElement.classList.remove("speaking");
+                }
+            }, 200);
+         });
     }
 
     private initVideoElement(): void {
@@ -191,14 +220,18 @@ export class UserVideoElement extends HTMLElement {
                 gap: 10px;
                 cursor: zoom-in;
             }
-            span {
-                color: white;
-            }
             .smallVideo {
                 border-radius: 500px;
                 width: 150px;
                 height: 150px;
                 object-fit: cover;
+                border: 4px solid transparent;
+            }
+            .speaking {
+                border: 4px solid green;
+            }
+            span {
+                color: white;
             }
         `;
         shadowRoot.append(style, this.wrapperElement);

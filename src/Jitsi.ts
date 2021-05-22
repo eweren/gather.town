@@ -298,6 +298,8 @@ export default class JitsiInstance {
                     const stream = new MediaStream([t]);
                     (document.getElementById(`${participant}audio`) as HTMLAudioElement).srcObject = stream;
                 }
+                const videoElement = document.getElementById(`${participant}video`) as UserVideoElement;
+                videoElement?.connectAudioSource(track.getOriginalStream());
             });
         } else if (track.getOriginalStream().getAudioTracks().length === 1) {
             if (document.getElementById(`${participant}audio`) == null) {
@@ -306,6 +308,10 @@ export default class JitsiInstance {
                 element.id = `${participant}audio`;
                 document.body.append(element);
                 element.srcObject = track.getOriginalStream();
+                setTimeout(() => {
+                    const videoElement = document.getElementById(`${participant}video`) as UserVideoElement;
+                    videoElement?.connectAudioSource(track.getOriginalStream());
+                }, 1000);
             }
         }
 

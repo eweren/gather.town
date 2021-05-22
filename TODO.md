@@ -60,8 +60,6 @@
 
 [ ] _make bots more interactive and smart_
 
-[ ] _add synced ambient audio/video_
-
 [ ] _add container build pipeline_
 
 [X] _add multiplayer-in-game-games_
