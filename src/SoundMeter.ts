@@ -24,12 +24,8 @@ export class SoundMeter {
             const input = event.inputBuffer.getChannelData(0);
             let i;
             let sum = 0.0;
-            let clipCount = 0;
             for (i = 0; i < input.length; ++i) {
                 sum += input[i] * input[i];
-                if (Math.abs(input[i]) > 0.99) {
-                    clipCount += 1;
-                }
             }
             that.instant = Math.sqrt(sum / input.length);
             that.slow = 0.95 * that.slow + 0.05 * that.instant;
