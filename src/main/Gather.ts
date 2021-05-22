@@ -56,7 +56,6 @@ export class Gather extends Game {
     private dialogs: Dialog[] = [];
     private npcs: CharacterNode[] = [];
     private players: Record<string, OtherPlayerNode> = {};
-    private firstCommand = true;
     public room: JitsiConference | null = null;
 
     // Game progress
@@ -168,12 +167,7 @@ export class Gather extends Game {
     public sendCommand(eventName: string, value: any): void {
         const userId = this.room?.myUserId();
         if (userId != null) {
-            if (this.firstCommand) {
-                this.firstCommand = false;
-                this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, spriteIndex: this.getPlayer().spriteIndex, id: userId}) });
-            } else {
-                this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, id: userId}) });
-            }
+            this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, spriteIndex: this.getPlayer().spriteIndex, id: userId}) });
         }
     }
 
