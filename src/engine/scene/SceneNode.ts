@@ -10,6 +10,7 @@ import { Signal } from "../util/Signal";
 import { Constructor } from "../util/types";
 import { Animation } from "./animations/Animation";
 import { ScenePointerDownEvent } from "./events/ScenePointerDownEvent";
+import { ScenePointerEvent } from "./events/ScenePointerEvent";
 import { ScenePointerMoveEvent } from "./events/ScenePointerMoveEvent";
 import { Scene } from "./Scene";
 
@@ -122,6 +123,8 @@ export interface SceneNodeArgs {
     cameraTargetOffset?: ReadonlyVector2Like;
 
     scale?: number;
+
+    onClick?: (event: ScenePointerEvent) => void;
 }
 
 /**
@@ -225,6 +228,8 @@ export class SceneNode<T extends Game = Game> {
 
     private padding?: number;
 
+    public onClick?: (event: ScenePointerEvent) => void;
+
     /**
      * The layer this node is drawn on. Internal representation is stored in `2^n` while setter and getter works
      * with `n` instead. This is because the layering system internally works with fast bit masks. Can be set to
@@ -252,7 +257,7 @@ export class SceneNode<T extends Game = Game> {
 
     protected scale: number = 1;
     private pointerDownSignal?: Signal<ScenePointerDownEvent<T>>;
-    private pointerMoveSignal?: Signal<ScenePointerMoveEvent<T>>;
+    private pointerMoveSignal?: Signal<ScenePointerMoveEvent<Game>>;
     protected isHoverOver = false;
 
     /**
@@ -260,7 +265,7 @@ export class SceneNode<T extends Game = Game> {
      */
     public constructor({ id = null, x = 0, y = 0, width = 0, height = 0, anchor = Direction.CENTER,
             childAnchor = Direction.CENTER, opacity = 1, showBounds = false, backgroundColor, padding, layer = null, hidden = false,
-            collisionMask = 0, cameraTargetOffset, scale = 1 }: SceneNodeArgs = {}) {
+            collisionMask = 0, cameraTargetOffset, scale = 1, ...args }: SceneNodeArgs = {}) {
         this.id = id;
         this.position.setComponents(x, y);
         this.size.setDimensions(width, height);
@@ -274,6 +279,7 @@ export class SceneNode<T extends Game = Game> {
         this.hidden = hidden;
         this.collisionMask = collisionMask;
         this.scale = scale;
+        this.onClick = args.onClick;
         if (cameraTargetOffset != null) {
             this.cameraTargetOffset.setVector(cameraTargetOffset);
         }
@@ -886,14 +892,17 @@ export class SceneNode<T extends Game = Game> {
      * Called when node is added to scene. Can be overwritten to connect event handlers for example.
      */
     protected activate(): void {
+        this.pointerDownSignal?.disconnect(this.handlePointerDown, this);
         this.pointerDownSignal = this.scene?.onPointerDown;
         this.pointerDownSignal?.connect(this.handlePointerDown, this);
+        this.pointerMoveSignal?.disconnect(this.handlePointerMove, this);
         this.pointerMoveSignal = this.scene?.onPointerMove;
         this.pointerMoveSignal?.connect(this.handlePointerMove, this);
     }
 
     protected handlePointerDown(event: ScenePointerDownEvent<T>): void {
         this.onPointerDown.emit(event);
+        this.onClick?.(event);
     }
 
     protected handlePointerMove(event: ScenePointerMoveEvent<T>): void {

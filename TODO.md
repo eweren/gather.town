@@ -30,7 +30,7 @@
 
 [ ] For events use socket.ewer.rest endpoint -> Game-Logic no in jitsi
 
-[ ] add controls-bar somewhere and move options to it
+[X] add controls-bar somewhere and move options to it
 
 [X] let users share their audio-tab to a speaker-node
 
@@ -38,7 +38,7 @@
 
     [X] attach audio_stream of user to soundbox
 
-[ ] React to input/output-devices changes
+[X] React to input/output-devices changes
 
 [X] Add a Join-Screen
 

@@ -10,8 +10,6 @@ import { JitsiConferenceErrors } from "./typings/Jitsi/JitsiConferenceErrors";
 import { JitsiConferenceEvents } from "./typings/Jitsi/JitsiConferenceEvents";
 import JitsiConnection, { JitsiConferenceInitOptions, JitsiConferenceOptions } from "./typings/Jitsi/JitsiConnection";
 import { JitsiConnectionEvents } from "./typings/Jitsi/JitsiConnectionEvents";
-import JitsiMediaDevices from "./typings/Jitsi/JitsiMediaDevices";
-import { JitsiMediaDevicesEvents } from "./typings/Jitsi/JitsiMediaDevicesEvents";
 import { JitsiMeetJSType } from "./typings/Jitsi/JitsiMeetJS";
 import { JitsiTrackEvents } from "./typings/Jitsi/JitsiTrackEvents";
 import JitsiLocalTrack from "./typings/Jitsi/modules/RTC/JitsiLocalTrack";
@@ -74,10 +72,6 @@ export default class JitsiInstance {
             this.connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_DISCONNECTED,
                 this.disconnect.bind(this));
-
-            this.JitsiMeetJS.mediaDevices.addEventListener(
-                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                this.onDeviceListChanged.bind(this));
 
             this.connection?.connect(undefined);
 
@@ -541,13 +535,6 @@ export default class JitsiInstance {
      */
     private onConnectionFailed(): void {
         console.error("Connection Failed!");
-    }
-
-    /**
-     * This function is called when the connection fail.
-     */
-    private onDeviceListChanged(devices: typeof JitsiMediaDevices): void {
-        console.info("current devices", devices);
     }
 
     /**
