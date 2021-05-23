@@ -4,6 +4,7 @@ import { ScenePointerDownEvent } from "../../engine/scene/events/ScenePointerDow
 import { ScenePointerMoveEvent } from "../../engine/scene/events/ScenePointerMoveEvent";
 import { ImageNode } from "../../engine/scene/ImageNode";
 import { SceneNode, SceneNodeArgs } from "../../engine/scene/SceneNode";
+import { Layer } from "../constants";
 import { Gather } from "../Gather";
 
 export class JitsiControlsNode extends SceneNode<Gather> {
@@ -19,7 +20,7 @@ export class JitsiControlsNode extends SceneNode<Gather> {
     private previousCursor?: string;
 
     public constructor(args?: SceneNodeArgs) {
-        super({ anchor: Direction.CENTER, childAnchor: Direction.LEFT, backgroundColor: "#666a", padding: 4,  ...args });
+        super({ anchor: Direction.BOTTOM, childAnchor: Direction.LEFT, layer: Layer.HUD, backgroundColor: "#666a", padding: 4,  ...args });
     }
 
     public update(dt: number, time: number): void {
@@ -63,4 +64,5 @@ export class JitsiControlsNode extends SceneNode<Gather> {
         this.resizeTo(width, this.shareScreenNode.height);
         super.activate();
     }
+
 }

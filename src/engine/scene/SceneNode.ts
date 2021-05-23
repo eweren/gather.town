@@ -1748,10 +1748,11 @@ export class SceneNode<T extends Game = Game> {
             ctx.save();
             ctx.fillStyle = this.backgroundColor;
             const padding = this.padding ?? 0;
-            ctx.fillRect(this.getLeft() - padding, this.getTop() - padding, this.width + 2 * padding, this.height + 2 * padding);
+            ctx.fillRect(- padding, - padding, this.width + 2 * padding, this.height + 2 * padding);
             ctx.restore();
+            return this;
         }
-        return this.forEachChild(child => child.drawBackground(ctx));
+        return this;
     }
 
     /**
@@ -1847,5 +1848,6 @@ export class SceneNode<T extends Game = Game> {
      *         continuos redraw.
      */
     protected draw(ctx: CanvasRenderingContext2D, width: number, height: number):
-        void | boolean | (() => void | boolean) {}
+        void | boolean | (() => void | boolean) {
+    }
 }

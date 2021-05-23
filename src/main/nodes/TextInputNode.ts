@@ -29,7 +29,7 @@ export class TextInputNode extends SceneNode<Gather> {
         this.getGame().keyboard.blockInput = this;
         this.getGame().keyboard.onKeyDown.connect(this.handleKeyPress, this);
         this.getScene()?.onPointerDown.connect(this.blur, this);
-        this.placeholderNode.setColor("grey");
+        this.placeholderNode.setColor("white");
         this.active = true;
     }
 

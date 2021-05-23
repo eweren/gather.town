@@ -46,7 +46,6 @@ export class RootNode<T extends Game = Game> extends SceneNode<T> {
      */
     private drawAllWithBounds(ctx: CanvasRenderingContext2D, layer: number, width: number, height: number):
             PostDrawHints {
-        this.drawBackground(ctx);
         const flags = this.drawAll(ctx, layer, width, height);
         if ((flags & PostDrawHints.DRAW_BOUNDS) !== 0) {
             this.drawBounds(ctx);

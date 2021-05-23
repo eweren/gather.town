@@ -35,7 +35,7 @@ export class GameScene extends Scene<Gather> {
 
     private debugMode: boolean = false;
 
-    private controlsNode = new JitsiControlsNode({ x: Math.round(this.rootNode.width / 2), y: Math.round(this.rootNode.height - 10), anchor: Direction.BOTTOM, layer: Layer.HUD});
+    private controlsNode = new JitsiControlsNode({ x: Math.round(this.rootNode.width / 2), y: Math.round(this.rootNode.height - 10)});
 
     public mapNode = new TiledMapNode<Gather>({ map: GameScene.map, objects: {
         "collision": CollisionNode,

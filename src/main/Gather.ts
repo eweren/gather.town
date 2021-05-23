@@ -280,11 +280,10 @@ export class Gather extends Game {
     }
 
     private handleChat(): void {
-        const textInputNode = new TextInputNode("", "ENTER TEXT", undefined, { layer: Layer.HUD, backgroundColor: "#0006", padding: 4 });
         if (!this.isInGameScene()) {
             return;
-
         }
+        const textInputNode = new TextInputNode("", "ENTER TEXT", undefined, { layer: Layer.HUD, padding: 4 });
         this.getGameScene().rootNode.appendChild(textInputNode);
         textInputNode.moveTo(this.getGameScene().rootNode.width / 2, 10);
         textInputNode.focus();
