@@ -10,7 +10,7 @@ import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
 import JitsiInstance from "../Jitsi";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
-import { HEADLINE_FONT, SMALL_FONT, STANDARD_FONT } from "./constants";
+import { HEADLINE_FONT, Layer, SMALL_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
 import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
@@ -19,6 +19,7 @@ import { LightNode } from "./nodes/LightNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
 import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
+import { TextInputNode } from "./nodes/TextInputNode";
 import { GameScene } from "./scenes/GameScene";
 import { LoadingScene } from "./scenes/LoadingScene";
 
@@ -279,44 +280,31 @@ export class Gather extends Game {
     }
 
     private handleChat(): void {
-        if (document.getElementById("textInput")) {
+        const textInputNode = new TextInputNode("", "ENTER TEXT", undefined, { layer: Layer.HUD, backgroundColor: "#0006", padding: 4 });
+        if (!this.isInGameScene()) {
             return;
+
         }
-        const input = document.createElement("input");
-        input.style.position = "absolute";
-        input.style.margin = "20px auto";
-        input.style.margin = "0 auto";
-        input.style.left = "0";
-        input.style.right = "0";
-        input.style.top = "0";
-        input.style.height = "20px";
-        input.id = "textInput";
-        document.body.append(input);
-        input.textContent = "";
-        input.focus();
-        this.preventPlayerInteraction++;
-        input.addEventListener("keypress", (ev) => {
-            if (ev.key === "Enter") {
-                ev.preventDefault();
-                ev.stopImmediatePropagation();
-                const text = input.value;
-                const otherPlayers = this.getGameScene()?.rootNode.getDescendantsByType(OtherPlayerNode);
-                const filteredPlayers = otherPlayers
-                    .filter(p => p.getPosition().getDistance(this.getPlayer().getPosition()) < 50)
-                    .map(p => p.getId()!);
-                if (filteredPlayers.length > 0) {
-                    filteredPlayers.forEach(p => {
-                        this.room?.sendMessage(text, p);
-                    });
-                } else {
-                    this.room?.sendMessage(text);
-                }
-                this.preventPlayerInteraction = clamp(this.preventPlayerInteraction - 1, 0, Infinity);
-                if (text) {
-                    this.getPlayer().say(text, 5);
-                }
-                input.remove();
+        this.getGameScene().rootNode.appendChild(textInputNode);
+        textInputNode.moveTo(this.getGameScene().rootNode.width / 2, 10);
+        textInputNode.focus();
+        textInputNode.onTextSubmit.connect(text => {
+            const otherPlayers = this.getGameScene()?.rootNode.getDescendantsByType(OtherPlayerNode);
+            const filteredPlayers = otherPlayers
+                .filter(p => p.getPosition().getDistance(this.getPlayer().getPosition()) < 50)
+                .map(p => p.getId()!);
+            if (filteredPlayers.length > 0) {
+                filteredPlayers.forEach(p => {
+                    this.room?.sendMessage(text, p);
+                });
+            } else {
+                this.room?.sendMessage(text);
             }
+            if (text) {
+                this.getPlayer().say(text, 5);
+            }
+            textInputNode.onTextSubmit.clear();
+            textInputNode.remove();
         });
     }
 

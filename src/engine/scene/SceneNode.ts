@@ -99,6 +99,10 @@ export interface SceneNodeArgs {
     /** Optional initial showBounds flag. Set to true to show bounds around the node for debugging purposes. */
     showBounds?: boolean;
 
+    backgroundColor?: string;
+
+    padding?: number;
+
     /** Optional initial hidden flag. Set to true to hide the node. */
     hidden?: boolean;
 
@@ -216,6 +220,10 @@ export class SceneNode<T extends Game = Game> {
     /** Set to true to show bounds. Useful for debugging. */
     private showBounds: boolean;
 
+    private backgroundColor?: string;
+
+    private padding?: number;
+
     /**
      * The layer this node is drawn on. Internal representation is stored in `2^n` while setter and getter works
      * with `n` instead. This is because the layering system internally works with fast bit masks. Can be set to
@@ -248,7 +256,7 @@ export class SceneNode<T extends Game = Game> {
      * Creates a new scene node with the given initial settings.
      */
     public constructor({ id = null, x = 0, y = 0, width = 0, height = 0, anchor = Direction.CENTER,
-            childAnchor = Direction.CENTER, opacity = 1, showBounds = false, layer = null, hidden = false,
+            childAnchor = Direction.CENTER, opacity = 1, showBounds = false, backgroundColor, padding, layer = null, hidden = false,
             collisionMask = 0, cameraTargetOffset, scale = 1 }: SceneNodeArgs = {}) {
         this.id = id;
         this.position.setComponents(x, y);
@@ -257,6 +265,8 @@ export class SceneNode<T extends Game = Game> {
         this.anchor = anchor;
         this.childAnchor = childAnchor;
         this.showBounds = showBounds;
+        this.backgroundColor = backgroundColor;
+        this.padding = padding;
         this.layer = layer == null ? null : (1 << layer);
         this.hidden = hidden;
         this.collisionMask = collisionMask;
@@ -1475,12 +1485,11 @@ export class SceneNode<T extends Game = Game> {
      */
     public getSceneBoundsPolygon(): Polygon2 {
         if ((this.valid & SceneNodeAspect.SCENE_BOUNDS) === 0) {
-            const boundsPolygon = this.getBoundsPolygon();
             this.sceneBoundsPolygon.clear();
-            for (const vertex of boundsPolygon.vertices) {
-                this.sceneBoundsPolygon.addVertex(vertex.clone());
-            }
-            this.sceneBoundsPolygon.transform(this.getSceneTransformation());
+            this.sceneBoundsPolygon.addVertex(new Vector2(this.getLeft(), this.getTop()));
+            this.sceneBoundsPolygon.addVertex(new Vector2(this.getRight(), this.getTop()));
+            this.sceneBoundsPolygon.addVertex(new Vector2(this.getRight(), this.getBottom()));
+            this.sceneBoundsPolygon.addVertex(new Vector2(this.getLeft(), this.getBottom()));
             this.valid |= SceneNodeAspect.SCENE_BOUNDS;
         }
         return this.sceneBoundsPolygon;
@@ -1718,6 +1727,17 @@ export class SceneNode<T extends Game = Game> {
             ctx.restore();
         }
         return this.forEachChild(child => child.drawBounds(ctx));
+    }
+
+    protected drawBackground(ctx: CanvasRenderingContext2D): this {
+        if (this.backgroundColor) {
+            ctx.save();
+            ctx.fillStyle = this.backgroundColor;
+            const padding = this.padding ?? 0;
+            ctx.fillRect(this.getLeft() - padding, this.getTop() - padding, this.width + 2 * padding, this.height + 2 * padding);
+            ctx.restore();
+        }
+        return this.forEachChild(child => child.drawBackground(ctx));
     }
 
     /**

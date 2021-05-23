@@ -18,7 +18,7 @@ export class TextInputNode extends SceneNode<Gather> {
     private startTime = 0;
 
     public constructor(public text = "", public placeholder = "TYPE HERE", private maxLength?: number, args?: TiledSceneArgs) {
-        super({ anchor: Direction.CENTER, ...args });
+        super({ anchor: Direction.CENTER, childAnchor: Direction.CENTER, ...args });
         this.textNode.setText(text).appendTo(this);
         this.resizeTo(this.textNode.getWidth(), this.textNode.getHeight());
         this.updatePlaceholder();
@@ -34,18 +34,19 @@ export class TextInputNode extends SceneNode<Gather> {
     }
 
     public blur(): void {
-        this.getGame().keyboard.blockInput = undefined;
-        this.getGame().keyboard.onKeyDown.disconnect(this.handleKeyPress, this);
+        if (this.isInScene()) {
+            this.getGame().keyboard.blockInput = undefined;
+            this.getGame().keyboard.onKeyDown.disconnect(this.handleKeyPress, this);
+            this.onTextSubmit.emit(this.text);
+        }
         this.getScene()?.onPointerDown.disconnect(this.blur, this);
         this.active = false;
-        this.onTextSubmit.emit(this.text);
     }
 
     private updatePlaceholder(): void {
         if (this.text === "") {
             this.placeholderNode.setText(this.placeholder).appendTo(this);
             this.resizeTo(this.placeholderNode.getWidth(), this.placeholderNode.getHeight());
-            console.log("SHOULD BE ATTACHED");
         } else if (this.placeholderNode.getParent() != null) {
             this.placeholderNode.remove();
         }
