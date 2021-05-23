@@ -20,7 +20,7 @@
 
 [X] add iframe objects
 
-[ ] create a notification node and use it for events
+[X] create a notification node and use it for events
 
 [X] canvas full width and height
 

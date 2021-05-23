@@ -60,6 +60,7 @@ export class Gather extends Game {
     private npcs: CharacterNode[] = [];
     private players: Record<string, OtherPlayerNode> = {};
     public room: JitsiConference | null = null;
+    public userName: string = "anonymous";
 
     // Game progress
     private gameStage = GameStage.START;
@@ -78,10 +79,6 @@ export class Gather extends Game {
 
     public constructor() {
         super();
-        this.JitsiInstance = new JitsiInstance();
-        this.JitsiInstance.create().then(room => {
-            this.room = room;
-        });
     }
 
     // Called by GameScene
@@ -89,6 +86,11 @@ export class Gather extends Game {
         // TODO Enable this when npc can be synced
         // this.spawnNPCs();
         this.setStage(GameStage.GAME);
+        this.JitsiInstance = new JitsiInstance();
+        this.JitsiInstance.create().then(room => {
+            this.room = room;
+            this.room.setDisplayName(this.userName);
+        });
         // Assets cannot be loaded in constructor because the LoadingScene
         // is not initialized at constructor time and Assets are loaded in the LoadingScene
         this.dialogs = [
@@ -177,6 +179,12 @@ export class Gather extends Game {
         const userId = this.room?.myUserId();
         if (userId != null) {
             this.room?.sendCommandOnce(eventName, { value: JSON.stringify({...value, spriteIndex: this.getPlayer().spriteIndex, id: userId}) });
+        }
+    }
+
+    public showNotification(str: string): void {
+        if (this.isInGameScene()) {
+            this.getGameScene().notificationNode?.showNotification(str);
         }
     }
 
@@ -283,7 +291,7 @@ export class Gather extends Game {
         if (!this.isInGameScene()) {
             return;
         }
-        const textInputNode = new TextInputNode("", "ENTER TEXT", undefined, { layer: Layer.HUD, padding: 4 });
+        const textInputNode = new TextInputNode<this>("", "ENTER TEXT", undefined, true, { layer: Layer.HUD, padding: 4 });
         this.getGameScene().rootNode.appendChild(textInputNode);
         textInputNode.moveTo(this.getGameScene().rootNode.width / 2, 10);
         textInputNode.focus();

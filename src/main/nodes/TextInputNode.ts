@@ -1,3 +1,4 @@
+import { Game } from "../../engine/Game";
 import { Direction } from "../../engine/geom/Direction";
 import { ScenePointerDownEvent } from "../../engine/scene/events/ScenePointerDownEvent";
 import { SceneNode } from "../../engine/scene/SceneNode";
@@ -7,17 +8,17 @@ import { clamp } from "../../engine/util/math";
 import { Signal } from "../../engine/util/Signal";
 import { Gather } from "../Gather";
 
-export class TextInputNode extends SceneNode<Gather> {
+export class TextInputNode<T extends Game = Game> extends SceneNode<T> {
 
     public active = false;
     public onTextSubmit = new Signal<string>();
     public onTextChange = new Signal<string>();
-    private textNode = new TextNode<Gather>({ font: Gather.standardFont });
-    public placeholderNode = new TextNode<Gather>({ font: Gather.standardFont, color: "grey" });
+    private textNode = new TextNode<T>({ font: Gather.standardFont });
+    public placeholderNode = new TextNode<T>({ font: Gather.standardFont, color: "grey" });
     private cursorPosition: number;
     private startTime = 0;
 
-    public constructor(public text = "", public placeholder = "TYPE HERE", private maxLength?: number, args?: TiledSceneArgs) {
+    public constructor(public text = "", public placeholder = "TYPE HERE", private maxLength?: number, private filterValues = true, args?: TiledSceneArgs) {
         super({ anchor: Direction.CENTER, childAnchor: Direction.CENTER, ...args });
         this.textNode.setText(text).appendTo(this);
         this.resizeTo(this.textNode.getWidth(), this.textNode.getHeight());
@@ -52,7 +53,7 @@ export class TextInputNode extends SceneNode<Gather> {
         }
     }
 
-    protected handlePointerDown(event: ScenePointerDownEvent): void {
+    protected handlePointerDown(event: ScenePointerDownEvent<T>): void {
         super.handlePointerDown(event);
         if (this.active) {
             this.blur();
@@ -65,12 +66,7 @@ export class TextInputNode extends SceneNode<Gather> {
         value.stopImmediatePropagation();
         value.stopPropagation();
         value.preventDefault();
-        if (isValidCharacter(value.key) && (this.maxLength == null || this.text.length + 1 <= this.maxLength)) {
-            this.text = this.text.substr(0, this.cursorPosition) + value.key + this.text.substr(this.cursorPosition);
-            this.textNode.setText(this.text);
-            this.cursorPosition = clamp(this.cursorPosition + 1, 0, this.text.length);
-            this.onTextChange.emit(this.text);
-        } else if (value.key === "Backspace") {
+        if (value.key === "Backspace") {
             this.text = this.text.substr(0, this.cursorPosition - 1) + this.text.substr(this.cursorPosition);
             this.cursorPosition = clamp(this.cursorPosition - 1, 0, this.text.length);
             this.textNode.setText(this.text);
@@ -81,6 +77,11 @@ export class TextInputNode extends SceneNode<Gather> {
             this.cursorPosition = clamp(this.cursorPosition + 1, 0, this.text.length);
         } else if (value.key === "Enter") {
             this.blur();
+        } else if ((!this.filterValues || isValidCharacter(value.key)) && (this.maxLength == null || this.text.length + 1 <= this.maxLength)) {
+            this.text = this.text.substr(0, this.cursorPosition) + value.key + this.text.substr(this.cursorPosition);
+            this.textNode.setText(this.text);
+            this.cursorPosition = clamp(this.cursorPosition + 1, 0, this.text.length);
+            this.onTextChange.emit(this.text);
         }
         this.resizeTo(this.textNode.getWidth(), this.textNode.getHeight());
         this.updatePlaceholder();

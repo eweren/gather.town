@@ -22,7 +22,7 @@ export class TitleScene extends Scene<Gather> {
     private chooseNode = new TextNode<Gather>({ font: Gather.headlineFont, text: "CHOOSE CHARACTER" });
     private confirmNode = new TextNode<Gather>({ font: Gather.standardFont, text: "⤶ SELECT", color: "grey" });
     private containerNode = new SceneNode<Gather>();
-    private nameInputNode = new TextInputNode("", "ENTER USERNAME", 12);
+    private nameInputNode = new TextInputNode<Gather>("", "ENTER USERNAME", 12);
     private index = 1;
     private name = "";
 
@@ -99,7 +99,7 @@ export class TitleScene extends Scene<Gather> {
     }
 
     private updateName(name: string): void {
-        this.game.room?.setDisplayName(name);
+        this.game.userName = name;
         this.name = name;
         if (name.length > 0) {
             this.confirmNode.setColor("white");

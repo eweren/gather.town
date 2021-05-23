@@ -25,6 +25,7 @@ import { SpeakerNode } from "../nodes/SpeakerNode";
 import { CatNode } from "../nodes/CatNode";
 import { TiledTextNode } from "../nodes/TiledTextNode";
 import { JitsiControlsNode } from "../nodes/JitsiControlsNode";
+import { NotificationNode } from "../nodes/NotificationNode";
 
 export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
@@ -54,6 +55,7 @@ export class GameScene extends Scene<Gather> {
         "cat": CatNode,
         "text": TiledTextNode
     }});
+    public notificationNode?: NotificationNode;
 
     public setup() {
         this.inTransition = new FadeToBlackTransition({ duration: 2, delay: 1 });
@@ -61,7 +63,8 @@ export class GameScene extends Scene<Gather> {
         const player = this.mapNode.getDescendantById("Player");
         this.camera.setFollow(player);
         this.setLightLayers([ Layer.LIGHT ]);
-        this.setHudLayers([ Layer.HUD ]);
+        this.setHudLayers([Layer.HUD]);
+        this.notificationNode = new NotificationNode(3, { x: this.rootNode.width - 12, y: 4, layer: Layer.HUD }).appendTo(this.rootNode);
 
         if (isDev()) {
             this.rootNode.appendChild(new FpsCounterNode({
@@ -83,6 +86,7 @@ export class GameScene extends Scene<Gather> {
     public resizeTo(width: number, height: number): void {
         super.resizeTo(width, height);
         this.controlsNode.moveTo(Math.round(this.rootNode.width / 2), Math.round(this.rootNode.height - 10));
+        this.notificationNode?.moveTo(this.rootNode.width - 12, 4);
     }
 
     public cleanup() {

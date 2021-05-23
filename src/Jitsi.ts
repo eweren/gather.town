@@ -85,99 +85,8 @@ export default class JitsiInstance {
                     throw error;
                 });
 
-            if (this.JitsiMeetJS.mediaDevices.isDeviceChangeAvailable("output")) {
-                setTimeout(() => {
-                    const optionsButton = document.getElementById("options");
-                    const optionsContainer = document.getElementById("options-container");
-                    if (optionsButton == null || optionsContainer == null) {
-                        return;
-                    }
-                    const backdrop = document.createElement("div");
-                    const closeDropdown = () => {
-                        backdrop.remove();
-                        optionsContainer.style.display = "none";
-                        optionsButton.innerText = "Options ↧";
-                    };
-                    optionsButton.addEventListener("click", (ev) => {
-                        ev.stopImmediatePropagation();
-                        backdrop.classList.add("backdrop");
-                        document.body.appendChild(backdrop);
-                        setTimeout(() => {
-                            backdrop.addEventListener("click", (e) => {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                                e.stopPropagation();
-                                closeDropdown();
-                            }, { once: true });
-                        });
-                        optionsContainer.style.display = optionsContainer.style.display === "flex" ? "none" : "flex";
-                        optionsButton.innerText = optionsContainer.style.display === "flex" ? "Options ↥" : "Options ↧";
-                    });
-                    optionsContainer.style.display = "none";
-                    this.JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
-                        const audioOutputDevices
-                            = devices.filter(d => d.kind === "audiooutput");
-                        const audioInputDevices
-                            = devices.filter(d => d.kind === "audioinput");
-                        const videoInputDevices
-                            = devices.filter(d => d.kind === "videoinput");
-
-                        if (audioOutputDevices.length > 1) {
-                            const selectAudioOutput = document.createElement("select");
-                            selectAudioOutput.title = "Select audio output device";
-                            selectAudioOutput.id = "audioOutputSelect";
-                            optionsContainer.appendChild(selectAudioOutput);
-                            const options = audioOutputDevices.map(d => {
-                                const option = document.createElement("option");
-                                option.selected = audioOutputDevice === d.deviceId;
-                                option.value = d.deviceId;
-                                option.innerText = d.label;
-                                return option;
-                            });
-                            options.forEach(o => selectAudioOutput.appendChild(o));
-                            selectAudioOutput.addEventListener("input", (ev) => {
-                                this.changeAudioOutput((ev.target as any).value);
-                                closeDropdown();
-                            });
-                        }
-                        if (audioInputDevices.length > 1) {
-                            const selectAudioInput = document.createElement("select");
-                            selectAudioInput.title = "Select audio input device";
-                            selectAudioInput.id = "audioInputSelect";
-                            optionsContainer.appendChild(selectAudioInput);
-                            const options = audioInputDevices.map(d => {
-                                const option = document.createElement("option");
-                                option.selected = micDeviceId === d.deviceId;
-                                option.value = d.deviceId;
-                                option.innerText = d.label;
-                                return option;
-                            });
-                            options.forEach(o => selectAudioInput.appendChild(o));
-                            selectAudioInput.addEventListener("input", (ev) => {
-                                this.changeAudioInput((ev.target as any).value);
-                                closeDropdown();
-                            });
-                        }
-                        if (videoInputDevices.length > 1) {
-                            const selectVideoInput = document.createElement("select");
-                            selectVideoInput.title = "Select video input device";
-                            selectVideoInput.id = "videoInputSelect";
-                            optionsContainer.appendChild(selectVideoInput);
-                            const options = videoInputDevices.map(d => {
-                                const option = document.createElement("option");
-                                option.selected = cameraDeviceId === d.deviceId;
-                                option.value = d.deviceId;
-                                option.innerText = d.label;
-                                return option;
-                            });
-                            options.forEach(o => selectVideoInput.appendChild(o));
-                            selectVideoInput.addEventListener("input", (ev) => {
-                                this.changeVideoInput((ev.target as any).value);
-                                closeDropdown();
-                            });
-                        }
-                    });
-                }, 1000);
+            if (audioOutputDevice != null) {
+                this.changeAudioOutput(audioOutputDevice);
             }
         });
     }
@@ -404,13 +313,13 @@ export default class JitsiInstance {
         this.room.on(JitsiConferenceEvents.TRACK_ADDED, this.onRemoteTrack.bind(this));
         this.room.on(JitsiConferenceEvents.TRACK_REMOVED, this.onRemoteTrackRemoved.bind(this));
         this.room.on(JitsiConferenceEvents.CONFERENCE_JOINED, this.onConferenceJoined.bind(this));
-        this.room.on(JitsiConferenceEvents.USER_JOINED, id => {
-            setTimeout(() => {
-                if (Gather.instance.isInGameScene()) {
-                    Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
-                }
-            }, 100);
+        this.room.on(JitsiConferenceEvents.USER_JOINED, async id => {
             this.remoteTracks[id] = [];
+            await sleep(500);
+            if (Gather.instance.isInGameScene() && id !== this.room.myUserId()) {
+                Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
+                Gather.instance.showNotification(this.room.getParticipantById(id).getDisplayName() + " joined");
+            }
         });
         this.room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, this.handleMessageReceived.bind(this));
         this.room.on(JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED, this.handleMessageReceived.bind(this));
