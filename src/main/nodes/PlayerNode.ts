@@ -1,20 +1,20 @@
 import { Aseprite } from "../../engine/assets/Aseprite";
-import { CharacterNode, PostCharacterTags } from "./CharacterNode";
-import { ControllerIntent } from "../../engine/input/ControllerIntent";
-import { Direction, SimpleDirection } from "../../engine/geom/Direction";
-import { SceneNodeArgs, SceneNodeAspect } from "../../engine/scene/SceneNode";
-import { Vector2 } from "../../engine/graphics/Vector2";
 import { asset } from "../../engine/assets/Assets";
-import { ParticleNode, valueCurves } from "./ParticleNode";
-import { rnd, rndItem, timedRnd } from "../../engine/util/random";
+import { Direction, SimpleDirection } from "../../engine/geom/Direction";
 import { Rect } from "../../engine/geom/Rect";
-import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
+import { Vector2 } from "../../engine/graphics/Vector2";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
-import { Gather } from "../Gather";
-import { clamp } from "../../engine/util/math";
+import { ControllerIntent } from "../../engine/input/ControllerIntent";
 import { AsepriteNode } from "../../engine/scene/AsepriteNode";
+import { SceneNodeArgs, SceneNodeAspect } from "../../engine/scene/SceneNode";
 import { isDev } from "../../engine/util/env";
+import { clamp } from "../../engine/util/math";
+import { rnd, rndItem, timedRnd } from "../../engine/util/random";
+import { Gather } from "../Gather";
+import { CharacterNode, PostCharacterTags } from "./CharacterNode";
 import { InteractiveNode } from "./InteractiveNode";
+import { ParticleNode, valueCurves } from "./ParticleNode";
+import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 
 const groundColors = [
     "#806057",
@@ -117,7 +117,7 @@ export class PlayerNode extends CharacterNode {
             this.initDone = true;
             this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y });
             this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
-            const handleControllerInputChange = (ev: ControllerEvent) => {
+            const handleControllerInputChange = () => {
                 const oldIsRunning = this.isRunning;
                 this.isRunning = (this.getGame().input.currentActiveIntents & ControllerIntent.PLAYER_RUN) === ControllerIntent.PLAYER_RUN;
                 if (oldIsRunning !== this.isRunning) {
@@ -126,6 +126,10 @@ export class PlayerNode extends CharacterNode {
             };
             this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
             this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);
+            this.getGame().keyboard.onKeyPress.filter(ev => ev.key === "g").connect(() => {
+                this.inGhostMode = !this.inGhostMode;
+                this.getGame().sendCommand("playerUpdate", { inGhostMode: this.inGhostMode });
+            }, this);
         }
         this.setOpacity(1);
 

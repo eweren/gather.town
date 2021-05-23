@@ -26,7 +26,7 @@
 
 [ ] attach text Node with name to characters
 
-[ ] ghost mode und collision activation
+[X] ghost mode und collision activation
 
 [ ] For events use socket.ewer.rest endpoint -> Game-Logic no in jitsi
 

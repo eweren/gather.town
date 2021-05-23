@@ -159,6 +159,9 @@ export class Gather extends Game {
         if ("isRunning" in value) {
             player.isRunning = !!value.isRunning;
         }
+        if ("inGhostMode" in value) {
+            player.inGhostMode = !!value.inGhostMode;
+        }
         if ("spriteIndex" in value) {
             player.changeSprite(value.spriteIndex);
         }

@@ -3,6 +3,8 @@ import { Scene } from "../../engine/scene/Scene";
 import { ProgressBarNode } from "../../engine/scene/ProgressBarNode";
 import { FadeTransition } from "../../engine/transitions/FadeTransition";
 import { TitleScene } from "./TitleScene";
+import { isDev } from "../../engine/util/env";
+import { GameScene } from "./GameScene";
 
 export class LoadingScene extends Scene<Gather> {
     private progressBar!: ProgressBarNode;
@@ -21,7 +23,11 @@ export class LoadingScene extends Scene<Gather> {
 
     public async activate(): Promise<void> {
         this.game.assets.load(this.updateProgress.bind(this)).then(() => {
-            this.game.scenes.setScene(TitleScene);
+            if (isDev()) {
+                this.game.scenes.setScene(GameScene);
+            } else {
+                this.game.scenes.setScene(TitleScene);
+            }
         });
     }
 

@@ -46,6 +46,7 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     public isPlayer = false;
     protected isBot = false;
     public isRunning = false;
+    public inGhostMode = true;
 
     // Dynamic player state
     protected updateTime = 0;
@@ -176,7 +177,7 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
             } else {
                 this.consecutiveYCollisions = 0;
             }
-            if (this.collidesWithNpc(newX, newY)) {
+            if (this.collidesWithCharacter(newX, newY)) {
                 newX = x;
                 newY = y;
             }
@@ -301,12 +302,15 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
         return colliders;
     }
 
-    private collidesWithNpc(x = this.getX(), y = this.getY()): boolean {
+    private collidesWithCharacter(x = this.getX(), y = this.getY()): boolean {
+        if (this.inGhostMode) {
+            return false;
+        }
         const oldX = this.x;
         const oldY = this.y;
         this.setX(x);
         this.setY(y);
-        const collides = !!this.getScene()?.rootNode.getChildren().filter(c => c instanceof CharacterNode && c !== this && c.isBot)
+        const collides = !!this.getScene()?.rootNode.getChildren().filter(c => c instanceof CharacterNode && c !== this && !c.inGhostMode)
             .some(c => c.collidesWithNode(this));
         this.x = oldX;
         this.y = oldY;
@@ -368,6 +372,16 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
             } else {
                 (node as any).setAudioStream();
             }
+        }
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
+        if (this.inGhostMode) {
+            ctx.globalAlpha = 0.7;
+        }
+        super.draw(ctx);
+        if (this.inGhostMode) {
+            ctx.globalAlpha = 1;
         }
     }
 }
