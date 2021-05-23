@@ -133,6 +133,16 @@ export abstract class Scene<T extends Game = Game, A = void> {
         return this;
     }
 
+
+    /**
+     * Resizes the scenes rootNode to the given size.
+     * @param width - the new width
+     * @param height - the new height
+     */
+    public resizeTo(width: number, height: number): void {
+        this.rootNode.resizeTo(width, height);
+    }
+
     /**
      * Returns the layers which are handled as lighting layers.
      *

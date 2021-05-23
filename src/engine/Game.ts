@@ -5,7 +5,6 @@ import { createCanvas, getRenderingContext } from "./util/graphics";
 import { GamepadInput } from "./input/GamepadInput";
 import { Keyboard } from "./input/Keyboard";
 import { Scenes } from "./scene/Scenes";
-import { GAME_HEIGHT, GAME_WIDTH } from "../main/constants";
 import { getAudioContext } from "./assets/Sound";
 
 /**
@@ -33,7 +32,7 @@ export abstract class Game {
     protected currentTime: number = 0;
     protected paused = false;
 
-    public constructor(public readonly width: number = GAME_WIDTH, public readonly height: number = GAME_HEIGHT) {
+    public constructor(public width: number = window.innerWidth / 2, public height: number = window.innerHeight / 2) {
         const canvas = this.canvas = createCanvas(width, height);
         // Desynchronized sounds like a good idea but unfortunately it prevents pixelated graphics
         // on some systems (Chrome+Windows+NVidia for example which forces bilinear filtering). So
@@ -88,16 +87,17 @@ export abstract class Game {
     }
 
     private updateCanvasSize(): void {
-        const { width, height } = this;
+        this.canvas.width = window.innerWidth / 2;
+        this.canvas.height = window.innerHeight / 2;
 
-        this.canvasScale = Math.max(
-            1,
-            Math.floor(Math.min(window.innerWidth / width, window.innerHeight / height))
-        );
+        this.width = window.innerWidth / 2;
+        this.height = window.innerHeight / 2;
+
+        this.scenes.activeScene?.resizeTo(this.width, this.height);
 
         const style = this.canvas.style;
-        style.width = width * this.canvasScale + "px";
-        style.height = height * this.canvasScale + "px";
+        style.width = window.innerWidth + "px";
+        style.height = window.innerHeight + "px";
     }
 
     private gameLoop(): void {

@@ -22,13 +22,13 @@
 
 [ ] create a notification node and use it for events
 
-[ ] canvas auf volle Breite packen
+[X] canvas full width and height
 
 [ ] attach text Node with name to characters
 
-[ ] ghost mode und collision wieder einschalten
+[ ] ghost mode und collision activation
 
-[ ] Für events doch den socket.ewer.rest Endpunkt nehmen -> Game-Logik von Jitsi trennen
+[ ] For events use socket.ewer.rest endpoint -> Game-Logic no in jitsi
 
 [ ] add controls-bar somewhere and move options to it
 
