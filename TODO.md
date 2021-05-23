@@ -14,11 +14,23 @@
 
 [ ] _optimize layout of joined members_
 
-[ ] distance based video chat
+[ ] _distance based video chat_
 
 [ ] add interactive objects
 
 [X] add iframe objects
+
+[ ] create a notification node and use it for events
+
+[ ] canvas auf volle Breite packen
+
+[ ] attach text Node with name to characters
+
+[ ] ghost mode und collision wieder einschalten
+
+[ ] Für events doch den socket.ewer.rest Endpunkt nehmen -> Game-Logik von Jitsi trennen
+
+[ ] add controls-bar somewhere and move options to it
 
 [X] let users share their audio-tab to a speaker-node
 
