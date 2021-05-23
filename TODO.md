@@ -24,7 +24,7 @@
 
 [X] canvas full width and height
 
-[ ] attach text Node with name to characters
+[X] attach text Node with name to characters
 
 [X] ghost mode und collision activation
 

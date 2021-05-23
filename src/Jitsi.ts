@@ -445,8 +445,9 @@ export default class JitsiInstance {
         this.room.on(
             JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
             (userID: string, displayName: string) => {
-                const parent = document.getElementById(`${userID}video`)?.parentElement;
-                const textElement = parent?.getElementsByClassName("userName")[0] as HTMLSpanElement;
+                const parent = document.getElementById(`${userID}video`) as UserVideoElement;
+                const textElement = parent?.nameSpan;
+                Gather.instance.updatePlayer({ id: userID,  playerName: displayName });
                 if (textElement) {
                     textElement.innerText = displayName;
                 }

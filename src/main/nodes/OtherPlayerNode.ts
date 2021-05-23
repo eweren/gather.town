@@ -2,18 +2,10 @@ import { CharacterNode } from "./CharacterNode";
 import { Direction } from "../../engine/geom/Direction";
 import { SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { Vector2 } from "../../engine/graphics/Vector2";
-import { ParticleNode, valueCurves } from "./ParticleNode";
-import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 import { Gather } from "../Gather";
-
-const groundColors = [
-    "#806057",
-    "#504336",
-    "#3C8376",
-    "#908784"
-];
+import { TextNode } from "../../engine/scene/TextNode";
 
 export class OtherPlayerNode extends CharacterNode {
 
@@ -23,9 +15,9 @@ export class OtherPlayerNode extends CharacterNode {
     private readonly deceleration = 600;
     private initDone = false;
 
-    private dustParticles: ParticleNode;
+    private nameNode: TextNode<Gather>;
 
-    public constructor(id: string, public spriteIndex = 0, args?: SceneNodeArgs) {
+    public constructor(id: string, public spriteIndex = 0, public playerName = "anonymous", args?: SceneNodeArgs) {
         super({
             aseprite: Gather.characterSprites[spriteIndex],
             anchor: Direction.BOTTOM,
@@ -39,15 +31,8 @@ export class OtherPlayerNode extends CharacterNode {
         const ambientPlayerLight = new AmbientPlayerNode();
         this.appendChild(ambientPlayerLight);
 
-        this.dustParticles = new ParticleNode({
-            y: this.getHeight() / 2,
-            velocity: () => ({ x: rnd(-1, 1) * 26, y: rnd(0.7, 1) * 45 }),
-            color: () => rndItem(groundColors),
-            size: rnd(1, 2),
-            gravity: {x: 0, y: -100},
-            lifetime: () => rnd(0.5, 0.8),
-            alphaCurve: valueCurves.trapeze(0.05, 0.2)
-        }).appendTo(this);
+        this.nameNode = new TextNode<Gather>({ font: Gather.standardFont, text: this.playerName }).appendTo(this);
+        this.nameNode.moveTo(0, -this.height / 2 - 5);
     }
 
     public getSpeed(): number {
@@ -62,6 +47,11 @@ export class OtherPlayerNode extends CharacterNode {
         return this.deceleration;
     }
 
+    public changePlayerName(playerName: string): void {
+        this.nameNode.setText(playerName);
+        this.playerName = playerName;
+    }
+
     public changeSprite(spriteIndex: number): void {
         if (Gather.characterSprites.length > spriteIndex && spriteIndex > 0) {
             this.spriteIndex = spriteIndex;
@@ -73,15 +63,6 @@ export class OtherPlayerNode extends CharacterNode {
         super.update(dt, time);
         if (this.isInScene() && !this.initDone) {
             this.initDone = true;
-        }
-
-        // Spawn random dust particles while walking
-        if (this.isVisible()) {
-            if (this.getTag() === "walk") {
-                if (timedRnd(dt, 0.2)) {
-                    this.dustParticles.emit(1);
-                }
-            }
         }
     }
 

@@ -7,6 +7,7 @@ export const GAME_HEIGHT = 216;
 /** Fonts */
 export const STANDARD_FONT = "fonts/pixcelsior.font.json";
 export const HEADLINE_FONT = "fonts/headline.font.json";
+export const SMALL_FONT = "fonts/smallFont.font.json";
 
 /** Gravity in m/s² */
 export const GRAVITY = 35;

@@ -1,0 +1,358 @@
+{
+    "image": "smallFont.png",
+    "characterHeight": 8,
+    "characterMapping": [
+        {
+            "char": "A",
+            "width": 3
+        },
+        {
+            "char": "B",
+            "width": 3
+        },
+        {
+            "char": "C",
+            "width": 3
+        },
+        {
+            "char": "D",
+            "width": 3
+        },
+        {
+            "char": "E",
+            "width": 3
+        },
+        {
+            "char": "F",
+            "width": 3
+        },
+        {
+            "char": "G",
+            "width": 4
+        },
+        {
+            "char": "H",
+            "width": 3
+        },
+        {
+            "char": "I",
+            "width": 1
+        },
+        {
+            "char": "J",
+            "width": 3
+        },
+        {
+            "char": "K",
+            "width": 3
+        },
+        {
+            "char": "L",
+            "width": 3
+        },
+        {
+            "char": "M",
+            "width": 5
+        },
+        {
+            "char": "N",
+            "width": 3
+        },
+        {
+            "char": "O",
+            "width": 3
+        },
+        {
+            "char": "P",
+            "width": 3
+        },
+        {
+            "char": "Q",
+            "width": 4
+        },
+        {
+            "char": "R",
+            "width": 3
+        },
+        {
+            "char": "S",
+            "width": 4
+        },
+        {
+            "char": "T",
+            "width": 3
+        },
+        {
+            "char": "U",
+            "width": 3
+        },
+        {
+            "char": "V",
+            "width": 3
+        },
+        {
+            "char": "W",
+            "width": 5
+        },
+        {
+            "char": "X",
+            "width": 3
+        },
+        {
+            "char": "Y",
+            "width": 3
+        },
+        {
+            "char": "Z",
+            "width": 3
+        },
+        {
+            "char": "a",
+            "width": 3
+        },
+        {
+            "char": "b",
+            "width": 3
+        },
+        {
+            "char": "c",
+            "width": 3
+        },
+        {
+            "char": "d",
+            "width": 3
+        },
+        {
+            "char": "e",
+            "width": 3
+        },
+        {
+            "char": "f",
+            "width": 3
+        },
+        {
+            "char": "g",
+            "width": 3
+        },
+        {
+            "char": "h",
+            "width": 3
+        },
+        {
+            "char": "i",
+            "width": 1
+        },
+        {
+            "char": "j",
+            "width": 2
+        },
+        {
+            "char": "k",
+            "width": 3
+        },
+        {
+            "char": "l",
+            "width": 2
+        },
+        {
+            "char": "m",
+            "width": 5
+        },
+        {
+            "char": "n",
+            "width": 3
+        },
+        {
+            "char": "o",
+            "width": 3
+        },
+        {
+            "char": "p",
+            "width": 3
+        },
+        {
+            "char": "q",
+            "width": 3
+        },
+        {
+            "char": "r",
+            "width": 2
+        },
+        {
+            "char": "s",
+            "width": 3
+        },
+        {
+            "char": "t",
+            "width": 3
+        },
+        {
+            "char": "u",
+            "width": 3
+        },
+        {
+            "char": "v",
+            "width": 3
+        },
+        {
+            "char": "w",
+            "width": 5
+        },
+        {
+            "char": "x",
+            "width": 3
+        },
+        {
+            "char": "y",
+            "width": 3
+        },
+        {
+            "char": "z",
+            "width": 3
+        },
+        {
+            "char": "0",
+            "width": 3
+        },
+        {
+            "char": "1",
+            "width": 2
+        },
+        {
+            "char": "2",
+            "width": 3
+        },
+        {
+            "char": "3",
+            "width": 3
+        },
+        {
+            "char": "3",
+            "width": 3
+        },
+        {
+            "char": "5",
+            "width": 3
+        },
+        {
+            "char": "6",
+            "width": 4
+        },
+        {
+            "char": "7",
+            "width": 3
+        },
+        {
+            "char": "8",
+            "width": 3
+        },
+        {
+            "char": "9",
+            "width": 3
+        },
+        {
+            "char": "<",
+            "width": 3
+        },
+        {
+            "char": ">",
+            "width": 3
+        },
+        {
+            "char": "|",
+            "width": 1
+        },
+        {
+            "char": "-",
+            "width": 3
+        },
+        {
+            "char": "_",
+            "width": 4
+        },
+        {
+            "char": ".",
+            "width": 1
+        },
+        {
+            "char": ":",
+            "width": 1
+        },
+        {
+            "char": ",",
+            "width": 1
+        },
+        {
+            "char": ";",
+            "width": 1
+        },
+        {
+            "char": "#",
+            "width": 5
+        },
+        {
+            "char": "'",
+            "width": 1
+        },
+        {
+            "char": "+",
+            "width": 3
+        },
+        {
+            "char": "*",
+            "width": 3
+        },
+        {
+            "char": "~",
+            "width": 3
+        },
+        {
+            "char": "?",
+            "width": 3
+        },
+        {
+            "char": "!",
+            "width": 1
+        },
+        {
+            "char": "$",
+            "width": 3
+        },
+        {
+            "char": "%",
+            "width": 3
+        },
+        {
+            "char": "(",
+            "width": 3
+        },
+        {
+            "char": ")",
+            "width": 3
+        },
+        {
+            "char": "=",
+            "width": 3
+        },
+        {
+            "char": "/",
+            "width": 3
+        },
+        {
+            "char": "&",
+            "width": 4
+        },
+        {
+            "char": " ",
+            "width": 1
+        }
+    ],
+    "margin": 1,
+    "colors": {
+        "white": "#ffffff",
+        "black": "#000000",
+        "red": "#ff0000",
+        "darkgrey": "#3d3d3d",
+        "grey": "#8f8f8f"
+    }
+}

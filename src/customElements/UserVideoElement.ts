@@ -9,7 +9,7 @@ import { HoverOver } from "./HoverOver";
  * Class for showing/hiding elements on hover over.
  */
 export class UserVideoElement extends HTMLElement {
-    private readonly nameSpan = document.createElement("span");
+    public readonly nameSpan = document.createElement("span");
     private readonly videoElement = document.createElement("video");
     private readonly wrapperElement = document.createElement("div");
     private readonly hoverOver = new HoverOver();
@@ -101,6 +101,7 @@ export class UserVideoElement extends HTMLElement {
     private handleInput(ev: Event): void {
         ev.stopImmediatePropagation();
         ev.stopPropagation();
+        ev.preventDefault();
         if (this.nameSpan.innerText.includes("\n")) {
             this.nameSpan.innerText = this.nameSpan.innerText.trim();
             this.nameSpan.blur();

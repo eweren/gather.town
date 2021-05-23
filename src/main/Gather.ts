@@ -10,7 +10,7 @@ import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
 import JitsiInstance from "../Jitsi";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
-import { HEADLINE_FONT, STANDARD_FONT } from "./constants";
+import { HEADLINE_FONT, SMALL_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
 import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
@@ -33,6 +33,8 @@ export class Gather extends Game {
     public static readonly headlineFont: BitmapFont;
     @asset(STANDARD_FONT)
     public static readonly standardFont: BitmapFont;
+    @asset(SMALL_FONT)
+    public static readonly smallFont: BitmapFont;
     @asset([
         "sprites/characters/character.aseprite.json",
         "sprites/characters/dark_staff_black.aseprite.json",
@@ -136,7 +138,7 @@ export class Gather extends Game {
         const id = value.id;
         if (this.players[id] == null) {
             const { x, y } = this.getGameScene().mapNode.getPlayerSpawn();
-            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x, y });
+            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, this.room?.getParticipantById(id).getDisplayName() ?? "anonymous", { x, y });
             this.players[id] = newPlayer;
             this.getGameScene().rootNode.appendChild(newPlayer);
         }
@@ -164,6 +166,9 @@ export class Gather extends Game {
         }
         if ("spriteIndex" in value) {
             player.changeSprite(value.spriteIndex);
+        }
+        if ("playerName" in value) {
+            player.changePlayerName(value.playerName);
         }
     }
 
