@@ -60,13 +60,7 @@ export class UserVideoElement extends HTMLElement {
 
     private initNameSpanElement(): void {
         this.nameSpan.innerText = this.userName;
-        this.nameSpan.contentEditable = this.room != null ? "true" : "false";
         this.nameSpan.classList.add("userName");
-        if (this.room != null) {
-            this.nameSpan.addEventListener("click", ev => ev.stopImmediatePropagation());
-            this.nameSpan.addEventListener("input", this.handleInput.bind(this), false);
-            this.nameSpan.addEventListener("blur", this.handleBlur.bind(this), false);
-        }
     }
     private initWrapperElement(): void {
         this.wrapperElement.style.position = "relative";
@@ -96,23 +90,6 @@ export class UserVideoElement extends HTMLElement {
         this.wrapperElement.appendChild(this.nameSpan);
         this.wrapperElement.addEventListener("click", this.handleWrapperClick.bind(this));
         this.wrapperElement.addEventListener("contextmenu", this.handleWrapperContext.bind(this));
-    }
-
-    private handleInput(ev: Event): void {
-        ev.stopImmediatePropagation();
-        ev.stopPropagation();
-        ev.preventDefault();
-        if (this.nameSpan.innerText.includes("\n")) {
-            this.nameSpan.innerText = this.nameSpan.innerText.trim();
-            this.nameSpan.blur();
-        }
-    }
-
-    private handleBlur(): void {
-        if (this.nameSpan.innerText !== "") {
-            this.userName = this.nameSpan.innerText.replace("\n", "");
-        }
-        this.room!.setDisplayName(this.userName);
     }
 
     private handleWrapperClick(): void {
@@ -219,7 +196,6 @@ export class UserVideoElement extends HTMLElement {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
-                cursor: zoom-in;
             }
             .smallVideo {
                 border-radius: 500px;
@@ -227,6 +203,7 @@ export class UserVideoElement extends HTMLElement {
                 height: 150px;
                 object-fit: cover;
                 border: 4px solid transparent;
+                cursor: zoom-in;
             }
             .speaking {
                 border: 4px solid green;

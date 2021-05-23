@@ -136,7 +136,7 @@ export class Gather extends Game {
             return;
         }
         const id = value.id;
-        if (this.players[id] == null) {
+        if (this.players[id] == null && this.isInGameScene()) {
             const { x, y } = this.getGameScene().mapNode.getPlayerSpawn();
             const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, this.room?.getParticipantById(id).getDisplayName() ?? "anonymous", { x, y });
             this.players[id] = newPlayer;

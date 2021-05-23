@@ -38,6 +38,7 @@ export class Keyboard {
     public readonly onKeyDown = new Signal<KeyboardEvent>();
     public readonly onKeyUp = new Signal<KeyboardEvent>();
     public readonly onKeyPress = new Signal<KeyboardEvent>();
+    public blockInput?: any;
     private readonly pressed = new Set<string>();
     private readonly controllerManager = ControllerManager.getInstance();
 
@@ -48,7 +49,12 @@ export class Keyboard {
     }
 
     private handleKeyPress(event: KeyboardEvent): void {
-        this.onKeyPress.emit(event);
+        if (this.blockInput) {
+            this.onKeyPress.getSlots().filter(slot => slot.context === this.blockInput).forEach(slot => slot.call(event));
+            return;
+        } else {
+            this.onKeyPress.emit(event);
+        }
 
         // Quick workaround to make sure, that modifier keys never trigger a game-related
         // controller event. Especially necessary to make other non-game related actions
@@ -67,6 +73,12 @@ export class Keyboard {
     }
 
     private handleKeyDown(event: KeyboardEvent): void {
+        if (this.blockInput) {
+            this.onKeyDown.getSlots().filter(slot => slot.context === this.blockInput).forEach(slot => slot.call(event));
+            return;
+        } else {
+            this.onKeyDown.emit(event);
+        }
         if (preventDefaultKeyCodes.includes(event.code)) {
             event.preventDefault();
         }
@@ -75,7 +87,6 @@ export class Keyboard {
             this.pressed.add(event.key);
         }
 
-        this.onKeyDown.emit(event);
 
         if (event.altKey || event.ctrlKey || event.metaKey) {
             return;
@@ -90,11 +101,15 @@ export class Keyboard {
     }
 
     private handleKeyUp(event: KeyboardEvent): void {
+        if (this.blockInput) {
+            this.onKeyUp.getSlots().filter(slot => slot.context === this.blockInput).forEach(slot => slot.call(event));
+            return;
+        } else {
+            this.onKeyUp.emit(event);
+        }
         if (!event.repeat) {
             this.pressed.delete(event.key);
         }
-
-        this.onKeyUp.emit(event);
 
         if (event.altKey || event.ctrlKey || event.metaKey) {
             return;

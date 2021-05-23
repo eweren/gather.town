@@ -84,6 +84,10 @@ export class Signal<T = void> {
         this.slots.forEach(slot => slot.call(value));
     }
 
+    public getSlots() {
+        return this.slots;
+    }
+
     /**
      * Returns a new signal which only emits the values matching the giving predicate.
      *

@@ -44,9 +44,9 @@
 
     [x] Add titleScreen with choose options
 
-    [ ] Add option to choose name
+    [X] Add option to choose name
 
-    [ ] Join when both done
+    [X] Join when both done
 
 [X] optimize presentation
 

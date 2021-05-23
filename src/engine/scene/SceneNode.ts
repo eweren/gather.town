@@ -1,14 +1,17 @@
-import { Scene } from "./Scene";
 import { Game } from "../Game";
 import { Direction } from "../geom/Direction";
 import { AffineTransform, ReadonlyAffineTransform } from "../graphics/AffineTransform";
-import { Polygon2 } from "../graphics/Polygon2";
-import { Vector2, ReadonlyVector2, ReadonlyVector2Like } from "../graphics/Vector2";
 import { Bounds2 } from "../graphics/Bounds2";
-import { Animation } from "./animations/Animation";
+import { Polygon2 } from "../graphics/Polygon2";
 import { Size2 } from "../graphics/Size2";
-import { Constructor } from "../util/types";
+import { ReadonlyVector2, ReadonlyVector2Like, Vector2 } from "../graphics/Vector2";
 import { TiledObject } from "../tiled/TiledObject";
+import { Signal } from "../util/Signal";
+import { Constructor } from "../util/types";
+import { Animation } from "./animations/Animation";
+import { ScenePointerDownEvent } from "./events/ScenePointerDownEvent";
+import { ScenePointerEvent } from "./events/ScenePointerEvent";
+import { Scene } from "./Scene";
 
 /**
  * Hints which are returned to the scene after drawing the scene graph. These hints can suggest further actions after
@@ -122,6 +125,7 @@ export interface SceneNodeArgs {
  * node for other nodes (similar to a DIV element in HTML for example).
  */
 export class SceneNode<T extends Game = Game> {
+    public onPointerDown = new Signal<ScenePointerEvent>();
     /** The parent node. Null if none. */
     private parent: SceneNode<T> | null = null;
 
@@ -238,6 +242,7 @@ export class SceneNode<T extends Game = Game> {
     protected collidingWith: SceneNode[] = [];
 
     protected scale: number = 1;
+    private pointerDownSignal?: Signal<ScenePointerDownEvent<T>>;
 
     /**
      * Creates a new scene node with the given initial settings.
@@ -867,12 +872,21 @@ export class SceneNode<T extends Game = Game> {
     /**
      * Called when node is added to scene. Can be overwritten to connect event handlers for example.
      */
-    protected activate(): void {}
+    protected activate(): void {
+        this.pointerDownSignal = this.scene?.onPointerDown.filter(event => this.containsPoint(event.getX(), event.getY()));
+        this.pointerDownSignal?.connect(this.handlePointerDown, this);
+    }
+
+    protected handlePointerDown(event: ScenePointerDownEvent<T>): void {
+        this.onPointerDown.emit(event);
+    }
 
     /**
      * Called when node is removed from scene. Can be overwritten to disconnect event handlers for example.
      */
-    protected deactivate(): void {}
+    protected deactivate(): void {
+        this.pointerDownSignal?.disconnect(this.handlePointerDown, this);
+    }
 
     /**
      * Returns the parent node of this node or null if node is not attached to a parent or is the root node.

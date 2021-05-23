@@ -11,7 +11,7 @@ import { SceneNode } from "../../engine/scene/SceneNode";
 import { Direction } from "../../engine/geom/Direction";
 import { PostCharacterTags } from "../nodes/CharacterNode";
 import { TextNode } from "../../engine/scene/TextNode";
-import { ControllerEvent } from "../../engine/input/ControllerEvent";
+import { TextInputNode } from "../nodes/TextInputNode";
 
 export class TitleScene extends Scene<Gather> {
     @asset("sounds/interface/click.mp3")
@@ -20,9 +20,11 @@ export class TitleScene extends Scene<Gather> {
     private characterNodes: Array<AsepriteNode<Gather>> =
         Gather.characterSprites.map(aseprite => new AsepriteNode<Gather>({ aseprite, tag: PostCharacterTags.IDLE, anchor: Direction.RIGHT }));
     private chooseNode = new TextNode<Gather>({ font: Gather.headlineFont, text: "CHOOSE CHARACTER" });
-    private confirmNode = new TextNode<Gather>({ font: Gather.standardFont, text: "⤶ SELECT" });
+    private confirmNode = new TextNode<Gather>({ font: Gather.standardFont, text: "⤶ SELECT", color: "grey" });
     private containerNode = new SceneNode<Gather>();
+    private nameInputNode = new TextInputNode("", "ENTER USERNAME", 12);
     private index = 1;
+    private name = "";
 
     public setup() {
         this.inTransition = new FadeTransition();
@@ -36,7 +38,10 @@ export class TitleScene extends Scene<Gather> {
         this.rootNode.appendChild(this.chooseNode);
         this.chooseNode.moveBy(0, -60);
         this.rootNode.appendChild(this.confirmNode);
-        this.confirmNode.moveBy(0, 60);
+        this.rootNode.appendChild(this.nameInputNode);
+        this.nameInputNode.onTextSubmit.connect(this.updateName, this);
+        this.nameInputNode.moveBy(0, 60);
+        this.confirmNode.moveBy(0, 90);
         this.moveLeft();
 
         MusicManager.getInstance().loopTrack(0);
@@ -78,20 +83,33 @@ export class TitleScene extends Scene<Gather> {
     }
 
     public activate(): void {
-        this.input.onButtonPress.connect(this.handleButtonPress, this);
+        this.game.keyboard.onKeyDown.connect(this.handleButtonPress, this);
     }
 
-    private handleButtonPress(ev: ControllerEvent): void {
-        if (ev.isMenuLeft) {
+    private handleButtonPress(ev: KeyboardEvent): void {
+        if (ev.key === "ArrowLeft" || ev.key === "a") {
             this.moveLeft();
-        } else if (ev.isMenuRight) {
+        } else if (ev.key === "ArrowRight" || ev.key === "d") {
             this.moveRight();
-        } else if (ev.isConfirm) {
+        } else if ((ev.key === "Enter" || ev.key === " ") && this.name !== "") {
             this.goToGame();
+        } else if ((ev.key === "Enter" || ev.key === " ") && this.name === "" || (ev.key === "s" || ev.key === "ArrowDown")) {
+            this.nameInputNode.focus();
+        }
+    }
+
+    private updateName(name: string): void {
+        this.game.room?.setDisplayName(name);
+        this.name = name;
+        if (name.length > 0) {
+            this.confirmNode.setColor("white");
+        } else {
+            this.confirmNode.setColor("grey");
         }
     }
 
     public deactivate(): void {
-        this.input.onButtonPress.disconnect(this.handleButtonPress, this);
+        this.nameInputNode.onTextSubmit.disconnect(this.updateName, this);
+        this.game.keyboard.onKeyDown.disconnect(this.handleButtonPress, this);
     }
 }
