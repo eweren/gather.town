@@ -40,7 +40,7 @@
 
 [ ] React to input/output-devices changes
 
-[ ] Add a Join-Screen
+[X] Add a Join-Screen
 
     [x] Add titleScreen with choose options
 
