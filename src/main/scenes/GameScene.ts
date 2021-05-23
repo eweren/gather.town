@@ -24,6 +24,7 @@ import { IFrameNode } from "../nodes/IFrameNode";
 import { SpeakerNode } from "../nodes/SpeakerNode";
 import { CatNode } from "../nodes/CatNode";
 import { TiledTextNode } from "../nodes/TiledTextNode";
+import { JitsiControlsNode } from "../nodes/JitsiControlsNode";
 
 export class GameScene extends Scene<Gather> {
     @asset(STANDARD_FONT)
@@ -33,6 +34,8 @@ export class GameScene extends Scene<Gather> {
     private static map: TiledMap;
 
     private debugMode: boolean = false;
+
+    private controlsNode = new JitsiControlsNode({ x: Math.round(this.rootNode.width / 2), y: Math.round(this.rootNode.height - 10), anchor: Direction.BOTTOM, layer: Layer.HUD});
 
     public mapNode = new TiledMapNode<Gather>({ map: GameScene.map, objects: {
         "collision": CollisionNode,
@@ -70,9 +73,16 @@ export class GameScene extends Scene<Gather> {
             }));
         }
 
+        this.rootNode.appendChild(this.controlsNode);
+
         setTimeout(() => {
             this.game.setupScene();
         });
+    }
+
+    public resizeTo(width: number, height: number): void {
+        super.resizeTo(width, height);
+        this.controlsNode.moveTo(Math.round(this.rootNode.width / 2), Math.round(this.rootNode.height - 10));
     }
 
     public cleanup() {

@@ -31,6 +31,10 @@ export class CatNode extends InteractiveNode {
     }
 
     public interact(): void {
-        this.getPlayer()?.startPetting();
+        if (this.getPlayer()?.isPetting()) {
+            this.getPlayer()?.stopPetting();
+        } else {
+            this.getPlayer()?.startPetting();
+        }
     }
 }

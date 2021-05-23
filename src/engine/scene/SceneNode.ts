@@ -10,7 +10,7 @@ import { Signal } from "../util/Signal";
 import { Constructor } from "../util/types";
 import { Animation } from "./animations/Animation";
 import { ScenePointerDownEvent } from "./events/ScenePointerDownEvent";
-import { ScenePointerEvent } from "./events/ScenePointerEvent";
+import { ScenePointerMoveEvent } from "./events/ScenePointerMoveEvent";
 import { Scene } from "./Scene";
 
 /**
@@ -129,7 +129,8 @@ export interface SceneNodeArgs {
  * node for other nodes (similar to a DIV element in HTML for example).
  */
 export class SceneNode<T extends Game = Game> {
-    public onPointerDown = new Signal<ScenePointerEvent>();
+    public onPointerDown = new Signal<ScenePointerDownEvent>();
+    public onHoverOverChange = new Signal<boolean>();
     /** The parent node. Null if none. */
     private parent: SceneNode<T> | null = null;
 
@@ -251,6 +252,8 @@ export class SceneNode<T extends Game = Game> {
 
     protected scale: number = 1;
     private pointerDownSignal?: Signal<ScenePointerDownEvent<T>>;
+    private pointerMoveSignal?: Signal<ScenePointerMoveEvent<T>>;
+    protected isHoverOver = false;
 
     /**
      * Creates a new scene node with the given initial settings.
@@ -883,12 +886,22 @@ export class SceneNode<T extends Game = Game> {
      * Called when node is added to scene. Can be overwritten to connect event handlers for example.
      */
     protected activate(): void {
-        this.pointerDownSignal = this.scene?.onPointerDown.filter(event => this.containsPoint(event.getX(), event.getY()));
+        this.pointerDownSignal = this.scene?.onPointerDown;
         this.pointerDownSignal?.connect(this.handlePointerDown, this);
+        this.pointerMoveSignal = this.scene?.onPointerMove;
+        this.pointerMoveSignal?.connect(this.handlePointerMove, this);
     }
 
     protected handlePointerDown(event: ScenePointerDownEvent<T>): void {
         this.onPointerDown.emit(event);
+    }
+
+    protected handlePointerMove(event: ScenePointerMoveEvent<T>): void {
+        const isHoverOver = this.containsPoint(event.getX(), event.getY());
+        if (this.isHoverOver !== isHoverOver) {
+            this.onHoverOverChange.emit(isHoverOver);
+            this.isHoverOver = isHoverOver;
+        }
     }
 
     /**
@@ -896,6 +909,7 @@ export class SceneNode<T extends Game = Game> {
      */
     protected deactivate(): void {
         this.pointerDownSignal?.disconnect(this.handlePointerDown, this);
+        this.pointerMoveSignal?.disconnect(this.handlePointerMove, this);
     }
 
     /**

@@ -6,6 +6,7 @@ import { Rect } from "../../engine/geom/Rect";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 import { Gather } from "../Gather";
 import { TextNode } from "../../engine/scene/TextNode";
+import { Layer } from "../constants";
 
 export class OtherPlayerNode extends CharacterNode {
 
@@ -31,7 +32,7 @@ export class OtherPlayerNode extends CharacterNode {
         const ambientPlayerLight = new AmbientPlayerNode();
         this.appendChild(ambientPlayerLight);
 
-        this.nameNode = new TextNode<Gather>({ font: Gather.standardFont, text: this.playerName }).appendTo(this);
+        this.nameNode = new TextNode<Gather>({ font: Gather.standardFont, text: this.playerName, layer: Layer.OVERLAY }).appendTo(this);
         this.nameNode.moveTo(0, -this.height / 2 - 5);
     }
 
