@@ -10,7 +10,7 @@ export class ScenePointerDownEvent<T extends Game = Game, A = void> extends Scen
 
     private initPointerMove(signal: Signal<ScenePointerMoveEvent<T, A>>) {
         const listener = (event: PointerEvent) => {
-            signal.emit(new ScenePointerMoveEvent(this.scene, event));
+            signal.emit(new ScenePointerMoveEvent<T, A>(this.scene, event));
         };
         const canvas = this.scene.game.canvas;
         const cleanup = () => {
@@ -23,7 +23,7 @@ export class ScenePointerDownEvent<T extends Game = Game, A = void> extends Scen
 
     private initPointerEnd(signal: Signal<ScenePointerEndEvent<T, A>>) {
         const listener = (event: PointerEvent) => {
-            signal.emit(new ScenePointerMoveEvent(this.scene, event));
+            signal.emit(new ScenePointerMoveEvent<T, A>(this.scene, event));
             cleanup();
         };
         const cleanup = () => {

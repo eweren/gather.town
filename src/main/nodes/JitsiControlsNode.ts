@@ -99,7 +99,7 @@ export class JitsiControlsNode extends SceneNode<Gather> {
         this.options.remove();
     }
 
-    protected handlePointerMove(event: ScenePointerMoveEvent): void {
+    protected handlePointerMove(event: ScenePointerMoveEvent<Gather>): void {
         const { x, y } = event.getScreenPosition();
         const isHoverOver = this.containsPoint(x, y);
         if (this.isHoverOver !== isHoverOver) {

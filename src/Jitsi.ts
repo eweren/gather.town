@@ -371,7 +371,7 @@ export default class JitsiInstance {
         this.room.addCommandListener("IFrameUpdate", (values: any) => {
             const parsedObj = JSON.parse(values.value);
             if (parsedObj.id !== this.room.myUserId()) {
-                const iFrameToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType(IFrameNode)
+                const iFrameToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType<IFrameNode>(IFrameNode)
                     .filter(iFrame => iFrame.url === parsedObj.originalUrl);
                 Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " started a game");
                 iFrameToUpdate.forEach(iFrame => {

@@ -154,10 +154,10 @@ export class NpcNode extends CharacterNode {
         return this.deceleration;
     }
     protected getPlayer(): PlayerNode | undefined {
-        return this.getScene()?.rootNode.getDescendantsByType(PlayerNode)[0];
+        return this.getScene()?.rootNode.getDescendantsByType<PlayerNode>(PlayerNode)[0];
     }
     protected getOtherNpcs(): Array<NpcNode> | undefined {
-        return this.getScene()?.rootNode.getDescendantsByType(NpcNode);
+        return this.getScene()?.rootNode.getDescendantsByType<NpcNode>(NpcNode);
     }
 
 }

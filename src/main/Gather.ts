@@ -191,7 +191,7 @@ export class Gather extends Game {
     }
 
     public handleOtherPlayerPresentationUpdate(args: { presentationBoardId: number, slide: number; id: string}): void {
-        const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType(PresentationBoardNode)
+        const presentationBoard = this.getGameScene()?.rootNode.getDescendantsByType<PresentationBoardNode>(PresentationBoardNode)
             .find(n => n.boardId === args.presentationBoardId);
         if (args.slide === -1) {
             this.getCamera().focus(this.getPlayer(), { follow: true });
@@ -299,7 +299,7 @@ export class Gather extends Game {
         textInputNode.moveTo(this.getGameScene().rootNode.width / 2, 10);
         textInputNode.focus();
         textInputNode.onTextSubmit.connect(text => {
-            const otherPlayers = this.getGameScene()?.rootNode.getDescendantsByType(OtherPlayerNode);
+            const otherPlayers = this.getGameScene()?.rootNode.getDescendantsByType<OtherPlayerNode>(OtherPlayerNode);
             const filteredPlayers = otherPlayers
                 .filter(p => p.getPosition().getDistance(this.getPlayer().getPosition()) < 50)
                 .map(p => p.getId()!);
@@ -352,7 +352,7 @@ export class Gather extends Game {
     }
 
     public getPlayer(id?: string): PlayerNode {
-        return this.getGameScene().rootNode.getDescendantsByType(PlayerNode)[0];
+        return this.getGameScene().rootNode.getDescendantsByType<PlayerNode>(PlayerNode)[0];
     }
 
     public getOtherPlayerById(id: string): OtherPlayerNode | null {
@@ -384,7 +384,7 @@ export class Gather extends Game {
     }
 
     public getAllLights(): LightNode[] {
-        return this.getGameScene().rootNode.getDescendantsByType(LightNode);
+        return this.getGameScene().rootNode.getDescendantsByType<LightNode>(LightNode);
     }
 
     public log(el: any) {

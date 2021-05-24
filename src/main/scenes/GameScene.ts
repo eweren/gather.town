@@ -148,7 +148,7 @@ export class GameScene extends Scene<Gather> {
         }
     }
 
-    private handleTeleportClick(event: ScenePointerDownEvent): void {
+    private handleTeleportClick(event: ScenePointerDownEvent<Gather>): void {
         const player = this.rootNode.getDescendantById("Player");
         if (player != null) {
             player.moveTo(event.getX(), event.getY());

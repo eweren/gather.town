@@ -92,7 +92,7 @@ export abstract class InteractiveNode extends AsepriteNode<Gather> {
     }
 
     protected getPlayer(): PlayerNode | undefined {
-        return this.getScene()?.rootNode.getDescendantsByType(PlayerNode)[0];
+        return this.getScene()?.rootNode.getDescendantsByType<PlayerNode>(PlayerNode)[0];
     }
 
     public draw(context: CanvasRenderingContext2D): void {

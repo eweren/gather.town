@@ -298,7 +298,7 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
 
     @cacheResult
     private getColliders(): CollisionNode[] {
-        const colliders = this.getScene()?.rootNode.getDescendantsByType(CollisionNode) ?? [];
+        const colliders = this.getScene()?.rootNode.getDescendantsByType<CollisionNode>(CollisionNode) ?? [];
         return colliders;
     }
 
