@@ -5,30 +5,20 @@ import { Rect } from "../../engine/geom/Rect";
 import { Vector2 } from "../../engine/graphics/Vector2";
 import { ControllerEvent } from "../../engine/input/ControllerEvent";
 import { ControllerIntent } from "../../engine/input/ControllerIntent";
-import { AsepriteNode } from "../../engine/scene/AsepriteNode";
 import { SceneNodeArgs, SceneNodeAspect } from "../../engine/scene/SceneNode";
 import { isDev } from "../../engine/util/env";
 import { clamp } from "../../engine/util/math";
-import { rnd, rndItem, timedRnd } from "../../engine/util/random";
 import { Gather } from "../Gather";
 import { CharacterNode, PostCharacterTags } from "./CharacterNode";
 import { InteractiveNode } from "./InteractiveNode";
-import { ParticleNode, valueCurves } from "./ParticleNode";
 import { AmbientPlayerNode } from "./player/AmbientPlayerNode";
 
-const groundColors = [
-    "#806057",
-    "#504336",
-    "#3C8376",
-    "#908784"
-];
+export const playerSyncKeys = ["username", "speed", "acceleration", "deceleration"];
 
 export class PlayerNode extends CharacterNode {
 
     @asset("sprites/characters/character.aseprite.json")
     private static readonly sprite: Aseprite;
-    @asset("sprites/pet.aseprite.json")
-    private static readonly petSprite: Aseprite;
 
     // Character settings
     private readonly speed = 100;
@@ -42,11 +32,10 @@ export class PlayerNode extends CharacterNode {
 
     public isPlayer = true;
 
-    private dustParticles: ParticleNode;
-    private petNode: AsepriteNode<Gather>;
+    private gPressed = false;
 
     public constructor(args?: SceneNodeArgs) {
-        super({
+        super(playerSyncKeys, {
             aseprite: PlayerNode.sprite,
             anchor: Direction.BOTTOM,
             childAnchor: Direction.CENTER,
@@ -58,22 +47,10 @@ export class PlayerNode extends CharacterNode {
         });
         const ambientPlayerLight = new AmbientPlayerNode();
         this.appendChild(ambientPlayerLight);
-        this.petNode = new AsepriteNode<Gather>({ aseprite: PlayerNode.petSprite, tag: "idle" });
-        this.appendChild(this.petNode);
 
         if (isDev()) {
             (<any>window)["player"] = this;
         }
-
-        this.dustParticles = new ParticleNode({
-            y: this.getHeight() / 2,
-            velocity: () => ({ x: rnd(-1, 1) * 26, y: rnd(0.7, 1) * 45 }),
-            color: () => rndItem(groundColors),
-            size: rnd(1, 2),
-            gravity: {x: 0, y: -100},
-            lifetime: () => rnd(0.5, 0.8),
-            alphaCurve: valueCurves.trapeze(0.05, 0.2)
-        }).appendTo(this);
     }
 
     public getSpeed(): number {
@@ -93,6 +70,7 @@ export class PlayerNode extends CharacterNode {
             this.spriteIndex = index;
             this.setAseprite(Gather.characterSprites[index]);
             this.getGame().sendCommand("playerUpdate", { index });
+            this.emitEvent("changeSprite", index);
         }
     }
 
@@ -100,38 +78,26 @@ export class PlayerNode extends CharacterNode {
         this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, spriteIndex: this.spriteIndex, direction: this.direction });
     }
 
-    public isPetting(): boolean {
-        return this.petNode.getTag() === "pet";
-    }
-
-    public startPetting(): void {
-        this.petNode.setTag("pet");
-    }
-    public stopPetting(): void {
-        this.petNode.setTag("idle");
-    }
-
     public update(dt: number, time: number) {
         super.update(dt, time);
         if (this.isInScene() && !this.initDone) {
             this.initDone = true;
-            this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y });
             this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
             const handleControllerInputChange = () => {
-                const oldIsRunning = this.isRunning;
                 this.isRunning = (this.getGame().input.currentActiveIntents & ControllerIntent.PLAYER_RUN) === ControllerIntent.PLAYER_RUN;
-                if (oldIsRunning !== this.isRunning) {
-                    this.getGame().sendCommand("playerUpdate", { isRunning: this.isRunning });
-                }
             };
             this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
             this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);
             this.getGame().keyboard.onKeyPress.filter(ev => ev.key === "g").connect(() => {
-                this.inGhostMode = !this.inGhostMode;
-                this.getGame().sendCommand("playerUpdate", { inGhostMode: this.inGhostMode });
+                this.gPressed = true;
             }, this);
         }
         this.setOpacity(1);
+
+        if (this.gPressed) {
+            this.gPressed = false;
+            this.inGhostMode = !this.inGhostMode;
+        }
 
         // Controls
         const input = this.getScene()!.game.input;
@@ -175,15 +141,6 @@ export class PlayerNode extends CharacterNode {
                 node.reverseInteract();
             }
         }
-
-        // Spawn random dust particles while walking
-        if (this.isVisible()) {
-            if (this.getTag() === "walk") {
-                if (timedRnd(dt, 0.2)) {
-                    this.dustParticles.emit(1);
-                }
-            }
-        }
         this.updatePreviouslyPressed();
     }
 
@@ -220,5 +177,14 @@ export class PlayerNode extends CharacterNode {
 
     public setDebug(debug: boolean): void {
         this.debug = debug;
+    }
+
+    public getIdentifier(): string {
+        return this.getGame().onlineService.username;
+    }
+
+    public activate(): void {
+        super.activate();
+        this.identifier = this.getGame().onlineService.username;
     }
 }

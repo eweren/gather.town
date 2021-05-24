@@ -45,7 +45,7 @@ export class NpcNode extends CharacterNode {
     private textNode: TextNode<Gather>;
 
     public constructor(args?: NpcNodeArgs) {
-        super({
+        super([], {
             aseprite: NpcNode.sprites[args?.spriteIndex ?? args?.tiledObject?.getOptionalProperty("spriteIndex", "int")?.getValue() ?? 0],
             anchor: Direction.BOTTOM,
             childAnchor: Direction.CENTER,

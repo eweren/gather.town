@@ -151,6 +151,7 @@
         "gamepadconnected",
         "gamepaddisconnected",
         "gameplay",
+        "gamestate",
         "genderswapping",
         "getthisdone",
         "ghostwhite",

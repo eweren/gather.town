@@ -8,6 +8,8 @@ import { Gather } from "../Gather";
 import { TextNode } from "../../engine/scene/TextNode";
 import { Layer } from "../constants";
 
+export const playerSyncKeys = ["username", "speed", "acceleration", "deceleration"];
+
 export class OtherPlayerNode extends CharacterNode {
 
     // Character settings
@@ -18,8 +20,8 @@ export class OtherPlayerNode extends CharacterNode {
 
     private nameNode: TextNode<Gather>;
 
-    public constructor(id: string, public spriteIndex = 0, public playerName = "anonymous", args?: SceneNodeArgs) {
-        super({
+    public constructor(id: string, public spriteIndex = 0, args?: SceneNodeArgs) {
+        super(playerSyncKeys, {
             aseprite: Gather.characterSprites[spriteIndex],
             anchor: Direction.BOTTOM,
             childAnchor: Direction.CENTER,
@@ -29,10 +31,11 @@ export class OtherPlayerNode extends CharacterNode {
             cameraTargetOffset: new Vector2(0, -30),
             ...args
         });
+        this.identifier = id;
         const ambientPlayerLight = new AmbientPlayerNode();
         this.appendChild(ambientPlayerLight);
 
-        this.nameNode = new TextNode<Gather>({ font: Gather.standardFont, text: this.playerName, layer: Layer.OVERLAY }).appendTo(this);
+        this.nameNode = new TextNode<Gather>({ font: Gather.standardFont, text: this.identifier, layer: Layer.OVERLAY }).appendTo(this);
         this.nameNode.moveTo(0, -this.height / 2 - 5);
     }
 
@@ -48,9 +51,13 @@ export class OtherPlayerNode extends CharacterNode {
         return this.deceleration;
     }
 
+    public emitEvent(): void { }
+
+    public syncCharacterState(): void {}
+
     public changePlayerName(playerName: string): void {
         this.nameNode.setText(playerName);
-        this.playerName = playerName;
+        this.identifier = playerName;
     }
 
     public changeSprite(spriteIndex: number): void {

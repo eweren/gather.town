@@ -5,9 +5,11 @@ import { asset } from "../engine/assets/Assets";
 import { BitmapFont } from "../engine/assets/BitmapFont";
 import { RGBColor } from "../engine/color/RGBColor";
 import { Game } from "../engine/Game";
+import { OnlineService } from "../engine/online/OnlineService";
 import { Camera } from "../engine/scene/Camera";
 import { FadeToBlack } from "../engine/scene/camera/FadeToBlack";
 import { clamp } from "../engine/util/math";
+import { sleep } from "../engine/util/time";
 import JitsiInstance from "../Jitsi";
 import JitsiConference from "../typings/Jitsi/JitsiConference";
 import { HEADLINE_FONT, Layer, SMALL_FONT, STANDARD_FONT } from "./constants";
@@ -76,6 +78,22 @@ export class Gather extends Game {
     private wasAudioMuted = false;
     private wasVideoMuted = false;
     public initialPlayerSprite = 0;
+
+
+    public get onlineService(): OnlineService {
+        return this._onlineService;
+    }
+    public set onlineService(service: OnlineService) {
+        this._onlineService = service;
+        this.onlineService.onOtherPlayerJoined.connect(event => {
+            console.log("On other player joined ");
+            this.spawnOtherPlayer(event);
+        });
+        this.onlineService.onOtherPlayerDisconnect.connect(() => {
+            this.checkIfPlayersShouldBeRemoved();
+        });
+    }
+    private _onlineService!: OnlineService;
 
     public constructor() {
         super();
@@ -365,6 +383,46 @@ export class Gather extends Game {
             throw new Error("GameScene not available");
         }
         return scene;
+    }
+
+    public checkIfPlayersShouldBeRemoved(): string | null {
+        if (this.scenes.getScene(GameScene)) {
+            const playersToRemove = Object.values(this.players).filter(player => !this.onlineService.players.has(player.getIdentifier() as string));
+            if (playersToRemove.length === 1) {
+                playersToRemove[0].remove();
+                return playersToRemove[0].getIdentifier() as string;
+            }
+        }
+        return null;
+    }
+
+    public async spawnOtherPlayer(event: any): Promise<void> {
+        if (event == null || !event.position || event.id === this.onlineService.username) {
+            return;
+        }
+        console.log("Should spawn other player: ", event);
+        while (this.isInGameScene == null) {
+            await sleep(100);
+        }
+        if (!this.scenes.getScene(GameScene)) {
+            this.scenes.setScene(GameScene as any);
+        }
+        while (!this.scenes.getScene(GameScene)) {
+            await sleep(100);
+        }
+        if (!Object.values(this.players).find(p => p.getIdentifier() === event.id)) {
+            try {
+                this.getGameScene();
+            } catch (_) {
+                await this.scenes.setScene(GameScene as any);
+            }
+            const otherPlayer = new OtherPlayerNode(event.id);
+            this.getGameScene().rootNode?.appendChild(otherPlayer);
+            otherPlayer.moveTo(event.position?.x ?? this.getPlayer().getX(), event.position?.y ?? this.getPlayer().getY());
+            otherPlayer.reset();
+
+            this.players[event.id] = otherPlayer;
+        }
     }
 
     public isInGameScene(): boolean {

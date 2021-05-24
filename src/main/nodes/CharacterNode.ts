@@ -1,7 +1,9 @@
+import { Aseprite } from "../../engine/assets/Aseprite";
 import { asset } from "../../engine/assets/Assets";
 import { BitmapFont } from "../../engine/assets/BitmapFont";
 import { SimpleDirection } from "../../engine/geom/Direction";
 import { Vector2 } from "../../engine/graphics/Vector2";
+import { OnlineSceneNode } from "../../engine/online/OnlineSceneNode";
 import { AsepriteNode, AsepriteNodeArgs } from "../../engine/scene/AsepriteNode";
 import { SceneNode } from "../../engine/scene/SceneNode";
 import { cacheResult } from "../../engine/util/cache";
@@ -29,10 +31,13 @@ export enum PostCharacterTags {
     DANCE = "dance"
 }
 
-export abstract class CharacterNode extends AsepriteNode<Gather> {
+export abstract class CharacterNode extends OnlineSceneNode<Gather> {
 
     @asset(STANDARD_FONT)
     private static readonly dialogFont: BitmapFont;
+
+    @asset("sprites/pet.aseprite.json")
+    private static readonly petSprite: Aseprite;
 
     private gameTime = 0;
     private preTag: PreCharacterTags = PreCharacterTags.FRONT;
@@ -42,6 +47,8 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     public abstract getAcceleration(): number;
     public abstract getDeceleration(): number;
 
+
+    private petNode: AsepriteNode<Gather>;
     public inConversation = false;
     public isPlayer = false;
     protected isBot = false;
@@ -71,10 +78,11 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     protected speakerNode?: SceneNode;
     protected shareAudioId?: string;
 
-    public constructor(args: AsepriteNodeArgs) {
-        super(args);
+    public constructor(keysOfPropertiesToSync: Array<string>, args: AsepriteNodeArgs) {
+        super({keysOfPropertiesToSync: [...keysOfPropertiesToSync, "position", "direction", "velocity", "tag", "inGhostMode"],...args});
         this.velocity = new Vector2(0, 0);
-        // this.setShowBounds(true);
+        this.petNode = new AsepriteNode<Gather>({ aseprite: CharacterNode.petSprite, tag: "idle" });
+        this.appendChild(this.petNode);
         this.sparkEmitter = new ParticleNode({
             offset: () => this.particleOffset,
             velocity: () => {
@@ -184,8 +192,8 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
 
             // Apply
             if (newX !== x || newY !== y) {
-                this.setX(newX);
-                this.setY(newY);
+                this.setX(Math.round(newX));
+                this.setY(Math.round(newY));
             }
         }
         // Talking/Thinking
@@ -226,6 +234,7 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     public setPreTag(preTag: PreCharacterTags): void {
         if (preTag !== this.preTag) {
             this.preTag = preTag;
+            this.emitEvent("setPreTag", preTag);
         }
     }
 
@@ -238,10 +247,8 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
         const oldTag = this.getTag();
         if (tag && ((oldTag !== this.preTag + tag) || (tag === PostCharacterTags.DANCE && oldTag !== tag))) {
             const newTag = (tag !== PostCharacterTags.DANCE ? this.preTag : "") + tag;
-            if (this.getTag() !== PostCharacterTags.DANCE && tag === PostCharacterTags.DANCE) {
-                this.getGame().sendCommand("playerUpdate", { dances: true });
-            }
             super.setTag(newTag);
+            this.emitEvent("setTag", tag);
         }
         return this;
     }
@@ -262,29 +269,22 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
                     this.setPreTag(PreCharacterTags.BACK);
                     break;
             }
-            if (this.isPlayer) {
-                this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, direction });
-            }
+            this.emitEvent("setDirection", direction);
         }
         this.direction = direction;
-    }
-
-    public emitSparks(x: number, y: number, angle: number): void {
-        const pos = this.getScenePosition();
-        this.particleOffset = new Vector2(x - pos.x, y - pos.y + 20);
-        this.particleAngle = -angle;
-        this.sparkEmitter.emit(rnd(4, 10));
     }
 
     public reset(): void {
         this.velocity = new Vector2(0, 0);
         this.setTag(PostCharacterTags.IDLE);
+        this.emitEvent("reset");
     }
 
-    public say(line = "", duration = 0, delay = 0): void {
+    public say(line = "", duration = 5, delay = 0): void {
         this.speakSince = this.gameTime + delay;
         this.speakUntil = this.speakSince + duration;
         this.speakLine = line;
+        this.emitEvent("say", line);
     }
 
     private getPlayerCollisionAt(x = this.getX(), y = this.getY()): boolean {
@@ -343,18 +343,19 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
         return this.canInteractWith;
     }
 
-    public async setSpeakerNode(node: SceneNode, id: string): Promise<void> {
-        this.speakerNode = node;
-        this.shareAudioId = id;
+    public async setSpeakerNode(args: {node: SceneNode, sharedId: string}): Promise<void> {
+        this.speakerNode = args.node;
+        this.shareAudioId = args.sharedId;
         await sleep(1000);
-        this.getGame().sendCommand("speakerUpdate", { speakerNode: node.getId(), shareAudioId: id });
+        // this.getGame().sendCommand("speakerUpdate", { speakerNode: node.getId(), shareAudioId: id });
+        this.emitEvent("setSpeakerNode", args);
     }
 
-    public activateSpeakerNode(userId: string, nodeId: string, id?: string): void {
-        document.getElementById(`${userId + id}audio`)?.remove();
-        const node = this.getScene()?.rootNode.getDescendantById(nodeId);
+    public activateSpeakerNode(args: {userId: string, nodeId: string, id?: string}): void {
+        document.getElementById(`${args.userId + args.id}audio`)?.remove();
+        const node = this.getScene()?.rootNode.getDescendantById(args.nodeId);
         if (node) {
-            if (id != null) {
+            if (args.id != null) {
                 Object.values(this.getGame().JitsiInstance!.remoteTracks)
                     .map(tracks => tracks.filter(t => t.isAudioTrack()))
                     .filter(v => v.length > 0)
@@ -362,16 +363,30 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
                         console.log(tracks);
                         tracks.forEach(track => {
                             const t = track.getOriginalStream().getAudioTracks()
-                                .filter(track => track.id.includes(id))[0];
+                                .filter(track => track.id.includes(args.id!))[0];
                             if (t) {
-                                (node as any).setAudioStream(userId, t);
+                                (node as any).setAudioStream(args.userId, t);
                             }
                         });
                     });
             } else {
                 (node as any).setAudioStream();
             }
+            this.emitEvent("activateSpeakerNode", args);
         }
+    }
+
+    public isPetting(): boolean {
+        return this.petNode.getTag() === "pet";
+    }
+
+    public startPetting(): void {
+        this.petNode.setTag("pet");
+        this.emitEvent("startPetting");
+    }
+    public stopPetting(): void {
+        this.petNode.setTag("idle");
+        this.emitEvent("stopPetting");
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {

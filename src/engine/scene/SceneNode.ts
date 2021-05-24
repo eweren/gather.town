@@ -199,6 +199,9 @@ export class SceneNode<T extends Game = Game> {
      */
     private readonly sceneBoundsPolygon: Polygon2 = new Polygon2();
 
+    /** The identifier of the node. Null if none. */
+    protected identifier: string | number | null = null;
+
     /**
      * The transformation matrix of this node. This transformation is applied to the node before moving the node to
      * its position (X/Y coordinates). So in simple cases this transformation is not needed at all and its up to you
@@ -263,7 +266,7 @@ export class SceneNode<T extends Game = Game> {
      */
     public constructor({ id = null, x = 0, y = 0, width = 0, height = 0, anchor = Direction.CENTER,
             childAnchor = Direction.CENTER, opacity = 1, showBounds = false, backgroundColor, padding, layer = null, hidden = false,
-            collisionMask = 0, cameraTargetOffset, scale = 1, ...args }: SceneNodeArgs = {}) {
+            collisionMask = 0, cameraTargetOffset, scale = 1, tiledObject, ...args }: SceneNodeArgs = {}) {
         this.id = id;
         this.position.setComponents(x, y);
         this.size.setDimensions(width, height);
@@ -278,6 +281,7 @@ export class SceneNode<T extends Game = Game> {
         this.collisionMask = collisionMask;
         this.scale = scale;
         this.onClick = args.onClick;
+        this.identifier = tiledObject?.toJSON().id ?? null;
         if (cameraTargetOffset != null) {
             this.cameraTargetOffset.setVector(cameraTargetOffset);
         }
@@ -907,6 +911,15 @@ export class SceneNode<T extends Game = Game> {
             this.onHoverOverChange.emit(isHoverOver);
             this.isHoverOver = isHoverOver;
         }
+    }
+
+    /**
+     * Returns the node identifier specified by tilemap.
+     *
+     * @return The identifier of the node or null if none.
+     */
+     public getIdentifier(): string | number | null {
+        return this.identifier;
     }
 
     /**

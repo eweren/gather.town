@@ -347,7 +347,7 @@ export default class JitsiInstance {
         this.room.addCommandListener("playerUpdate", (values: any) => {
             const parsedObj = JSON.parse(values.value);
             if (parsedObj.id !== this.room.myUserId() && Gather.instance.isInGameScene()) {
-                Gather.instance.updatePlayer(parsedObj);
+                // Gather.instance.updatePlayer(parsedObj);
             }
         });
         this.room.addCommandListener("presentationUpdate", (values: any) => {
@@ -360,7 +360,7 @@ export default class JitsiInstance {
             const parsedObj = JSON.parse(values.value);
             if (parsedObj.id !== this.room.myUserId()) {
                 const character = Gather.instance.getGameScene().rootNode.getDescendantById(parsedObj.id) as CharacterNode;
-                character?.activateSpeakerNode(parsedObj.id, parsedObj.speakerNode, parsedObj.shareAudioId);
+                character?.activateSpeakerNode({userId: parsedObj.id, nodeId: parsedObj.speakerNode, id: parsedObj.shareAudioId});
                 if (parsedObj.id != null) {
                     Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " started to share music");
                 } else {

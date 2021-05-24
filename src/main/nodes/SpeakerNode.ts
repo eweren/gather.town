@@ -55,7 +55,7 @@ export class SpeakerNode extends InteractiveNode {
         if (this.canInteractHere()) {
             const sharedId = await this.getGame().JitsiInstance?.shareTabAudio();
             if (sharedId) {
-                this.getPlayer()?.setSpeakerNode(this, sharedId);
+                this.getPlayer()?.setSpeakerNode({node: this, sharedId});
             }
         }
     }

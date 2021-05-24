@@ -12,6 +12,7 @@ import { Direction } from "../../engine/geom/Direction";
 import { PostCharacterTags } from "../nodes/CharacterNode";
 import { TextNode } from "../../engine/scene/TextNode";
 import { TextInputNode } from "../nodes/TextInputNode";
+import { OnlineService } from "../../engine/online/OnlineService";
 
 export class TitleScene extends Scene<Gather> {
     @asset("sounds/interface/click.mp3")
@@ -78,6 +79,7 @@ export class TitleScene extends Scene<Gather> {
     }
 
     public startGame(): void {
+        this.game.onlineService = new OnlineService(this.nameInputNode.text);
         this.game.initialPlayerSprite = this.index;
         this.game.scenes.setScene(GameScene);
     }
