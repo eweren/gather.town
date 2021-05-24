@@ -28,6 +28,8 @@
 
 [X] ghost mode und collision activation
 
+[ ] presentation-width to canvas width
+
 [ ] For events use socket.ewer.rest endpoint -> Game-Logic no in jitsi
 
 [X] add controls-bar somewhere and move options to it
