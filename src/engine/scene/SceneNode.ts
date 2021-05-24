@@ -257,7 +257,7 @@ export class SceneNode<T extends Game = Game> {
 
     protected scale: number = 1;
     private pointerDownSignal?: Signal<ScenePointerDownEvent<T>>;
-    private pointerMoveSignal?: Signal<ScenePointerMoveEvent<Game>>;
+    private pointerMoveSignal?: Signal<ScenePointerMoveEvent<T>>;
     protected isHoverOver = false;
 
     /**
