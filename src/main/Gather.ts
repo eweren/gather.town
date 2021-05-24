@@ -86,7 +86,6 @@ export class Gather extends Game {
     public set onlineService(service: OnlineService) {
         this._onlineService = service;
         this.onlineService.onOtherPlayerJoined.connect(event => {
-            console.log("On other player joined ");
             this.spawnOtherPlayer(event);
         });
         this.onlineService.onOtherPlayerDisconnect.connect(() => {
@@ -159,12 +158,12 @@ export class Gather extends Game {
             return;
         }
         const id = value.id;
-        if (this.players[id] == null && this.isInGameScene()) {
+        /*if (this.players[id] == null && this.isInGameScene()) {
             const { x, y } = this.getGameScene().mapNode.getPlayerSpawn();
-            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, this.room?.getParticipantById(id).getDisplayName() ?? "anonymous", { x, y });
+            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x, y });
             this.players[id] = newPlayer;
             this.getGameScene().rootNode.appendChild(newPlayer);
-        }
+        }*/
         const player = this.players[id];
         if (id === this.room?.myUserId() || player == null || player.isPlayer) {
             return;

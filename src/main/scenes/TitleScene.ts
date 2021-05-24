@@ -13,6 +13,8 @@ import { PostCharacterTags } from "../nodes/CharacterNode";
 import { TextNode } from "../../engine/scene/TextNode";
 import { TextInputNode } from "../nodes/TextInputNode";
 import { OnlineService } from "../../engine/online/OnlineService";
+import { NotificationNode } from "../nodes/NotificationNode";
+import { Layer } from "../constants";
 
 export class TitleScene extends Scene<Gather> {
     @asset("sounds/interface/click.mp3")
@@ -26,6 +28,7 @@ export class TitleScene extends Scene<Gather> {
     private nameInputNode = new TextInputNode<Gather>("", "ENTER USERNAME", 12);
     private index = 1;
     private name = "";
+    private notificationNode!: NotificationNode;
 
     public setup() {
         this.inTransition = new FadeTransition();
@@ -44,6 +47,7 @@ export class TitleScene extends Scene<Gather> {
         this.nameInputNode.moveBy(0, 60);
         this.confirmNode.moveBy(0, 90);
         this.moveLeft();
+        this.notificationNode = new NotificationNode(5, { x: this.rootNode.width / 2 - 10, y: -this.rootNode.height / 2 + 10, layer: Layer.HUD }).appendTo(this.rootNode);
 
         MusicManager.getInstance().loopTrack(0);
     }
@@ -79,7 +83,7 @@ export class TitleScene extends Scene<Gather> {
     }
 
     public startGame(): void {
-        this.game.onlineService = new OnlineService(this.nameInputNode.text);
+        this.game.onlineService.username = this.nameInputNode.text;
         this.game.initialPlayerSprite = this.index;
         this.game.scenes.setScene(GameScene);
     }
@@ -88,12 +92,20 @@ export class TitleScene extends Scene<Gather> {
         this.game.keyboard.onKeyDown.connect(this.handleButtonPress, this);
     }
 
-    private handleButtonPress(ev: KeyboardEvent): void {
+    private async handleButtonPress(ev: KeyboardEvent): Promise<void> {
         if (ev.key === "ArrowLeft" || ev.key === "a") {
             this.moveLeft();
         } else if (ev.key === "ArrowRight" || ev.key === "d") {
             this.moveRight();
         } else if ((ev.key === "Enter" || ev.key === " ") && this.name !== "") {
+            const res = await OnlineService.getUsers();
+            console.log(res);
+            if (res.includes(this.name)) {
+                this.notificationNode.showNotification("Username already taken", 5);
+                this.nameInputNode.focus();
+                return;
+            }
+            this.game.onlineService = new OnlineService(this.name);
             this.goToGame();
         } else if ((ev.key === "Enter" || ev.key === " ") && this.name === "" || (ev.key === "s" || ev.key === "ArrowDown")) {
             this.nameInputNode.focus();

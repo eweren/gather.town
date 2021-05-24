@@ -21,6 +21,11 @@ export interface ActionEvent {
 
 @Service
 export class OnlineService {
+    private static onlineBaseUrl = isDev() ? "http://localhost:3000/" : "https://socket.ewer.rest:3000/";
+
+    public static async getUsers(): Promise<any> {
+        return (await fetch(`${OnlineService.onlineBaseUrl}${isDev() ? "mylittleconference" : "gather"}`)).json();
+    }
     /** The username of the current user. */
     public username = "";
 
@@ -48,9 +53,6 @@ export class OnlineService {
     /** Emits if a new player has joined. */
     public onOtherPlayerJoined = new Signal<any>();
 
-    /** Emits if a gameTime update was emitted. */
-    public onGameTimeUpdate = new Signal<number>();
-
     /** Emits if a player has lost connection. */
     public onOtherPlayerDisconnect = new Signal<string>();
 
@@ -66,16 +68,15 @@ export class OnlineService {
     /** Holds the last gamestate in order to minimize unneeded payload. */
     private _lastGameState = "";
 
-    public constructor(username?: string) {
-        const onlineBaseUrl = isDev() ? "http://localhost:3000/" : "https://socket.ewer.rest:3000/";
-        this.username = username ?? Math.random() + "";
+    public constructor(username: string = "") {
+        this.username = username;
         let room = Gather.instance?.JitsiInstance?.room.getName() ?? "mylittleconference";
         if (!room) {
             room = (Math.random() * 10000000).toFixed();
         }
 
         // Initialize socket and add current user to the list of users.
-        this.socket = io.connect(onlineBaseUrl, { query: { room, username: this.username }, transportOptions: ["websocket"] });
+        this.socket = io.connect(OnlineService.onlineBaseUrl, { query: { room, username: this.username }, transportOptions: ["websocket"] });
         this.socket.on("connect", () => {
             this.onPlayerConnect.emit();
             this.players.add(this.username!);
@@ -116,11 +117,6 @@ export class OnlineService {
             }
         });
 
-        // Listen on gameTime. Those updates are related to the online game-state.
-        this.socket.on("gameTime", (val: number) => {
-            this.onGameTimeUpdate.emit(val);
-        });
-
         // Listen on updates of the room. Those are typically actions like players joining/leaving or host.switching.
         this.socket.on("roomInfo", (val: RoomInfoEvent) => {
 
@@ -132,12 +128,9 @@ export class OnlineService {
             if (val.playerLeft) {
                 this.onOtherPlayerDisconnect.emit(val.playerLeft);
             }
-            if (val.gameTime) {
-                this.onGameTimeUpdate.emit(val.gameTime);
-            }
         });
 
-        // Listen on gameState changes. Those events are typically fired on gameStart, if the host starts a diacount or
+        // Listen on gameState changes. Those events are typically fired on gameStart, if the host starts a game or
         // other actions that result in stage-changes.
         this.socket.on("gameState", (val: string) => {
             this.onGameStateUpdate.emit(val);

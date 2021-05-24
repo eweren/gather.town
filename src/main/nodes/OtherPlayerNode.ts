@@ -27,6 +27,7 @@ export class OtherPlayerNode extends CharacterNode {
             childAnchor: Direction.CENTER,
             tag: "idle",
             id,
+            layer: Layer.FOREGROUND,
             sourceBounds: new Rect(7, 1, 20, 30),
             cameraTargetOffset: new Vector2(0, -30),
             ...args

@@ -316,7 +316,7 @@ export default class JitsiInstance {
         this.room.on(JitsiConferenceEvents.USER_JOINED, async id => {
             this.remoteTracks[id] = [];
             await sleep(500);
-            if (Gather.instance.isInGameScene() && id !== this.room.myUserId()) {
+            if (Gather.instance.isInGameScene() && id !== this.room.getName()) {
                 Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
                 Gather.instance.showNotification(this.room.getParticipantById(id).getDisplayName() + " joined");
             }
@@ -339,7 +339,7 @@ export default class JitsiInstance {
             (userID: string, displayName: string) => {
                 const parent = document.getElementById(`${userID}video`) as UserVideoElement;
                 const textElement = parent?.nameSpan;
-                Gather.instance.updatePlayer({ id: userID,  playerName: displayName });
+                // Gather.instance.updatePlayer({ id: userID,  playerName: displayName });
                 if (textElement) {
                     textElement.innerText = displayName;
                 }
