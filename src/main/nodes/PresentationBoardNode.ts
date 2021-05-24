@@ -147,8 +147,8 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         if (this.getTag() !== PresentationBoardTags.OUT && this.getTag() !== PresentationBoardTags.ROLL_OUT) {
             this.slideIndex = startIndex;
             this.setTag(PresentationBoardTags.ROLL_OUT);
-            this.appendChild(this.controlsNode);
             if (isPresenter) {
+                this.appendChild(this.controlsNode);
                 this.controlsNode.moveTo(this.getWidth() / 2 + 4, -this.getHeight() / 2);
             }
             this.isPresenter = isPresenter;

@@ -100,6 +100,8 @@ export class Gather extends Game {
         this.input.onButtonPress.filter(e => e.isConfirm).connect(() => this.nextDialogLine(), this);
         this.input.onButtonUp.filter(e => e.isPlayerChat).connect(() => this.handleChat(), this);
 
+        this.keyboard.onKeyPress.filter(ev => ev.key === "9" && ev.ctrlKey).connect((ev) => { ev.preventDefault(); this.preventPlayerInteraction = 0;});
+
         this.input.onDrag.filter(e => e.isRightStick && !!e.direction && e.direction.getLength() > 0.3).connect(this.getPlayer().handleControllerInput, this.getPlayer());
     }
 
@@ -216,6 +218,7 @@ export class Gather extends Game {
         } else if (this.getCamera().getFollow() === presentationBoard && presentationBoard != null) {
             presentationBoard.setSlide(args.slide);
         } else if (presentationBoard != null) {
+            this.showNotification((this.room?.getParticipantById(args.id).getDisplayName() ?? "anonymous") + " started to present");
             this.getCamera().focus(presentationBoard).then((successful) => {
                 if (successful) {
                     this.getCamera().setFollow(presentationBoard);

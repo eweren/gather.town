@@ -351,7 +351,6 @@ export abstract class CharacterNode extends AsepriteNode<Gather> {
     }
 
     public activateSpeakerNode(userId: string, nodeId: string, id?: string): void {
-        console.log(document.getElementById(`${userId + id}audio`));
         document.getElementById(`${userId + id}audio`)?.remove();
         const node = this.getScene()?.rootNode.getDescendantById(nodeId);
         if (node) {

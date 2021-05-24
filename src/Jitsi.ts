@@ -361,6 +361,11 @@ export default class JitsiInstance {
             if (parsedObj.id !== this.room.myUserId()) {
                 const character = Gather.instance.getGameScene().rootNode.getDescendantById(parsedObj.id) as CharacterNode;
                 character?.activateSpeakerNode(parsedObj.id, parsedObj.speakerNode, parsedObj.shareAudioId);
+                if (parsedObj.id != null) {
+                    Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " started to share music");
+                } else {
+                    Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " stopped to share music");
+                }
             }
         });
         this.room.addCommandListener("IFrameUpdate", (values: any) => {
@@ -368,6 +373,7 @@ export default class JitsiInstance {
             if (parsedObj.id !== this.room.myUserId()) {
                 const iFrameToUpdate = Gather.instance.getGameScene().rootNode.getDescendantsByType(IFrameNode)
                     .filter(iFrame => iFrame.url === parsedObj.originalUrl);
+                Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " started a game");
                 iFrameToUpdate.forEach(iFrame => {
                     iFrame.url = parsedObj.newUrl;
                     iFrame.pasteInput?.remove();
