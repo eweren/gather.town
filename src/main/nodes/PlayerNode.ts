@@ -27,7 +27,6 @@ export class PlayerNode extends CharacterNode {
     private leftMouseDown = false;
     private rightMouseDown = false;
     private previouslyPressed = 0;
-    private initDone = false;
     public spriteIndex = 0;
 
     public isPlayer = true;
@@ -80,18 +79,6 @@ export class PlayerNode extends CharacterNode {
 
     public update(dt: number, time: number) {
         super.update(dt, time);
-        if (this.isInScene() && !this.initDone) {
-            this.initDone = true;
-            this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
-            const handleControllerInputChange = () => {
-                this.isRunning = (this.getGame().input.currentActiveIntents & ControllerIntent.PLAYER_RUN) === ControllerIntent.PLAYER_RUN;
-            };
-            this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
-            this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);
-            this.getGame().keyboard.onKeyPress.filter(ev => ev.key === "g").connect(() => {
-                this.gPressed = true;
-            }, this);
-        }
         this.setOpacity(1);
 
         if (this.gPressed) {
@@ -186,5 +173,14 @@ export class PlayerNode extends CharacterNode {
     public activate(): void {
         super.activate();
         this.identifier = this.getGame().onlineService.username;
+        this.getGame().input.onDrag.filter(ev => ev.isRightStick && !!ev.direction && ev.direction.getLength() > 0.3).connect(this.handleControllerInput, this);
+        const handleControllerInputChange = () => {
+            this.isRunning = (this.getGame().input.currentActiveIntents & ControllerIntent.PLAYER_RUN) === ControllerIntent.PLAYER_RUN;
+        };
+        this.getGame().input.onButtonDown.connect(handleControllerInputChange, this);
+        this.getGame().input.onButtonUp.connect(handleControllerInputChange, this);
+        this.getGame().keyboard.onKeyPress.filter(ev => ev.key === "g").connect(() => {
+            this.gPressed = true;
+        }, this);
     }
 }
