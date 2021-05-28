@@ -359,12 +359,13 @@ export default class JitsiInstance {
         this.room.addCommandListener("speakerUpdate", (values: any) => {
             const parsedObj = JSON.parse(values.value);
             if (parsedObj.id !== this.room.myUserId()) {
-                const character = Gather.instance.getGameScene().rootNode.getDescendantById(parsedObj.id) as CharacterNode;
+                const id = this.room.getParticipantById(parsedObj.id).getDisplayName();
+                const character = Gather.instance.getGameScene().rootNode.getDescendantById(id) as CharacterNode;
                 character?.activateSpeakerNode({userId: parsedObj.id, nodeId: parsedObj.speakerNode, id: parsedObj.shareAudioId});
                 if (parsedObj.id != null) {
-                    Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " started to share music");
+                    Gather.instance.showNotification(id + " started to share music");
                 } else {
-                    Gather.instance.showNotification(this.room.getParticipantById(parsedObj.id).getDisplayName() + " stopped to share music");
+                    Gather.instance.showNotification(id + " stopped to share music");
                 }
             }
         });

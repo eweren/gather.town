@@ -347,8 +347,7 @@ export abstract class CharacterNode extends OnlineSceneNode<Gather> {
         this.speakerNode = args.node;
         this.shareAudioId = args.sharedId;
         await sleep(1000);
-        // this.getGame().sendCommand("speakerUpdate", { speakerNode: node.getId(), shareAudioId: id });
-        this.emitEvent("setSpeakerNode", args);
+        this.getGame().sendCommand("speakerUpdate", { speakerNode: args.node.getId(), shareAudioId: args.sharedId });
     }
 
     public activateSpeakerNode(args: {userId: string, nodeId: string, id?: string}): void {
