@@ -43,6 +43,14 @@ export class Bounds2 {
         return this;
     }
 
+    public translate(vertex: ReadonlyVector2Like): this {
+        this.minX += vertex.x;
+        this.maxX += vertex.x;
+        this.minY += vertex.y;
+        this.maxY += vertex.y;
+        return this;
+    }
+
     public addLine(line: Line2): this {
         return this.addVertex(line.start).addVertex(line.end);
     }

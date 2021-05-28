@@ -99,7 +99,6 @@ export class TitleScene extends Scene<Gather> {
             this.moveRight();
         } else if ((ev.key === "Enter" || ev.key === " ") && this.name !== "") {
             const res = await OnlineService.getUsers();
-            console.log(res);
             if (res.includes(this.name)) {
                 this.notificationNode.showNotification("Username already taken", 5);
                 this.nameInputNode.focus();

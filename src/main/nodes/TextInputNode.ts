@@ -40,6 +40,7 @@ export class TextInputNode<T extends Game = Game> extends SceneNode<T> {
             this.getGame().keyboard.onKeyDown.disconnect(this.handleKeyPress, this);
             this.onTextSubmit.emit(this.text);
         }
+        this.placeholderNode.setColor("grey");
         this.getScene()?.onPointerDown.disconnect(this.blur, this);
         this.active = false;
     }
@@ -55,9 +56,13 @@ export class TextInputNode<T extends Game = Game> extends SceneNode<T> {
 
     protected handlePointerDown(event: ScenePointerDownEvent<T>): void {
         super.handlePointerDown(event);
-        if (this.active) {
+        const scenePosition = this.getScenePosition();
+        const sceneBounds = this.getSceneBounds().toRect().translate(scenePosition.x, scenePosition.y - this.getSceneBounds().minY - this.height / 2);
+        const eventPosition = event.getScreenPosition();
+        const containsCursor = sceneBounds.containsPoint(eventPosition.x, eventPosition.y);
+        if (this.active && !containsCursor) {
             this.blur();
-        } else {
+        } else if (containsCursor && !this.active) {
             this.focus();
         }
     }
