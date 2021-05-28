@@ -53,6 +53,7 @@ export class HoverOver extends HTMLElement {
         style.textContent = `
             .actionButton {
                 cursor: pointer;
+                user-select: none;
             }
             .actionButtonWrapper {
                 opacity: 1;

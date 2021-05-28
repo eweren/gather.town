@@ -30,7 +30,9 @@
 
 [ ] presentation-width to canvas width
 
-[ ] For events use socket.ewer.rest endpoint -> Game-Logic no in jitsi
+[X] For events use socket.ewer.rest endpoint -> Game-Logic not in jitsi
+
+    [ ] transform remaining events
 
 [X] add controls-bar somewhere and move options to it
 
