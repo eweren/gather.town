@@ -74,6 +74,7 @@ export class IFrameNode extends InteractiveNode {
     }
 
     public open(): void {
+        this.getGame().pauseGame();
         this.iFrame = document.createElement("iframe");
         this.iFrame.src = this.url;
         this.iFrame.frameBorder = "0";
@@ -134,6 +135,7 @@ export class IFrameNode extends InteractiveNode {
     }
 
     public close(): void {
+        this.getGame().pauseGame();
         this.backdrop?.remove();
         this.iFrame?.remove();
         this.pasteInput?.remove();
