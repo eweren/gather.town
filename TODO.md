@@ -28,7 +28,7 @@
 
 [X] ghost mode und collision activation
 
-[ ] presentation-width to canvas width
+[X] presentation-width to canvas width
 
 [X] For events use socket.ewer.rest endpoint -> Game-Logic not in jitsi
 

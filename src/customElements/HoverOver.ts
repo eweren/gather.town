@@ -22,7 +22,6 @@ export class HoverOver extends HTMLElement {
         button.title = textHover ?? "";
         button.appendChild(icon);
         button.onclick = (ev) => {
-            console.log("click");
             ev.stopImmediatePropagation();
             callback(icon.getUrl() === imageUrl && toggleImageUrl != null);
             if (icon.getUrl() === imageUrl && toggleImageUrl != null) {

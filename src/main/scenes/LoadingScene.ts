@@ -23,7 +23,7 @@ export class LoadingScene extends Scene<Gather> {
 
     public async activate(): Promise<void> {
         this.game.assets.load(this.updateProgress.bind(this)).then(() => {
-            if (isDev()) {
+            if (isDev() && false) {
                 this.game.scenes.setScene(GameScene);
             } else {
                 this.game.scenes.setScene(TitleScene);
