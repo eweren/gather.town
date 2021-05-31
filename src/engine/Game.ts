@@ -90,8 +90,14 @@ export abstract class Game {
         this.canvas.width = window.innerWidth / 2;
         this.canvas.height = window.innerHeight / 2;
 
+        this.canvasScale = Math.max(
+            1,
+            Math.floor(Math.min(window.innerWidth / this.width, window.innerHeight / this.height))
+        );
+
         this.width = window.innerWidth / 2;
         this.height = window.innerHeight / 2;
+
 
         this.scenes.activeScene?.resizeTo(this.width, this.height);
 

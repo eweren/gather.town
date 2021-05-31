@@ -3,7 +3,6 @@ import { Scene } from "../../engine/scene/Scene";
 import { asset } from "../../engine/assets/Assets";
 import { GameScene } from "./GameScene";
 import { FadeToBlackTransition } from "../../engine/transitions/FadeToBlackTransition";
-import { MusicManager } from "../MusicManager";
 import { FadeTransition } from "../../engine/transitions/FadeTransition";
 import { Sound } from "../../engine/assets/Sound";
 import { AsepriteNode } from "../../engine/scene/AsepriteNode";
@@ -15,6 +14,7 @@ import { TextInputNode } from "../nodes/TextInputNode";
 import { OnlineService } from "../../engine/online/OnlineService";
 import { NotificationNode } from "../nodes/NotificationNode";
 import { Layer } from "../constants";
+import { isDev } from "../../engine/util/env";
 
 export class TitleScene extends Scene<Gather> {
     @asset("sounds/interface/click.mp3")
@@ -30,7 +30,7 @@ export class TitleScene extends Scene<Gather> {
     private name = "";
     private notificationNode!: NotificationNode;
 
-    public setup() {
+    public setup(): void {
         this.inTransition = new FadeTransition();
         this.outTransition = new FadeToBlackTransition({ duration: 0.5, exclusive: true });
         this.characterNodes.forEach(node => {
@@ -49,7 +49,11 @@ export class TitleScene extends Scene<Gather> {
         this.moveLeft();
         this.notificationNode = new NotificationNode(5, { x: this.rootNode.width / 2 - 10, y: -this.rootNode.height / 2 + 10, layer: Layer.HUD }).appendTo(this.rootNode);
 
-        MusicManager.getInstance().loopTrack(0);
+        if (isDev()) {
+            const name = Math.random() + "";
+            this.nameInputNode.setText(name);
+            this.updateName(name);
+        }
     }
     private moveLeft(): void {
         this.characterNodes[this.index]?.scaleBy(1);
@@ -116,8 +120,10 @@ export class TitleScene extends Scene<Gather> {
         this.name = name;
         if (name.length > 0) {
             this.confirmNode.setColor("white");
+            this.confirmNode.setText("⤶ CONTINUE");
         } else {
             this.confirmNode.setColor("grey");
+            this.confirmNode.setText("⤶ SELECT");
         }
     }
 

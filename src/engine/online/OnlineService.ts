@@ -21,7 +21,7 @@ export interface ActionEvent {
 
 @Service
 export class OnlineService {
-    private static onlineBaseUrl = isDev() ? "http://localhost:3000/" : "https://socket.ewer.rest:3000/";
+    private static onlineBaseUrl = isDev() && false ? "http://localhost:3000/" : "https://socket.ewer.rest:3000/";
 
     public static async getUsers(): Promise<any> {
         return (await fetch(`${OnlineService.onlineBaseUrl}${isDev() ? "mylittleconference" : "gather"}`)).json();

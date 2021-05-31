@@ -45,6 +45,7 @@ export abstract class Scene<T extends Game = Game, A = void> {
 
     public readonly onPointerMove = new Signal<ScenePointerMoveEvent<T, A>>(this.initPointerMove.bind(this));
     public readonly onPointerDown = new Signal<ScenePointerDownEvent<T, A>>(this.initPointerDown.bind(this));
+    public readonly onResize = new Signal<void>();
 
     public constructor(public readonly game: T) {
         this.rootNode = new RootNode(this, (update, draw) => {
@@ -141,6 +142,7 @@ export abstract class Scene<T extends Game = Game, A = void> {
      */
     public resizeTo(width: number, height: number): void {
         this.rootNode.resizeTo(width, height);
+        this.onResize.emit();
     }
 
     /**

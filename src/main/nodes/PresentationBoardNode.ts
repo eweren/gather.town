@@ -4,7 +4,6 @@ import { SceneNodeArgs } from "../../engine/scene/SceneNode";
 import { asset } from "../../engine/assets/Assets";
 import { Gather } from "../Gather";
 import { AsepriteNode } from "../../engine/scene/AsepriteNode";
-import { LightNode } from "./LightNode";
 import { Layer } from "../constants";
 import { clamp } from "../../engine/util/math";
 import { PresentationJSON } from "*.presentation.json";
@@ -34,21 +33,22 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
     private static presentationData: Array<PresentationJSON>;
     private presentationData: PresentationJSON;
 
-    private headlineNode = new TextNode<Gather>({ font: Gather.headlineFont, outlineColor: "grey" });
-    private textNode = new TextNode<Gather>({ font: Gather.standardFont, });
+    private headlineNode = new TextNode<Gather>({ font: Gather.headlineFont, outlineColor: "grey", anchor: Direction.CENTER });
+    private textNode = new TextNode<Gather>({ font: Gather.standardFont, anchor: Direction.CENTER });
     private controlsNode = new TextNode<Gather>({ font: Gather.standardFont, text: "→ next\n← previous\nQ quit", anchor: Direction.TOP_LEFT});
 
     public slideIndex = 0;
 
-    private lightNode = new LightNode({ x: this.x, y: this.y, width: PresentationBoardNode.sprite.width, height: PresentationBoardNode.sprite.height, anchor: Direction.CENTER, layer: Layer.LIGHT });
     private presentationIndex: number;
     private currentLine?: { slide: number; headline: string; subHeadline?: string, lines?: string[]; };
     private isPresenter = false;
+    private canvasScale = 1;
 
     public constructor(args: SceneNodeArgs) {
         super({
             aseprite: PresentationBoardNode.sprite,
-            anchor: Direction.CENTER,
+            anchor: Direction.TOP_LEFT,
+            childAnchor: Direction.TOP_LEFT,
             tag: PresentationBoardTags.IN,
             ...args
         });
@@ -63,6 +63,11 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         this.presentation = PresentationBoardNode.presentations[clamp(this.presentationIndex, 0, PresentationBoardNode.presentations.length - 1)];
         this.currentLine = this.presentationData[this.slideIndex];
         this.setLayer(Layer.OVERLAY);
+        this.getScene()?.onResize.connect(this.updatePosition, this);
+    }
+
+    public deactivate(): void {
+        this.getScene()?.onResize.disconnect(this.updatePosition, this);
     }
 
     public update(dt: number, time: number): void {
@@ -72,12 +77,10 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         }
         if (this.getTimesPlayed(PresentationBoardTags.ROLL_IN) >= 1) {
             this.setTag(PresentationBoardTags.IN);
-            this.lightNode.remove();
         }
         if (this.getTimesPlayed(PresentationBoardTags.ROLL_OUT) >= 1) {
             this.setTag(PresentationBoardTags.OUT);
             this.updateSlide();
-            this.lightNode.appendTo(this.getScene()!.rootNode);
         }
         if (this.getTag() !== PresentationBoardTags.OUT) {
             this.updateSlide();
@@ -118,12 +121,12 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
             return;
         }
         if (this.currentLine.headline) {
-            this.headlineNode.moveTo(0, -10);
+            this.headlineNode.moveTo(this.width / 2 / this.canvasScale, (this.height / 2 / this.canvasScale) -10);
             this.headlineNode.setText(this.currentLine.headline);
             this.appendChild(this.headlineNode);
             if (this.currentLine.lines == null && this.currentLine.subHeadline) {
                 this.textNode.setText(this.currentLine.subHeadline);
-                this.textNode.moveTo(0, 10);
+                this.textNode.moveTo(this.width / 2 / this.canvasScale, (this.height / 2 / this.canvasScale) + 10);
                 this.appendChild(this.textNode);
             }
         } else {
@@ -132,11 +135,11 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
         }
         if (this.currentLine.lines != null) {
             if (this.currentLine.headline) {
-                this.headlineNode.moveTo(0, -80);
+                this.headlineNode.moveTo(this.width / 2 / this.canvasScale, (this.height / 2 / this.canvasScale) -80);
             }
             this.textNode.setText(this.currentLine.lines.join("\n"));
             this.appendChild(this.textNode);
-            this.textNode.moveTo(0, 0);
+            this.textNode.moveTo(this.width / 2 / this.canvasScale, (this.height / 2 / this.canvasScale));
         } else if (this.currentLine.subHeadline == null) {
             this.textNode.setText("");
             this.textNode.remove();
@@ -145,14 +148,25 @@ export class PresentationBoardNode extends AsepriteNode<Gather> {
 
     public startPresentation(startIndex = 0, isPresenter = false): void {
         if (this.getTag() !== PresentationBoardTags.OUT && this.getTag() !== PresentationBoardTags.ROLL_OUT) {
+            this.updatePosition();
             this.slideIndex = startIndex;
             this.setTag(PresentationBoardTags.ROLL_OUT);
             if (isPresenter) {
                 this.appendChild(this.controlsNode);
-                this.controlsNode.moveTo(this.getWidth() / 2 + 4, -this.getHeight() / 2);
+                this.controlsNode.moveTo(this.getWidth() + 4, 0);
             }
             this.isPresenter = isPresenter;
         }
+    }
+
+    private updatePosition(): void {
+        const widthRatio = window.innerWidth / (this.width / this.scale) / 2;
+        const heightRatio = window.innerHeight / (this.height / this.scale) / 2;
+        const minRatio = Math.floor(Math.min(widthRatio, heightRatio));
+        console.log(minRatio);
+        this.scaleBy(minRatio);
+        this.canvasScale = minRatio;
+        this.moveTo((this.getScene()!.rootNode.width - this.width) / 2, (this.getScene()!.rootNode.height - this.height) / 2);
     }
 
     public endPresentation(): void {

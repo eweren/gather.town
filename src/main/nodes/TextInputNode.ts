@@ -110,6 +110,11 @@ export class TextInputNode<T extends Game = Game> extends SceneNode<T> {
             ctx.restore();
         }
     }
+    public setText(text: string): void {
+        this.text = text;
+        this.textNode.setText(text);
+        this.updatePlaceholder();
+    }
 }
 
 function isValidCharacter(str: string): boolean {
