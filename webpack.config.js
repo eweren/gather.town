@@ -55,7 +55,7 @@ module.exports = {
     },
     plugins: [
         new DefinePlugin({
-            "process.env": JSON.stringify(dotenv.parsed)
+            "process.env": JSON.stringify({...process.env, ...dotenv.parsed})
         }),
         gitRevisionPlugin,
         new GenerateJsonPlugin("appinfo.json", {
