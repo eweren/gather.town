@@ -16,7 +16,7 @@ import { HEADLINE_FONT, Layer, SMALL_FONT, STANDARD_FONT } from "./constants";
 import { Dialog } from "./Dialog";
 import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
-import { CharacterNode, PostCharacterTags } from "./nodes/CharacterNode";
+import { CharacterNode } from "./nodes/CharacterNode";
 import { LightNode } from "./nodes/LightNode";
 import { NpcNode } from "./nodes/NpcNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";

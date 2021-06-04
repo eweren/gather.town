@@ -11,4 +11,4 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-To report a vulnerability please just create an issue and Tag it with 'vulnerability'. 
+To report a vulnerability please just create an issue and Tag it with 'vulnerability'.
