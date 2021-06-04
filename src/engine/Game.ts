@@ -107,30 +107,28 @@ export abstract class Game {
     }
 
     private gameLoop(): void {
-            const currentUpdateTime = performance.now();
-            const dt = clamp((currentUpdateTime - this.lastUpdateTime) / 1000, 0, MAX_DT);
-            this.currentTime += dt;
-            // TODO if we are fancy, we may differentiate between elapsed system time and actual game time (e.g. to allow
-            // pausing the game and stuff, or slow-mo effects)
-            this.update(dt, this.currentTime);
-            this.lastUpdateTime = currentUpdateTime;
+        const currentUpdateTime = performance.now();
+        const dt = clamp((currentUpdateTime - this.lastUpdateTime) / 1000, 0, MAX_DT);
+        this.currentTime += dt;
+        this.update(dt, this.currentTime);
+        this.lastUpdateTime = currentUpdateTime;
 
-            if (!this.paused) {
-                const { ctx, width, height } = this;
-                ctx.save();
-                ctx.imageSmoothingEnabled = false;
-                ctx.fillStyle = this.backgroundColor;
-                ctx.fillRect(0, 0, width, height);
-                this.draw(ctx, width, height);
-                ctx.restore();
-            }
+        if (!this.paused) {
+            const { ctx, width, height } = this;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = this.backgroundColor;
+            ctx.fillRect(0, 0, width, height);
+            this.draw(ctx, width, height);
+            ctx.restore();
+        }
 
-            this.nextFrame();
+        this.nextFrame();
     }
 
     private nextFrame(): void {
-        this.gameLoopId = requestAnimationFrame(this.gameLoopCallback);
-        // this.gameLoopId = window.setTimeout(this.gameLoopCallback, 50); // simulate low FPS rate
+        this.gameLoopId = window.setTimeout(this.gameLoopCallback, 1000 / 40); // limit framerate to nearly 30fps for
+                                                                               // better performance
     }
 
     protected update(dt: number, time: number): void {
