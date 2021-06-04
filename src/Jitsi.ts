@@ -317,7 +317,6 @@ export default class JitsiInstance {
             this.remoteTracks[id] = [];
             await sleep(500);
             if (Gather.instance.isInGameScene() && id !== this.room.getName()) {
-                Gather.instance.sendCommand("playerUpdate", { spriteIndex: Gather.instance.getPlayer().spriteIndex });
                 Gather.instance.showNotification(this.room.getParticipantById(id).getDisplayName() + " joined");
             }
         });
@@ -339,17 +338,10 @@ export default class JitsiInstance {
             (userID: string, displayName: string) => {
                 const parent = document.getElementById(`${userID}video`) as UserVideoElement;
                 const textElement = parent?.nameSpan;
-                // Gather.instance.updatePlayer({ id: userID,  playerName: displayName });
                 if (textElement) {
                     textElement.innerText = displayName;
                 }
             });
-        this.room.addCommandListener("playerUpdate", (values: any) => {
-            const parsedObj = JSON.parse(values.value);
-            if (parsedObj.id !== this.room.myUserId() && Gather.instance.isInGameScene()) {
-                // Gather.instance.updatePlayer(parsedObj);
-            }
-        });
         this.room.addCommandListener("presentationUpdate", (values: any) => {
             const parsedObj = JSON.parse(values.value);
             if (parsedObj.id !== this.room.myUserId()) {

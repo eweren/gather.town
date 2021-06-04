@@ -47,7 +47,6 @@ export class PresentationNode extends InteractiveNode {
             player?.setX(this.x);
             player?.setY(this.y);
             player?.setPreTag(PreCharacterTags.FRONT);
-            player?.updatePlayerPosition();
             this.presentationBoard = this.getScene()?.rootNode.getDescendantsByType<PresentationBoardNode>(PresentationBoardNode).find(n => n.boardId === this.presentationBoardId);
             if (this.presentationBoard) {
                 this.getGame().sendCommand("presentationUpdate", { presentationBoardId: this.presentationBoard.boardId, slide: this.presentationBoard.slideIndex });

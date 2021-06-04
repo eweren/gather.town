@@ -111,7 +111,7 @@ export class NpcNode extends CharacterNode {
         const playerPos = this.getPlayer()?.getPosition() ?? new Vector2();
         const otherNpcs = this.getOtherNpcs()?.sort((npc1, npc2) => npc1.getPosition().getDistance(playerPos) - npc2.getPosition().getDistance(playerPos));
 
-        return otherNpcs != null && otherNpcs[0] === this;
+        return otherNpcs != null && otherNpcs[0] === this && !this.inConversation;
     }
 
     public interact(): void {

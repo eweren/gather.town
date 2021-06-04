@@ -18,6 +18,7 @@ import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
 import { CharacterNode, PostCharacterTags } from "./nodes/CharacterNode";
 import { LightNode } from "./nodes/LightNode";
+import { NpcNode } from "./nodes/NpcNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
 import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
@@ -69,7 +70,6 @@ export class Gather extends Game {
     public keyTaken = false; // key taken from corpse
 
     // Dialog
-    private currentDialogLine = 0;
     private currentDialog: Dialog | null = null;
 
     @asset("dialog/train.dialog.json")
@@ -101,7 +101,7 @@ export class Gather extends Game {
     // Called by GameScene
     public setupScene(): void {
         // TODO Enable this when npc can be synced
-        // this.spawnNPCs();
+        this.spawnNPCs();
         this.setStage(GameStage.GAME);
         this.JitsiInstance = new JitsiInstance();
         this.JitsiInstance.create().then(room => {
@@ -114,7 +114,6 @@ export class Gather extends Game {
             new Dialog(Gather.trainDialog)
         ];
 
-        this.input.onButtonPress.filter(e => e.isConfirm).connect(() => this.nextDialogLine(), this);
         this.input.onButtonUp.filter(e => e.isPlayerChat).connect(() => this.handleChat(), this);
 
         this.keyboard.onKeyPress.filter(ev => ev.key === "9" && ev.ctrlKey).connect((ev) => { ev.preventDefault(); this.preventPlayerInteraction = 0;});
@@ -140,58 +139,17 @@ export class Gather extends Game {
         }
     }
 
-    /* private spawnNPCs(): void {
+    private spawnNPCs(): void {
         const chars = [ new NpcNode({spriteIndex: 0}), new NpcNode({spriteIndex: 1}), new NpcNode({spriteIndex: 2}), new NpcNode({spriteIndex: 3}), new NpcNode({spriteIndex: 4}) ];
         const positions = [ 644, 680, 720, 760, 800 ];
         for (let i = 0; i < chars.length; i++) {
             chars[i].moveTo(positions[i], 512).appendTo(this.getGameScene().rootNode);
         }
         this.npcs = chars;
-    }*/
+    }
 
     public removePlayer(id: string): void {
         this.players[id]?.remove();
-    }
-
-    public updatePlayer(value: Record<string, any>): void {
-        if (value == null) {
-            return;
-        }
-        const id = value.id;
-        /*if (this.players[id] == null && this.isInGameScene()) {
-            const { x, y } = this.getGameScene().mapNode.getPlayerSpawn();
-            const newPlayer = new OtherPlayerNode(id, value.spriteIndex ?? 0, { x, y });
-            this.players[id] = newPlayer;
-            this.getGameScene().rootNode.appendChild(newPlayer);
-        }*/
-        const player = this.players[id];
-        if (id === this.room?.myUserId() || player == null || player.isPlayer) {
-            return;
-        }
-        if ("x" in value) {
-            player.x = value.x;
-        }
-        if ("y" in value) {
-            player.y = value.y;
-        }
-        if ("direction" in value) {
-            player.setDirection(value.direction);
-        }
-        if ("dances" in value) {
-            player.setTag(PostCharacterTags.DANCE);
-        }
-        if ("isRunning" in value) {
-            player.isRunning = !!value.isRunning;
-        }
-        if ("inGhostMode" in value) {
-            player.inGhostMode = !!value.inGhostMode;
-        }
-        if ("spriteIndex" in value) {
-            player.changeSprite(value.spriteIndex);
-        }
-        if ("playerName" in value) {
-            player.changePlayerName(value.playerName);
-        }
     }
 
     public sendCommand(eventName: string, value: any): void {
@@ -286,27 +244,6 @@ export class Gather extends Game {
         }
     }
 
-    private nextDialogLine(char = this.dialogChar): void {
-        // Shut up all characters
-        this.npcs.forEach(npc => npc.say());
-        this.getPlayer().say();
-        this.currentDialogLine++;
-        if (this.currentDialog && this.currentDialogLine >= this.currentDialog.lines.length) {
-            this.currentDialog = null;
-            this.currentDialogLine = 0;
-        } else if (this.currentDialog) {
-            // Show line
-            const line = this.currentDialog.lines[this.currentDialogLine];
-            char = line.charNum >= 1 ? char ?? this.npcs[line.charNum] : this.getPlayer();
-            char.say(line.line, Infinity);
-        }
-        if (this.currentDialogLine > (this.currentDialog?.lines.length ?? 0) - 1) {
-            if (this.dialogChar != null && this.dialogChar !== char) {
-                this.dialogChar.inConversation = false;
-            }
-        }
-    }
-
     private handleChat(): void {
         if (!this.isInGameScene()) {
             return;
@@ -335,12 +272,19 @@ export class Gather extends Game {
         });
     }
 
-    public startDialog(num: number, char?: CharacterNode): void {
+    public async startDialog(num: number, char?: CharacterNode): Promise<void> {
         if (this.currentDialog) {
+            // Shut up all characters
+            this.npcs.forEach(npc => npc.say());
+            this.getPlayer().say();
+            if (this.dialogChar) {
+                this.dialogChar.inConversation = false;
+                this.dialogChar = undefined;
+            }
+            this.currentDialog = null;
             return;
         }
         this.currentDialog = this.dialogs[num];
-        this.currentDialogLine = -1;
         if (this.dialogChar != null && this.dialogChar !== char) {
             this.dialogChar.inConversation = false;
         }
@@ -348,7 +292,13 @@ export class Gather extends Game {
         if (this.dialogChar) {
             this.dialogChar.inConversation = true;
         }
-        this.nextDialogLine(char);
+        const line = await OnlineService.getDialogLine();
+        if (line != null) {
+            // Shut up all characters
+            this.npcs.forEach(npc => npc.say());
+            this.getPlayer().say();
+            char?.say(line);
+        }
     }
 
     private updateGame(): void {

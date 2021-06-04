@@ -3,6 +3,9 @@ const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
 const GitRevisionPlugin = require("git-revision-webpack-plugin");
+const dotenv = require('dotenv').config({ path: __dirname + '/.env' });
+const { DefinePlugin } = require("webpack");
+
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
@@ -51,6 +54,9 @@ module.exports = {
         ]
     },
     plugins: [
+        new DefinePlugin({
+            "process.env": JSON.stringify(dotenv.parsed)
+        }),
         gitRevisionPlugin,
         new GenerateJsonPlugin("appinfo.json", {
             version: process.env.npm_package_version,

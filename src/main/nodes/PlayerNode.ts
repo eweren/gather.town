@@ -68,13 +68,8 @@ export class PlayerNode extends CharacterNode {
         if (Gather.characterSprites.length > index && index >= 0) {
             this.spriteIndex = index;
             this.setAseprite(Gather.characterSprites[index]);
-            this.getGame().sendCommand("playerUpdate", { index });
             this.emitEvent("changeSprite", index);
         }
-    }
-
-    public updatePlayerPosition(): void {
-        this.getGame().sendCommand("playerUpdate", { x: this.x, y: this.y, spriteIndex: this.spriteIndex, direction: this.direction });
     }
 
     public update(dt: number, time: number) {

@@ -132,7 +132,7 @@ export interface SceneNodeArgs {
  * node for other nodes (similar to a DIV element in HTML for example).
  */
 export class SceneNode<T extends Game = Game> {
-    public onPointerDown = new Signal<ScenePointerDownEvent<T>>();
+    public onPointerDown = new Signal<ScenePointerDownEvent<any>>();
     public onHoverOverChange = new Signal<boolean>();
     /** The parent node. Null if none. */
     private parent: SceneNode<T> | null = null;
