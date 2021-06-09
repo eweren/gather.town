@@ -292,13 +292,13 @@ export class Gather extends Game {
         if (this.dialogChar) {
             this.dialogChar.inConversation = true;
         }
-        const line = await OnlineService.getDialogLine();
+        /*const line = await OnlineService.getDialogLine();
         if (line != null) {
             // Shut up all characters
             this.npcs.forEach(npc => npc.say());
             this.getPlayer().say();
             char?.say(line);
-        }
+        }*/
     }
 
     private updateGame(): void {
