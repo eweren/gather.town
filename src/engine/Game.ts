@@ -127,7 +127,8 @@ export abstract class Game {
     }
 
     private nextFrame(): void {
-        this.gameLoopId = window.setTimeout(this.gameLoopCallback, 1000 / 40); // limit framerate to nearly 30fps for
+        this.gameLoopId = requestAnimationFrame(this.gameLoopCallback);
+        // this.gameLoopId = window.setTimeout(this.gameLoopCallback, 1000 / 40); // limit framerate to nearly 30fps for
                                                                                // better performance
     }
 
