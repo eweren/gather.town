@@ -18,7 +18,7 @@ import { FxManager } from "./FxManager";
 import { MusicManager } from "./MusicManager";
 import { CharacterNode } from "./nodes/CharacterNode";
 import { LightNode } from "./nodes/LightNode";
-import { NpcNode } from "./nodes/NpcNode";
+// import { NpcNode } from "./nodes/NpcNode";
 import { OtherPlayerNode } from "./nodes/OtherPlayerNode";
 import { PlayerNode } from "./nodes/PlayerNode";
 import { PresentationBoardNode } from "./nodes/PresentationBoardNode";
@@ -101,7 +101,7 @@ export class Gather extends Game {
     // Called by GameScene
     public setupScene(): void {
         // TODO Enable this when npc can be synced
-        this.spawnNPCs();
+        // this.spawnNPCs();
         this.setStage(GameStage.GAME);
         this.JitsiInstance = new JitsiInstance();
         this.JitsiInstance.create().then(room => {
@@ -139,14 +139,14 @@ export class Gather extends Game {
         }
     }
 
-    private spawnNPCs(): void {
+    /*private spawnNPCs(): void {
         const chars = [ new NpcNode({spriteIndex: 0}), new NpcNode({spriteIndex: 1}), new NpcNode({spriteIndex: 2}), new NpcNode({spriteIndex: 3}), new NpcNode({spriteIndex: 4}) ];
         const positions = [ 644, 680, 720, 760, 800 ];
         for (let i = 0; i < chars.length; i++) {
             chars[i].moveTo(positions[i], 512).appendTo(this.getGameScene().rootNode);
         }
         this.npcs = chars;
-    }
+    }*/
 
     public removePlayer(id: string): void {
         this.players[id]?.remove();
