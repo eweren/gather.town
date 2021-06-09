@@ -188,31 +188,4 @@ export class OnlineService {
             this.socket.emit("characterEvent", event);
         }
     }
-
-    public static async getDialogLine(): Promise<string | null> {
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
-        headers.append("Authorization", `Bearer ${process.env.OPEN_AI}`);
-        const res = await(await fetch("https://api.openai.com/v1/engines/davinci/completions", {
-            body: JSON.stringify({
-                "prompt": "Human: Tell me the nicest thing that happened in your life.\nAI: I have once been in thailand for vacation. The people there have been really nice!\nHuman: What's the best thing that happened to you last year?\n",
-                "temperature": 0.7,
-                "max_tokens": 30,
-                "top_p": 1,
-                "frequency_penalty": 0.5,
-                "presence_penalty": 0
-            }),
-            headers,
-            method: "POST"
-        })).json();
-
-        console.log(res);
-
-        if (res.choices.length > 0 && res.choices[0].text.length > 0) {
-            const indexOfHumanAnswer = (res.choices[0].text as string).indexOf("\nHuman");
-            return (res.choices[0].text as string).substring(3, indexOfHumanAnswer > 0 ? indexOfHumanAnswer : (res.choices[0].text as string).length - 1).trim();
-        } else {
-            return null;
-        }
-    }
 }
