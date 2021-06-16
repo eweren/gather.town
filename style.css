@@ -46,7 +46,14 @@ html, body {
     z-index: 1000;
     overflow-y: auto;
     overflow-x: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
+/* Hide scrollbar for Chrome, Safari and Opera */
+#videos::-webkit-scrollbar {
+    display: none;
+}
+      
 .userVideo {
     display: flex;
     flex-direction: column;

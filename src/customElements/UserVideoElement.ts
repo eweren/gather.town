@@ -42,8 +42,10 @@ export class UserVideoElement extends HTMLElement {
                 }
                 if (this.soundMeter.slow >= 0.01) {
                     this.videoElement.classList.add("speaking");
+                    this.style.order = "1";
                 } else {
                     this.videoElement.classList.remove("speaking");
+                    this.style.order = "2";
                 }
             }, 200);
          });
