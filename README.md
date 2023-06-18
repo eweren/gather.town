@@ -2,6 +2,14 @@
 
 [![Current Release](https://github.com/eweren/gather.town/actions/workflows/createRelease.yml/badge.svg)](https://github.com/eweren/gather.town/actions/workflows/createRelease.yml)
 
+## NOTE
+
+I stopped working on this and cancelled the running servers. Still the code should run when deploying and adjusting addresses for backend and jitsi.
+
+## How it works
+
+The realtime part is done by using [the backend service](https://github.com/eweren/games-backend) and the video conference part by creating a jitsi instance-
+
 ## Deployment
 
 All branches will be automatically deployed.
